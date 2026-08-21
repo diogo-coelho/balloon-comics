@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AuthModule } from './auth/auth.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,6 +18,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: process.env.PG_DATABASE_PASSWORD,
       autoLoadEntities: true,
     }),
+    AuthModule,
   ],
   controllers: [],
   providers: [],
