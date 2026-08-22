@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ReaderModule } from './reader/reader.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: process.env.PG_DATABASE_PASSWORD,
       autoLoadEntities: true,
     }),
+    ReaderModule,
   ],
   controllers: [],
   providers: [],
