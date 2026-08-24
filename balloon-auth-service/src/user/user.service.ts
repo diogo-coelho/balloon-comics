@@ -1,5 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ClientProxy } from "@nestjs/microservices/client/client-proxy";
 import { Repository } from "typeorm";
 
 import { UserEntity } from "./entities/user.entity";
@@ -14,7 +15,9 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly hashingService: HashingServiceProtocol,
-    private readonly authService: AuthService    
+    private readonly authService: AuthService,
+    @Inject("RABBITMQ_SERVICE")
+    private readonly client: ClientProxy, 
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
@@ -29,7 +32,13 @@ export class UserService {
       await this.userRepository.save(newUser);
 
       const accessToken = await this.authService.getAccessToken(newUser.id!, newUser.username!, newUser.email!);
-      const nextUrl = await this.authService.getNextUrl();
+      const nextUrl = await this.authService.getNextUrl('\/reader\/create');
+
+      this.client.emit('user_created', { 
+        userId: newUser.id, 
+        username: newUser.username, 
+        email: newUser.email 
+      });
 
       return { 
         message: 'Usuário criado com sucesso', 

@@ -35,7 +35,7 @@ export class AuthService {
       if (!isPasswordValid) throw new PasswordNotMatchError();
 
       const accessToken = await this.getAccessToken(user.id!, user.username!, user.email!);
-      const nextUrl = await this.getNextUrl();
+      const nextUrl = await this.getNextUrl('\/home');
 
       return {
         message: 'Acesso concedido',
@@ -69,8 +69,8 @@ export class AuthService {
     return accessToken;
   }
 
-  async getNextUrl(): Promise<string> {
-    const nextUrl = process.env.NEXT_URL! + '\/reader\/create';
+  async getNextUrl(resource: string): Promise<string> {
+    const nextUrl = process.env.NEXT_URL! + resource;
     return nextUrl;
   }
   

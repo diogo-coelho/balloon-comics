@@ -1,5 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { ClientsModule, Transport } from "@nestjs/microservices";
+import { ConfigService, ConfigModule } from "@nestjs/config";
 
 import { UserService } from "./user.service";
 import { UserController } from "./user.controller";
@@ -12,7 +14,24 @@ import { AuthModule } from "../auth/auth.module";
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
-    AuthModule
+    AuthModule,
+    ClientsModule.registerAsync([
+      {
+        name: "RABBITMQ_SERVICE",
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.RMQ,
+          options: {
+            urls: [configService.getOrThrow<string>("RABBITMQ_URL")],
+            queue: "auth_queue",
+            queueOptions: {
+              durable: true
+            }
+          }
+        }),
+        inject: [ConfigService]
+      }
+    ])
   ],
   controllers: [UserController],
   providers: [
