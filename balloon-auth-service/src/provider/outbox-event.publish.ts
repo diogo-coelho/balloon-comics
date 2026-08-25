@@ -1,15 +1,15 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Interval } from '@nestjs/schedule';
 import { Repository } from "typeorm";
 
-import { OutboxEventEntity } from "./entities/outbox-event.entity";
-import { RabbitMQProvider } from "../provider/rabbit-mq.provider";
+import { OutboxEventEntity } from "../user/entities/outbox-event.entity";
+import { RabbitMQProvider } from "./rabbit-mq.provider";
 
 @Injectable()
-export class UserPublish {
+export class OutboxEventsPublisher {
 
-  private readonly logger = new Logger(UserPublish.name);
+  private readonly logger = new Logger(OutboxEventsPublisher.name);
   private isPublishing = false;
   
   constructor(
@@ -18,7 +18,7 @@ export class UserPublish {
     private readonly rabbitMqProvider: RabbitMQProvider,
   ) {}
 
-  @Interval('publish-user-outbox-events', 5_000)
+  @Interval('publish-outbox-events', 5_000)
   async publishPendingEvents(): Promise<void> {
     if (this.isPublishing) {
       return;

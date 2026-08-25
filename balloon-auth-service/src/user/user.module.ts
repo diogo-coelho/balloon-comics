@@ -3,7 +3,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 
 import { UserService } from "./user.service";
-import { UserPublish } from "./user.publish";
 import { UserController } from "./user.controller";
 import { UserEntity } from "./entities/user.entity";
 import { OutboxEventEntity } from "./entities/outbox-event.entity";
@@ -12,6 +11,7 @@ import { HashingServiceProtocol } from "../auth/hashing/hashing.service";
 import { BcryptService } from "../auth/hashing/bcrypt.service";
 import { AuthModule } from "../auth/auth.module";
 import { RabbitMQProvider } from "../provider/rabbit-mq.provider";
+import { OutboxEventsPublisher } from "../provider/outbox-event.publish";
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { RabbitMQProvider } from "../provider/rabbit-mq.provider";
   controllers: [UserController],
   providers: [
     UserService,
-    UserPublish,
+    OutboxEventsPublisher,
     {
       provide: HashingServiceProtocol,
       useClass: BcryptService,
