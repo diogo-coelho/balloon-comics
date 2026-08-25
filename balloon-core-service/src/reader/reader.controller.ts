@@ -1,8 +1,8 @@
-import { Body, Controller, UseGuards, Request, Patch } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-import { EventPattern } from "@nestjs/microservices";
-import { UserQueueDto } from "./dtos/request/user-queue.dto";
+import { Body, Controller, UseGuards, Patch } from "@nestjs/common";
 import { ReaderService } from "./reader.service";
+import { AuthTokenGuard } from "../auth/guards/auth-token.guard";
+import { TokenPayloadParam } from "../auth/decorators/token-payload.decorator";
+import { JwtPayloadDto } from "../auth/dtos/jwt-payload.dto";
 import { CreateReaderDto } from "./dtos/request/create-reader.dto";
 import { RequestReaderDto } from "./dtos/request/request-reader.dto";
 
@@ -11,13 +11,13 @@ export class ReaderController {
 
   constructor(private readonly readerService: ReaderService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthTokenGuard)
   @Patch('create')
   async createReader(
-    @Request() req: any,
+    @TokenPayloadParam() tokenPayload: JwtPayloadDto,
     @Body() requestReaderDto: RequestReaderDto): Promise<any> {
 
-    const { sub, email, username } = req.user;
+    const { sub, email, username } = tokenPayload;
     
     const createReaderDto: CreateReaderDto = {
       userId: sub,

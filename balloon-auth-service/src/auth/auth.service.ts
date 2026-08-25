@@ -46,6 +46,13 @@ export class AuthService {
         statusCode: 200
       }
     } catch (error: Error | undefined | any) {
+      if (error instanceof UserEmailNotFoundError || error instanceof PasswordNotMatchError) {
+        return {
+          message: 'Usuário ou senha inválidos',
+          statusCode: error.getStatus()
+        }
+      }
+      
       return {
         message: 'Erro ao realizar login',
         error,

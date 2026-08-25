@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Patch, Param, Delete } from "@nestjs/common";
+import { Controller, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 
+import { AuthTokenGuard } from "../auth/guards/auth-token.guard";
 import { CreateUserDto } from "./dtos/request/create-user.dto";
 import { ResponseUserDto } from "./dtos/response/response-user.dto";
 import { ResponseUpdatedUserDto } from "./dtos/response/response-updated-user.dto";
@@ -16,6 +17,7 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
+  @UseGuards(AuthTokenGuard)
   @Patch('update/:id')
   async updateUser(
     @Body() updateUserDto: UpdateUserDto, 
@@ -23,6 +25,7 @@ export class UserController {
     return this.userService.updateUser(id, updateUserDto);
   }
 
+  @UseGuards(AuthTokenGuard)
   @Delete('delete/:id')
   async deleteUser(@Param('id') id: string): Promise<void> {
     return this.userService.deleteUser(id);

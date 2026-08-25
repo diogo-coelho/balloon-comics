@@ -1,16 +1,18 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { PassportModule } from "@nestjs/passport";
+import { JwtModule } from "@nestjs/jwt";
 
 import jwtConfig from "./config/jwt.config";
-import { JwtStrategy } from "./strategies/jwt.strategy";
 
 @Module({
   imports: [
     ConfigModule.forFeature(jwtConfig),
-    PassportModule.register({ defaultStrategy: "jwt" }),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
   ],
-  providers: [JwtStrategy],
-  exports: [PassportModule],
+  providers: [],
+  exports: [
+    JwtModule,
+    ConfigModule,
+  ],
 })
 export class AuthModule {}

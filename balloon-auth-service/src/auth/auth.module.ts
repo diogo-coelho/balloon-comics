@@ -28,6 +28,8 @@ import { UserEntity } from "../user/entities/user.entity";
   exports: [
     HashingServiceProtocol,
     AuthService,
+    JwtModule,
+    ConfigModule,
   ]
 })
 export class AuthModule {}
