@@ -25,7 +25,7 @@ async function bootstrap() {
       exchange: 'auth_exchange',
       exchangeType: 'topic',
       routingKey: rabbitMQOrderKey,
-      queue: "reader.user.created",
+      queue: "reader.user",
       queueOptions: {
         durable: true
       }

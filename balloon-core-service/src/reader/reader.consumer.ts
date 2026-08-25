@@ -14,4 +14,14 @@ export class ReaderConsumer {
     await this.readerService.createReaderByQueue(user);
   }
 
+  @EventPattern('user.updated')
+  async updateReaderByAuthUserUpdated(user: UserQueueDto): Promise<void> {
+    await this.readerService.updateReaderByQueue(user);
+  }
+
+  @EventPattern('user.deleted')
+  async deleteReaderByAuthUserDeleted(user: UserQueueDto): Promise<void> {
+    await this.readerService.deleteReaderByQueue(user);
+  }
+
 }

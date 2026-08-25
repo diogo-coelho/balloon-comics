@@ -31,13 +31,6 @@ export class RabbitMQProvider implements OnModuleInit {
       data: message
     }
 
-    this.channel.publish(
-      exchange, 
-      routingKey, 
-      Buffer.from(JSON.stringify(newMessage)), 
-      { persistent: true }
-    );
-
     const published = this.channel.publish(
       exchange, 
       routingKey, 

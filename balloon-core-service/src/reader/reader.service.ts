@@ -29,6 +29,30 @@ export class ReaderService {
     }
   }
 
+  async updateReaderByQueue(user: UserQueueDto): Promise<void> {
+    try {
+      const existingReader = await this.readerRepository.findOne({ where: { userId: user.userId } });
+
+      if (existingReader) {
+        await this.readerRepository.update(existingReader.id as string, { ...user, updatedAt: new Date() });
+      }
+    } catch (error: Error | any | undefined) {
+      console.error('Erro ao atualizar leitor a partir da fila: ', error?.message || 'Erro desconhecido');
+    }
+  }
+
+  async deleteReaderByQueue(user: UserQueueDto): Promise<void> {
+    try {
+      const existingReader = await this.readerRepository.findOne({ where: { userId: user.userId } });
+
+      if (existingReader) {
+        await this.readerRepository.delete(existingReader.id as string);
+      }
+    } catch (error: Error | any | undefined) {
+      console.error('Erro ao deletar leitor a partir da fila: ', error?.message || 'Erro desconhecido');
+    }
+  }
+
   async createReader(createReaderDto: CreateReaderDto): Promise<any> {
     try {
       const existingReader = await this.readerRepository.findOne({ where: { userId: createReaderDto.userId } });
