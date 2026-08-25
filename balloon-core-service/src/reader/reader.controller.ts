@@ -11,11 +11,6 @@ export class ReaderController {
 
   constructor(private readonly readerService: ReaderService) {}
 
-  @EventPattern('user.created')
-  async createReaderByAuthUserCreated(user: UserQueueDto): Promise<void> {
-    this.readerService.createReaderByQueue(user);
-  }
-
   @UseGuards(AuthGuard('jwt'))
   @Patch('create')
   async createReader(

@@ -1,52 +1,66 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { DataSource } from "typeorm";
 
 import { UserEntity } from "./entities/user.entity";
+import { OutboxEventEntity } from "./entities/outbox-event.entity";
 import { ResponseUserDto } from "./dtos/response/response-user.dto";
 import { CreateUserDto } from "./dtos/request/create-user.dto";
 import { HashingServiceProtocol } from "../auth/hashing/hashing.service";
 import { AuthService } from "../auth/auth.service";
-import { RabbitMQProvider } from "../provider/rabbit-mq.provider";
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    private readonly dataSource: DataSource,
     private readonly hashingService: HashingServiceProtocol,
     private readonly authService: AuthService,
-    private readonly rabbitMqProvider: RabbitMQProvider 
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
     try {
-      const user = {
-        username: createUserDto.username,
-        email: createUserDto.email,
-        passwordHash: await this.hashingService.hash(createUserDto.password),
-      };
+      const passwordHash = await this.hashingService.hash(createUserDto.password);
 
-      const newUser = this.userRepository.create(user);
-      await this.userRepository.save(newUser);
+      const user = await this.dataSource.transaction(async (manager) => {
+        const newUser = manager.create(UserEntity, {
+          username: createUserDto.username,
+          email: createUserDto.email,
+          passwordHash,
+        });
 
-      const accessToken = await this.authService.getAccessToken(newUser.id!, newUser.username!, newUser.email!);
-      const nextUrl = await this.authService.getNextUrl('\/reader\/create');
+        const savedUser = await manager.save(UserEntity, newUser);
 
-      this.rabbitMqProvider.publish('auth_exchange', 'user.created', {
-        userId: newUser.id, 
-        username: newUser.username, 
-        email: newUser.email 
+        const outboxEvent = manager.create(OutboxEventEntity, {
+          eventType: 'user.created',
+          userId: savedUser.id,
+          payload: {
+            'user_id': savedUser.id,
+            username: savedUser.username,
+            email: savedUser.email,
+          },
+          status: 'pending',
+          attempts: 0,
+        });
+
+        await manager.save(OutboxEventEntity, outboxEvent);
+
+        return savedUser;
       });
 
-      return { 
-        message: 'Usuário criado com sucesso', 
-        data: { 
-          accessToken: accessToken,
-        },
+      const accessToken = await this.authService.getAccessToken(
+        user.id!,
+        user.username!,
+        user.email!,
+      );
+
+      const nextUrl = await this.authService.getNextUrl('/reader/create');
+
+      return {
+        message: 'Usuário criado com sucesso',
+        data: { accessToken },
         next: nextUrl,
-        statusCode: 201 
+        statusCode: 201,
       };
+
     } catch (error: Error | undefined | any) {
       return Promise.reject({ 
         message: 'Erro ao tentar criar um usuário', 
