@@ -1,10 +1,16 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config/dist/config.service';
+
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+  
+  const rabbitMQUrl = configService.getOrThrow<string>('RABBITMQ_URL');
+  const rabbitMQOrderKey = configService.getOrThrow<string>('RABBITMQ_ORDER_KEY');
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
@@ -15,8 +21,11 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: ['amqp://admin:admin@localhost:5672'],
-      queue: "auth_queue",
+      urls: [rabbitMQUrl],
+      exchange: 'auth_exchange',
+      exchangeType: 'topic',
+      routingKey: rabbitMQOrderKey,
+      queue: "reader.user.created",
       queueOptions: {
         durable: true
       }

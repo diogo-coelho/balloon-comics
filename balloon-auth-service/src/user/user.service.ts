@@ -1,6 +1,5 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ClientProxy } from "@nestjs/microservices/client/client-proxy";
 import { Repository } from "typeorm";
 
 import { UserEntity } from "./entities/user.entity";
@@ -8,6 +7,7 @@ import { ResponseUserDto } from "./dtos/response/response-user.dto";
 import { CreateUserDto } from "./dtos/request/create-user.dto";
 import { HashingServiceProtocol } from "../auth/hashing/hashing.service";
 import { AuthService } from "../auth/auth.service";
+import { RabbitMQProvider } from "../provider/rabbit-mq.provider";
 
 @Injectable()
 export class UserService {
@@ -16,8 +16,7 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly hashingService: HashingServiceProtocol,
     private readonly authService: AuthService,
-    @Inject("RABBITMQ_SERVICE")
-    private readonly client: ClientProxy, 
+    private readonly rabbitMqProvider: RabbitMQProvider 
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
@@ -34,7 +33,7 @@ export class UserService {
       const accessToken = await this.authService.getAccessToken(newUser.id!, newUser.username!, newUser.email!);
       const nextUrl = await this.authService.getNextUrl('\/reader\/create');
 
-      this.client.emit('user_created', { 
+      this.rabbitMqProvider.publish('auth_exchange', 'user.created', {
         userId: newUser.id, 
         username: newUser.username, 
         email: newUser.email 
