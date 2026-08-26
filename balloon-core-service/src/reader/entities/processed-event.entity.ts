@@ -12,7 +12,7 @@ export class ProcessedEventEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ name: 'event_id', type: 'uuid'})
+  @Column({ name: 'event_id', type: 'uuid' })
   eventId!: string;
 
   @Column({ type: 'varchar', length: 100 })

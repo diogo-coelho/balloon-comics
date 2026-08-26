@@ -5,7 +5,7 @@ export class UserNotFoundError extends Error {
     super(`User with email ${email} not found`);
     this.name = 'UserNotFoundError';
     this.cause = { email };
-    this.stack = (new Error()).stack;
+    this.stack = new Error().stack;
     this.status = 404;
   }
 

@@ -10,10 +10,7 @@ import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      ReaderEntity, 
-      ProcessedEventEntity
-    ]),
+    TypeOrmModule.forFeature([ReaderEntity, ProcessedEventEntity]),
     AuthModule,
   ],
   controllers: [ReaderController, ReaderConsumer],

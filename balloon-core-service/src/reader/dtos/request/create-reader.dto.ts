@@ -1,26 +1,26 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateReaderDto {
   @IsString()
   @IsNotEmpty({ message: 'User ID é obrigatório' })
-  readonly userId?: string;
+  readonly userId!: string;
 
   @IsEmail({}, { message: 'Email inválido' })
-  readonly email?: string;
+  readonly email!: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Username é obrigatório' })
-  readonly username?: string;
+  readonly username!: string;
 
-  @IsString()
+  @IsOptional()
   @IsNotEmpty({ message: 'Nome é obrigatório' })
   readonly name?: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsOptional()
+  @IsUrl({}, { message: 'URL de imagem inválida' })
   readonly imageUrl?: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsOptional()
+  @IsNotEmpty({ message: 'Descrição não pode ser vazia' })
   readonly description?: string;
 }

@@ -5,4 +5,6 @@ export default registerAs('jwt', () => ({
   audience: process.env.JWT_TOKEN_AUDIENCE,
   issuer: process.env.JWT_TOKEN_ISSUER,
   expiresIn: Number(process.env.JWT_TOKEN_EXPIRATION) ?? 3600,
+  refreshTokenExpiresIn:
+    Number(process.env.JWT_REFRESH_TOKEN_EXPIRATION) ?? 86400,
 }));

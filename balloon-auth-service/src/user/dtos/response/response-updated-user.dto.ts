@@ -4,12 +4,10 @@ type UserData = {
   email?: string;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
 export class ResponseUpdatedUserDto {
   message?: string;
   data?: UserData;
   next?: string;
-  statusCode?: number;
-  error?: Error | undefined | any;
 }

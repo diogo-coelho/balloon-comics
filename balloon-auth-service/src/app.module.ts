@@ -2,7 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core/constants';
 
+import { getJoiConfig } from './config/joi.config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 
@@ -11,6 +14,15 @@ import { AuthModule } from './auth/auth.module';
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
+      validationSchema: getJoiConfig()
+    }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60,
+          limit: 10,
+        },
+      ],
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -25,6 +37,11 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

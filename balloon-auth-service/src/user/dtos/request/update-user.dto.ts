@@ -1,7 +1,13 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from "class-validator";
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  MinLength,
+} from 'class-validator';
 
 export class UpdateUserDto {
-
   @IsOptional()
   @IsString()
   @IsNotEmpty({ message: 'Nome de usuário não pode ser vazio' })
@@ -20,5 +26,4 @@ export class UpdateUserDto {
       'Senha deve possuir pelo menos uma letra maiúscula, uma letra minúscula e um caractere especial',
   })
   readonly password?: string;
-
 }

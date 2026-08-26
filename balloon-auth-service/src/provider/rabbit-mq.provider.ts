@@ -1,34 +1,37 @@
-import * as amqp from "amqplib";
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { AUTH_EXCHANGE } from "../constants/routing-keys";
-import { IntegrationEventContract } from "../contracts/integration-event.contract";
+import * as amqp from 'amqplib';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AUTH_EXCHANGE } from '../constants/routing-keys';
+import { IntegrationEventContract } from '../contracts/integration-event.contract';
 
 @Injectable()
 export class RabbitMQProvider implements OnModuleInit {
-
+  private readonly logger = new Logger(RabbitMQProvider.name);
   private connection!: amqp.ChannelModel;
   private channel!: amqp.ConfirmChannel;
   private readonly returnedMessages = new Set<string>();
 
   constructor(private readonly configService: ConfigService) {}
-  
+
   async onModuleInit() {
     try {
-      const connectionUrl = this.configService.getOrThrow<string>("RABBITMQ_URL") as string;
-      this.connection = await amqp.connect(connectionUrl);      
+      const connectionUrl = this.configService.getOrThrow<string>(
+        'RABBITMQ_URL',
+      ) as string;
+      this.connection = await amqp.connect(connectionUrl);
       this.channel = await this.connection?.createConfirmChannel();
-      await this.channel.assertExchange(AUTH_EXCHANGE, "topic", { durable: true });
+      await this.channel.assertExchange(AUTH_EXCHANGE, 'topic', {
+        durable: true,
+      });
       this.channel.on('return', (message) => {
-        const messageId =
-          message.properties.messageId;
+        const messageId = message.properties.messageId;
 
         if (messageId) {
           this.returnedMessages.add(messageId);
         }
       });
     } catch (error: Error | undefined | any) {
-      console.error("Failed to connect to RabbitMQ:", error);
+      this.logger.error('Failed to connect to RabbitMQ:', error);
       throw error;
     }
   }
@@ -38,40 +41,43 @@ export class RabbitMQProvider implements OnModuleInit {
     await this.connection?.close();
   }
 
-  async publish(exchange: string, routingKey: string, event: IntegrationEventContract): Promise<void> {
+  async publish(
+    exchange: string,
+    routingKey: string,
+    event: IntegrationEventContract,
+  ): Promise<void> {
     const packet = {
       pattern: routingKey,
       data: event,
     };
 
     const confirmPromise = new Promise<void>((resolve, reject) => {
-        const writable = this.channel.publish(
-            exchange,
-            routingKey,
-            Buffer.from(
-              JSON.stringify(packet),
-            ),
-            {
-              persistent: true,
-              mandatory: true,
-              messageId: event.eventId,
-              type: routingKey,
-              contentType: 'application/json',
-            },(error) => {
-              if (error) {
-                reject(error);
-                return;
-              }
-              resolve();
-            },
-          );
-
-          if (!writable) {
-            this.channel.once('drain', () => {
-              console.log('Channel drained, resuming publish...');
-            });
+      const writable = this.channel.publish(
+        exchange,
+        routingKey,
+        Buffer.from(JSON.stringify(packet)),
+        {
+          persistent: true,
+          mandatory: true,
+          messageId: event.eventId,
+          type: routingKey,
+          contentType: 'application/json',
+        },
+        (error) => {
+          if (error) {
+            reject(error);
+            return;
           }
-      });
+          resolve();
+        },
+      );
+
+      if (!writable) {
+        this.channel.once('drain', () => {
+          this.logger.warn('Canal RabbitMQ saturado (drain), retomando envio...');
+        });
+      }
+    });
 
     await confirmPromise;
 
@@ -81,5 +87,4 @@ export class RabbitMQProvider implements OnModuleInit {
       );
     }
   }
-
 }

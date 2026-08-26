@@ -1,18 +1,21 @@
-import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { ForbiddenException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import type { ConfigType } from '@nestjs/config';
+import { UserEntity } from './entities/user.entity';
+import { OutboxEventEntity } from './entities/outbox-event.entity';
 
-import { UserEntity } from "./entities/user.entity";
-import { OutboxEventEntity } from "./entities/outbox-event.entity";
+import { HashingServiceProtocol } from '../auth/hashing/hashing.service';
+import { AuthService } from '../auth/auth.service';
+import jwtConfig from '../auth/config/jwt.config';
+import { TokenPayloadDto } from '../auth/dtos/request/token-payload.dto';
+import { UserNotFoundError } from './error/user-not-found.error';
 
-import { HashingServiceProtocol } from "../auth/hashing/hashing.service";
-import { AuthService } from "../auth/auth.service";
-import { UserNotFoundError } from "./error/user-not-found.error";
+import { CreateUserDto } from './dtos/request/create-user.dto';
+import { UpdateUserDto } from './dtos/request/update-user.dto';
+import { ResponseUpdatedUserDto } from './dtos/response/response-updated-user.dto';
+import { ResponseUserDto } from './dtos/response/response-user.dto';
 
-import { CreateUserDto } from "./dtos/request/create-user.dto";
-import { UpdateUserDto } from "./dtos/request/update-user.dto";
-import { ResponseUpdatedUserDto } from "./dtos/response/response-updated-user.dto";
-import { ResponseUserDto } from "./dtos/response/response-user.dto";
-import { AUTH_ROUTING_KEYS } from "../constants/routing-keys";
+import { AUTH_ROUTING_KEYS } from '../constants/routing-keys';
 
 @Injectable()
 export class UserService {
@@ -20,18 +23,25 @@ export class UserService {
     private readonly dataSource: DataSource,
     private readonly hashingService: HashingServiceProtocol,
     private readonly authService: AuthService,
+    @Inject(jwtConfig.KEY)
+    private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
     try {
-      const passwordHash = await this.hashingService.hash(createUserDto.password);
-      const user = await this.createUserTransaction(passwordHash, createUserDto);
+      const passwordHash = await this.hashingService.hash(
+        createUserDto.password,
+      );
+      const user = await this.createUserTransaction(
+        passwordHash,
+        createUserDto,
+      );
       const nextUrl = await this.authService.getNextUrl('/reader/create');
 
-      const accessToken = await this.authService.getAccessToken(
+      const accessToken = await this.authService.signJwtAsync(
         user.id!,
-        user.username!,
-        user.email!,
+        this.jwtConfiguration.expiresIn,
+        { username: user.username!, email: user.email! },
       );
 
       return {
@@ -40,20 +50,23 @@ export class UserService {
         next: nextUrl,
         statusCode: 201,
       };
-
     } catch (error: Error | undefined | any) {
-      return Promise.reject({ 
-        message: 'Erro ao tentar criar um usuário', 
-        error,
-        statusCode: error.status || 500
-      }); 
+      throw new InternalServerErrorException('Erro ao tentar criar um usuário');
     }
   }
 
-  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<ResponseUpdatedUserDto> {
+  async updateUser(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    tokenPayload: TokenPayloadDto,
+  ): Promise<ResponseUpdatedUserDto> {
     try {
-      const updatedUser = await this.updateUserTransaction(id, updateUserDto);
-      
+      const updatedUser = await this.updateUserTransaction(
+        id,
+        updateUserDto,
+        tokenPayload,
+      );
+
       return {
         message: 'Usuário atualizado com sucesso',
         data: {
@@ -63,72 +76,87 @@ export class UserService {
           createdAt: updatedUser.createdAt,
           updatedAt: updatedUser.updatedAt,
         },
-        statusCode: 200,
       };
-
     } catch (error: Error | undefined | any) {
-      return Promise.reject({ 
-        message: 'Erro ao tentar atualizar um usuário', 
-        error,
-        statusCode: error.status || 500
-      }); 
+      throw new InternalServerErrorException('Erro ao tentar atualizar um usuário');
     }
   }
 
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: string, tokenPayload: TokenPayloadDto): Promise<void> {
     try {
-      await this.deleteUserTransaction(id);
+      await this.deleteUserTransaction(id, tokenPayload);
     } catch (error: Error | undefined | any) {
-      return Promise.reject({ 
-        message: 'Erro ao tentar deletar um usuário', 
-        error,
-        statusCode: error.status || 500
-      });
+      throw new InternalServerErrorException('Erro ao tentar deletar um usuário');
     }
   }
 
-  private async createUserTransaction(passwordHash: string, createUserDto: CreateUserDto): Promise<UserEntity> {
+  private async createUserTransaction(
+    passwordHash: string,
+    createUserDto: CreateUserDto,
+  ): Promise<UserEntity> {
     return await this.dataSource.transaction(async (manager) => {
-        const newUser = manager.create(UserEntity, {
-          username: createUserDto.username,
-          email: createUserDto.email,
-          passwordHash,
-        });
-
-        const savedUser = await manager.save(UserEntity, newUser);
-
-        const outboxEvent = manager.create(OutboxEventEntity, {
-          eventType: AUTH_ROUTING_KEYS.USER_CREATED,
-          userId: savedUser.id,
-          payload: {
-            userId: savedUser.id,
-            username: savedUser.username,
-            email: savedUser.email,
-          },
-          status: 'pending',
-          attempts: 0,
-        });
-
-        await manager.save(OutboxEventEntity, outboxEvent);
-
-        return savedUser;
+      const newUser = manager.create(UserEntity, {
+        username: createUserDto.username,
+        email: createUserDto.email,
+        passwordHash,
       });
+
+      const savedUser = await manager.save(UserEntity, newUser);
+
+      const outboxEvent = manager.create(OutboxEventEntity, {
+        eventType: AUTH_ROUTING_KEYS.USER_CREATED,
+        userId: savedUser.id,
+        payload: {
+          userId: savedUser.id,
+          username: savedUser.username,
+          email: savedUser.email,
+        },
+        status: 'pending',
+        attempts: 0,
+      });
+
+      await manager.save(OutboxEventEntity, outboxEvent);
+
+      return savedUser;
+    });
   }
 
-  private async updateUserTransaction(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+  private async updateUserTransaction(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    tokenPayload: TokenPayloadDto,
+  ): Promise<UserEntity> {
     return await this.dataSource.transaction(async (manager) => {
       const currentUser = await manager.findOne(UserEntity, { where: { id } });
 
-      if (!currentUser) throw new UserNotFoundError(`Usuário com ID ${id} não encontrado`);
+      if (!currentUser)
+        throw new UserNotFoundError(`Usuário com ID ${id} não encontrado`);
 
-      const usernameChanged = currentUser.username !== updateUserDto.username;
-      const emailChanged = currentUser.email !== updateUserDto.email;
+      if (tokenPayload.sub !== currentUser.id) {
+        throw new ForbiddenException(
+          'Usuário não autorizado a atualizar este recurso',
+        );
+      }
 
-      currentUser.username = updateUserDto.username;
-      currentUser.email = updateUserDto.email;
+      const usernameChanged =
+        updateUserDto.username !== undefined &&
+        updateUserDto.username !== currentUser.username;
+
+      const emailChanged =
+        updateUserDto.email !== undefined &&
+        updateUserDto.email !== currentUser.email;
+
+      currentUser.username = usernameChanged
+        ? updateUserDto.username
+        : currentUser.username;
+      currentUser.email = emailChanged
+        ? updateUserDto.email
+        : currentUser.email;
 
       if (updateUserDto.password) {
-        const passwordHash = await this.hashingService.hash(updateUserDto.password);
+        const passwordHash = await this.hashingService.hash(
+          updateUserDto.password,
+        );
         currentUser.passwordHash = passwordHash;
       }
 
@@ -154,18 +182,28 @@ export class UserService {
     });
   }
 
-  private async deleteUserTransaction(id: string): Promise<void> {
+  private async deleteUserTransaction(
+    id: string,
+    tokenPayload: TokenPayloadDto,
+  ): Promise<void> {
     return await this.dataSource.transaction(async (manager) => {
       const currentUser = await manager.findOne(UserEntity, { where: { id } });
-      if (!currentUser) throw new UserNotFoundError(`Usuário com ID ${id} não encontrado`);
-      
+      if (!currentUser)
+        throw new UserNotFoundError(`Usuário com ID ${id} não encontrado`);
+
+      if (tokenPayload.sub !== currentUser.id) {
+        throw new ForbiddenException(
+          'Usuário não autorizado a deletar este recurso',
+        );
+      }
+
       await manager.remove(UserEntity, currentUser);
 
       const outboxEvent = manager.create(OutboxEventEntity, {
         eventType: AUTH_ROUTING_KEYS.USER_DELETED,
         userId: id,
         payload: {
-          userId: id
+          userId: id,
         },
         status: 'pending',
         attempts: 0,
@@ -174,5 +212,4 @@ export class UserService {
       await manager.save(OutboxEventEntity, outboxEvent);
     });
   }
-
 }

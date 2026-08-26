@@ -9,6 +9,4 @@ export class ResponseReaderDto {
     description?: string;
   };
   next?: string;
-  statusCode?: number;
-  error?: Error | undefined | any;
 }

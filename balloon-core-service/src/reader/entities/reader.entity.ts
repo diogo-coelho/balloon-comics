@@ -1,4 +1,10 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('readers')
 export class ReaderEntity {
@@ -6,13 +12,13 @@ export class ReaderEntity {
   id?: string;
 
   @Column({ name: 'user_id', unique: true, type: 'uuid', nullable: false })
-  userId?: string;
+  userId!: string;
 
   @Column({ unique: true, type: 'varchar', length: 100, nullable: false })
-  email?: string;
+  email!: string;
 
   @Column({ unique: true, type: 'varchar', length: 200, nullable: false })
-  username?: string;
+  username!: string;
 
   @Column({ type: 'varchar', length: 150 })
   name?: string;
@@ -23,9 +29,18 @@ export class ReaderEntity {
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt?: Date;
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  updatedAt?: Date;
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt!: Date;
 }

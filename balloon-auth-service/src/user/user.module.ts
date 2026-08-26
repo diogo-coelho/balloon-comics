@@ -1,17 +1,17 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConfigModule } from "@nestjs/config";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
-import { UserService } from "./user.service";
-import { UserController } from "./user.controller";
-import { UserEntity } from "./entities/user.entity";
-import { OutboxEventEntity } from "./entities/outbox-event.entity";
+import { UserService } from './user.service';
+import { UserController } from './user.controller';
+import { UserEntity } from './entities/user.entity';
+import { OutboxEventEntity } from './entities/outbox-event.entity';
 
-import { HashingServiceProtocol } from "../auth/hashing/hashing.service";
-import { BcryptService } from "../auth/hashing/bcrypt.service";
-import { AuthModule } from "../auth/auth.module";
-import { RabbitMQProvider } from "../provider/rabbit-mq.provider";
-import { OutboxEventsPublisher } from "../provider/outbox-event.publish";
+import { HashingServiceProtocol } from '../auth/hashing/hashing.service';
+import { BcryptService } from '../auth/hashing/bcrypt.service';
+import { AuthModule } from '../auth/auth.module';
+import { RabbitMQProvider } from '../provider/rabbit-mq.provider';
+import { OutboxEventsPublisher } from '../provider/outbox-event.publish';
 
 @Module({
   imports: [
@@ -30,6 +30,6 @@ import { OutboxEventsPublisher } from "../provider/outbox-event.publish";
     },
     RabbitMQProvider,
   ],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule],
 })
 export class UserModule {}

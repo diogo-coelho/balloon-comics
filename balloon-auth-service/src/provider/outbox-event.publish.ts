@@ -1,19 +1,18 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Interval } from '@nestjs/schedule';
-import { Brackets, DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, In, Repository } from 'typeorm';
 
-import { OutboxEventEntity } from "../user/entities/outbox-event.entity";
-import { RabbitMQProvider } from "./rabbit-mq.provider";
-import { IntegrationEventContract } from "../contracts/integration-event.contract";
-import { AUTH_EXCHANGE } from "../constants/routing-keys";
+import { OutboxEventEntity } from '../user/entities/outbox-event.entity';
+import { RabbitMQProvider } from './rabbit-mq.provider';
+import { IntegrationEventContract } from '../contracts/integration-event.contract';
+import { AUTH_EXCHANGE } from '../constants/routing-keys';
 
 @Injectable()
 export class OutboxEventsPublisher {
-
   private readonly logger = new Logger(OutboxEventsPublisher.name);
   private isPublishing = false;
-  
+
   constructor(
     @InjectRepository(OutboxEventEntity)
     private readonly outboxRepository: Repository<OutboxEventEntity>,
@@ -31,10 +30,38 @@ export class OutboxEventsPublisher {
 
     try {
       const events = await this.claimEvents();
+      if (events.length === 0) return;
+
+      const successfulIds: string[] = [];
+      const failedEvents: Array<{ event: OutboxEventEntity; error: any }> = [];
 
       for (const event of events) {
-        await this.publishEvent(event);
+        try {
+          await this.publishEvent(event);
+          successfulIds.push(event.id!);
+        }
+        catch (error) {
+          failedEvents.push({ event, error });
+        }
       }
+
+      await this.updateEventStatus(successfulIds, 'published');
+
+      for (const { event, error } of failedEvents) {
+        const attempts = (event.attempts ?? 0) + 1;
+
+        await this.updateEventStatus(
+          [event.id!],
+          attempts >= 10 ? 'failed' : 'pending',
+          error instanceof Error ? error.message : String(error),
+        );
+
+        this.logger.error(
+          `Falha ao publicar evento ${event.id}. Tentativa ${attempts}.`,
+          error instanceof Error ? error.stack : undefined,
+        );
+      }
+
     } finally {
       this.isPublishing = false;
     }
@@ -50,39 +77,23 @@ export class OutboxEventsPublisher {
       data: event.payload!,
     };
 
-    try {
-      await this.rabbitMqProvider.publish(
-        AUTH_EXCHANGE,
-        event.eventType!,
-        message,
-      );
+    await this.rabbitMqProvider.publish(
+      AUTH_EXCHANGE,
+      event.eventType!,
+      message,
+    );
+  }
 
-      await this.outboxRepository.update(event.id!, {
-        status: 'published',
-        publishedAt: new Date(),
-        lockedAt: null,
-        lastError: null,
-      });
-      
-    } catch (error: Error | undefined | any) {
-      const attempts = event.attempts ?? 1;
-
-      await this.outboxRepository.update(event.id!, {
-        status: attempts >= 10
-          ? 'failed'
-          : 'pending',
-
-        lockedAt: null,
-
-        lastError:
-          error instanceof Error
-            ? error.message
-            : String(error),
-      });
-
-      this.logger.error(
-        `Falha ao publicar evento ${event.id}. Tentativa ${attempts}.`,
-        error instanceof Error ? error.stack : undefined,
+  private async updateEventStatus(eventIds: string[], status: 'pending' | 'published' | 'failed', lastError?: string): Promise<void> {
+    if (eventIds.length > 0) {
+      await this.outboxRepository.update(
+        { id: In(eventIds) },
+        {
+          status: status,
+          publishedAt: new Date(),
+          lockedAt: null,
+          lastError: lastError ?? null,
+        },
       );
     }
   }

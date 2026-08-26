@@ -5,6 +5,4 @@ export class ResponseAuthDto {
     refreshToken?: string;
   };
   next?: string;
-  statusCode?: number;
-  error?: Error | undefined | any;
 }
