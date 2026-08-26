@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -16,6 +14,20 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  nginx:
+    image: nginx:alpine
+    container_name: balloon-nginx
+    ports:
+      - "80:80"
+    env_file:
+      - ../balloon-auth-service/.env
+      - ../balloon-core-service/.env
+    environment:
+      - AUTH_SERVICE_PORT=${AUTH_PORT:-8081}
+      - CORE_SERVICE_PORT=${CORE_PORT:-8082}
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/templates/default.conf.template:ro
 
 volumes:
   rabbitmq-data:
