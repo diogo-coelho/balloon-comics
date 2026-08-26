@@ -28,31 +28,31 @@ export class UserService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
-    try {
-      const passwordHash = await this.hashingService.hash(
-        createUserDto.password,
-      );
-      const user = await this.createUserTransaction(
-        passwordHash,
-        createUserDto,
-      );
-      const nextUrl = await this.authService.getNextUrl('/reader/create');
+    const passwordHash = await this.hashingService.hash(
+      createUserDto.password,
+    );
+    const user = await this.createUserTransaction(
+      passwordHash,
+      createUserDto,
+    );
+    const nextUrl = await this.authService.getNextUrl('/reader/create');
 
-      const accessToken = await this.authService.signJwtAsync(
-        user.id!,
-        this.jwtConfiguration.expiresIn,
-        { username: user.username!, email: user.email! },
-      );
+    const accessToken = await this.authService.signJwtAsync(
+      user.id!,
+      this.jwtConfiguration.expiresIn,
+      { username: user.username!, email: user.email! },
+    );
 
-      return {
-        message: 'Usuário criado com sucesso',
-        data: { accessToken },
-        next: nextUrl,
-        statusCode: 201,
-      };
-    } catch (error: Error | undefined | any) {
-      throw new InternalServerErrorException('Erro ao tentar criar um usuário');
-    }
+    const refreshToken = await this.authService.signJwtAsync(
+      user.id!,
+      this.jwtConfiguration.refreshTokenExpiresIn,
+    );
+
+    return {
+      message: 'Usuário criado com sucesso',
+      data: { accessToken, refreshToken },
+      next: nextUrl,
+    };
   }
 
   async updateUser(
@@ -60,34 +60,26 @@ export class UserService {
     updateUserDto: UpdateUserDto,
     tokenPayload: TokenPayloadDto,
   ): Promise<ResponseUpdatedUserDto> {
-    try {
-      const updatedUser = await this.updateUserTransaction(
-        id,
-        updateUserDto,
-        tokenPayload,
-      );
+    const updatedUser = await this.updateUserTransaction(
+      id,
+      updateUserDto,
+      tokenPayload,
+    );
 
-      return {
-        message: 'Usuário atualizado com sucesso',
-        data: {
-          id: updatedUser.id,
-          username: updatedUser.username,
-          email: updatedUser.email,
-          createdAt: updatedUser.createdAt,
-          updatedAt: updatedUser.updatedAt,
-        },
-      };
-    } catch (error: Error | undefined | any) {
-      throw new InternalServerErrorException('Erro ao tentar atualizar um usuário');
-    }
+    return {
+      message: 'Usuário atualizado com sucesso',
+      data: {
+        id: updatedUser.id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        createdAt: updatedUser.createdAt,
+        updatedAt: updatedUser.updatedAt,
+      },
+    };
   }
 
   async deleteUser(id: string, tokenPayload: TokenPayloadDto): Promise<void> {
-    try {
-      await this.deleteUserTransaction(id, tokenPayload);
-    } catch (error: Error | undefined | any) {
-      throw new InternalServerErrorException('Erro ao tentar deletar um usuário');
-    }
+    await this.deleteUserTransaction(id, tokenPayload);
   }
 
   private async createUserTransaction(

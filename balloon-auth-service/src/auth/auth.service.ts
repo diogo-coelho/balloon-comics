@@ -24,33 +24,29 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto): Promise<ResponseAuthDto> {
-    try {
-      const { email, password } = loginDto;
+    const { email, password } = loginDto;
 
-      const user = await this.userRepository.findOne({ where: { email } });
-      const isPasswordValid = await this.hashingService.compare(
-        password,
-        user?.passwordHash || '',
-      );
+    const user = await this.userRepository.findOne({ where: { email } });
+    const isPasswordValid = await this.hashingService.compare(
+      password,
+      user?.passwordHash || '',
+    );
 
-      if (!user || !isPasswordValid) {
-        throw new UnauthorizedException('E-mail ou senha inválidos');
-      }
-
-      const { accessToken, refreshToken } = await this.generateTokens(user);
-      const nextUrl = await this.getNextUrl('\/home');
-
-      return {
-        message: 'Acesso concedido',
-        data: {
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        },
-        next: nextUrl,
-      };
-    } catch (error: Error | undefined | any) {
-      throw new InternalServerErrorException('Erro ao realizar login');
+    if (!user || !isPasswordValid) {
+      throw new UnauthorizedException('E-mail ou senha inválidos');
     }
+
+    const { accessToken, refreshToken } = await this.generateTokens(user);
+    const nextUrl = await this.getNextUrl('\/home');
+
+    return {
+      message: 'Acesso concedido',
+      data: {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      },
+      next: nextUrl,
+    };
   }
 
   async logout(userId: string): Promise<void> {
@@ -135,7 +131,7 @@ export class AuthService {
     const refreshToken = await this.signJwtAsync(
       user.id,
       this.jwtConfiguration.refreshTokenExpiresIn,
-      { tokenType: 'refresh' }, // Identifica que é um Refresh Token
+      { tokenType: 'refresh' }
     );
 
     const refreshTokenHash = await this.hashingService.hash(refreshToken);

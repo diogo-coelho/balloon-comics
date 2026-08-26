@@ -22,7 +22,7 @@ import { ResponseUpdatedUserDto } from './dtos/response/response-updated-user.dt
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('create')
+  @Post('/me')
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<ResponseUserDto> {
@@ -30,7 +30,7 @@ export class UserController {
   }
 
   @UseGuards(AuthTokenGuard)
-  @Patch('update/:id')
+  @Patch('/me/:id')
   async updateUser(
     @Body() updateUserDto: UpdateUserDto,
     @Param('id') id: string,
@@ -40,7 +40,7 @@ export class UserController {
   }
 
   @UseGuards(AuthTokenGuard)
-  @Delete('delete/:id')
+  @Delete('/me/:id')
   async deleteUser(
     @Param('id') id: string,
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,

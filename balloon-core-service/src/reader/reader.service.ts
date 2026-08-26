@@ -17,48 +17,42 @@ export class ReaderService {
   ) {}
 
   async createReader(createReaderDto: CreateReaderDto): Promise<any> {
-    try {
-      const existingReader = await this.readerRepository.findOne({
-        where: { userId: createReaderDto.userId },
-      });
+    const existingReader = await this.readerRepository.findOne({
+      where: { userId: createReaderDto.userId },
+    });
 
-      if (existingReader) {
-        const updatedReader = await this.readerRepository.update(
-          existingReader.id as string,
-          { ...createReaderDto, updatedAt: new Date() },
-        );
-        return {
-          message: 'Leitor atualizado com sucesso',
-          data: updatedReader.affected
-            ? { ...existingReader, ...createReaderDto }
-            : existingReader,
-        };
-      }
+    await this.readerRepository.upsert(
+      { ...createReaderDto, updatedAt: new Date() },
+      ['userId'],
+    );
 
-      const reader = this.readerRepository.create(createReaderDto);
-      const insertedReader = await this.readerRepository.save(reader);
-      return {
-        message: 'Leitor criado com sucesso',
-        data: insertedReader,
-      };
-    } catch (error: Error | any | undefined) {
-      throw new InternalServerErrorException('Erro ao criar ou atualizar leitor');
-    }
+    const reader = await this.readerRepository.findOneByOrFail({
+      userId: createReaderDto.userId,
+    });
+
+    return {
+      message: existingReader
+        ? 'Leitor atualizado com sucesso'
+        : 'Leitor criado com sucesso',
+      data: reader,
+    };
   }
 
   async handleUserCreated(
     event: IntegrationEvent<UserQueueDto>,
   ): Promise<void> {
     await this.processOnce(event, 'reader-sync', async (manager) => {
-      const reader = manager.create(ReaderEntity, {
-        userId: event.data.userId,
-        email: event.data.email,
-        username: event.data.username,
-
-        name: event.data.username,
-      });
-
-      await manager.save(ReaderEntity, reader);
+      await manager.upsert(
+        ReaderEntity,
+        {
+          userId: event.data.userId,
+          email: event.data.email,
+          username: event.data.username,
+          name: event.data.username,
+          updatedAt: new Date(),
+        },
+        ['userId'],
+      );
     });
   }
 

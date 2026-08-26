@@ -11,7 +11,7 @@ export class ReaderController {
   constructor(private readonly readerService: ReaderService) {}
 
   @UseGuards(AuthTokenGuard)
-  @Patch('create')
+  @Patch('me')
   async createReader(
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
     @Body() requestReaderDto: RequestReaderDto,

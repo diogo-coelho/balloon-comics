@@ -32,6 +32,11 @@ export class AuthTokenGuard implements CanActivate {
         token,
         this.jwtConfiguration,
       );
+
+      if (payload.tokenType !== 'access') {
+        throw new UnauthorizedException('Token de autenticação inválido');
+      }
+      
       request[REQUEST_TOKEN_PAYLOAD_KEY] = payload;
       return true;
     } catch (error: Error | undefined | any) {
@@ -41,9 +46,8 @@ export class AuthTokenGuard implements CanActivate {
 
   extractTokenFromHeader(request: Request): string | undefined {
     const authorization = request.headers?.authorization;
-
     if (!authorization || typeof authorization !== 'string') return undefined;
-
-    return authorization.split(' ')[1];
+    const match = authorization.trim().match(/^Bearer\s+(\S+)$/i);
+    return match?.[1];
   }
 }

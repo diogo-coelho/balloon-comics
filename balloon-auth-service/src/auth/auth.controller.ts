@@ -1,10 +1,13 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 
 import { AuthService } from './auth.service';
+import { AuthTokenGuard } from './guards/auth-token.guard';
 import { LoginDto } from './dtos/request/login.dto';
 import { RefreshTokenDto } from './dtos/request/refresh-token.dto';
 import { ResponseAuthDto } from './dtos/response/response-auth.dto';
+import { TokenPayloadParam } from './decorators/token-payload.param';
+import { TokenPayloadDto } from './dtos/request/token-payload.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,6 +17,16 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto): Promise<ResponseAuthDto> {
     return this.authService.login(loginDto);
+  }
+
+  @UseGuards(AuthTokenGuard)
+  @Post('logout')
+  async logout(
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto
+  ): Promise<void> {
+    const { sub: userId } = tokenPayload;
+    console.log('Logging out user with ID:', userId);
+    return this.authService.logout(userId);
   }
 
   @Post('refresh')
