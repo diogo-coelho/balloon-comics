@@ -5,9 +5,11 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core/constants';
 
-import { getJoiConfig } from './config/joi.config';
+import { PostgresConfigService } from './config/postgres.config.service';
+import { getJoiConfig } from './config/joi.config.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+
 
 @Module({
   imports: [
@@ -24,14 +26,8 @@ import { AuthModule } from './auth/auth.module';
         },
       ],
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.PG_DATABASE_HOST,
-      port: Number(process.env.PG_DATABASE_PORT),
-      database: process.env.PG_DATABASE_NAME,
-      username: process.env.PG_DATABASE_USERNAME,
-      password: process.env.PG_DATABASE_PASSWORD,
-      autoLoadEntities: true,
+    TypeOrmModule.forRootAsync({
+      useClass: PostgresConfigService,
     }),
     AuthModule,
     UserModule,

@@ -6,6 +6,7 @@ import { APP_GUARD } from '@nestjs/core/constants';
 
 import { getJoiConfig } from './config/joi.config';
 import { ReaderModule } from './reader/reader.module';
+import { PostgresConfigService } from './config/postgres.config.service';
 
 @Module({
   imports: [
@@ -21,14 +22,8 @@ import { ReaderModule } from './reader/reader.module';
         },
       ],
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.PG_DATABASE_HOST,
-      port: Number(process.env.PG_DATABASE_PORT),
-      database: process.env.PG_DATABASE_NAME,
-      username: process.env.PG_DATABASE_USERNAME,
-      password: process.env.PG_DATABASE_PASSWORD,
-      autoLoadEntities: true,
+    TypeOrmModule.forRootAsync({
+      useClass: PostgresConfigService,
     }),
     ReaderModule,
   ],
