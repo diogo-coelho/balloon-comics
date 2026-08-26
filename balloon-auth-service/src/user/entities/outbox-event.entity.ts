@@ -16,10 +16,19 @@ export class OutboxEventEntity {
   payload?: Record<string, unknown>;
 
   @Column({ default: 'pending' })
-  status?: 'pending' | 'published' | 'failed';
+  status?: 'pending' | 'processing' | 'published' | 'failed';
 
   @Column({ default: 0 })
   attempts?: number;
+
+  @Column({ name: 'locked_at', type: 'timestamp', nullable: true })
+  lockedAt?: Date | null;
+
+  @Column({ name: 'published_at', type: 'timestamp', nullable: true })
+  publishedAt?: Date | null;
+
+  @Column({ name: 'last_error', type: 'text', nullable: true })
+  lastError?: string | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date;

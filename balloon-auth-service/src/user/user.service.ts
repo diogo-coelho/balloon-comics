@@ -12,6 +12,7 @@ import { CreateUserDto } from "./dtos/request/create-user.dto";
 import { UpdateUserDto } from "./dtos/request/update-user.dto";
 import { ResponseUpdatedUserDto } from "./dtos/response/response-updated-user.dto";
 import { ResponseUserDto } from "./dtos/response/response-user.dto";
+import { AUTH_ROUTING_KEYS } from "../constants/routing-keys";
 
 @Injectable()
 export class UserService {
@@ -97,7 +98,7 @@ export class UserService {
         const savedUser = await manager.save(UserEntity, newUser);
 
         const outboxEvent = manager.create(OutboxEventEntity, {
-          eventType: 'user.created',
+          eventType: AUTH_ROUTING_KEYS.USER_CREATED,
           userId: savedUser.id,
           payload: {
             userId: savedUser.id,
@@ -135,7 +136,7 @@ export class UserService {
 
       if (usernameChanged || emailChanged) {
         const outboxEvent = manager.create(OutboxEventEntity, {
-          eventType: 'user.updated',
+          eventType: AUTH_ROUTING_KEYS.USER_UPDATED,
           userId: updatedUser.id,
           payload: {
             userId: updatedUser.id,
@@ -161,7 +162,7 @@ export class UserService {
       await manager.remove(UserEntity, currentUser);
 
       const outboxEvent = manager.create(OutboxEventEntity, {
-        eventType: 'user.deleted',
+        eventType: AUTH_ROUTING_KEYS.USER_DELETED,
         userId: id,
         payload: {
           userId: id

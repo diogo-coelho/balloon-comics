@@ -5,11 +5,15 @@ import { ReaderController } from './reader.controller';
 import { ReaderService } from './reader.service';
 import { ReaderConsumer } from './reader.consumer';
 import { ReaderEntity } from './entities/reader.entity';
+import { ProcessedEventEntity } from './entities/processed-event.entity';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ReaderEntity]), 
+    TypeOrmModule.forFeature([
+      ReaderEntity, 
+      ProcessedEventEntity
+    ]),
     AuthModule,
   ],
   controllers: [ReaderController, ReaderConsumer],

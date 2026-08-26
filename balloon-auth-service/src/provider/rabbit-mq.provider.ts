@@ -1,50 +1,85 @@
+import * as amqp from "amqplib";
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import * as amqp from "amqplib";
+import { AUTH_EXCHANGE } from "../constants/routing-keys";
+import { IntegrationEventContract } from "../contracts/integration-event.contract";
 
 @Injectable()
 export class RabbitMQProvider implements OnModuleInit {
 
   private connection!: amqp.ChannelModel;
   private channel!: amqp.ConfirmChannel;
+  private readonly returnedMessages = new Set<string>();
 
   constructor(private readonly configService: ConfigService) {}
   
   async onModuleInit() {
     try {
       const connectionUrl = this.configService.getOrThrow<string>("RABBITMQ_URL") as string;
-      this.connection = await amqp.connect(connectionUrl);
-      
+      this.connection = await amqp.connect(connectionUrl);      
       this.channel = await this.connection?.createConfirmChannel();
+      await this.channel.assertExchange(AUTH_EXCHANGE, "topic", { durable: true });
+      this.channel.on('return', (message) => {
+        const messageId =
+          message.properties.messageId;
 
-      await this.channel.assertExchange("auth_exchange", "topic", { durable: true });
-
-    } catch (error) {
+        if (messageId) {
+          this.returnedMessages.add(messageId);
+        }
+      });
+    } catch (error: Error | undefined | any) {
       console.error("Failed to connect to RabbitMQ:", error);
       throw error;
     }
   }
 
-  async publish(exchange: string, routingKey: string, message: unknown): Promise<void> {
-    const newMessage = {
+  async onModuleDestroy(): Promise<void> {
+    await this.channel?.close();
+    await this.connection?.close();
+  }
+
+  async publish(exchange: string, routingKey: string, event: IntegrationEventContract): Promise<void> {
+    const packet = {
       pattern: routingKey,
-      data: message
-    }
+      data: event,
+    };
 
-    const published = this.channel.publish(
-      exchange, 
-      routingKey, 
-      Buffer.from(JSON.stringify(newMessage)), 
-      { persistent: true }
-    );
+    const confirmPromise = new Promise<void>((resolve, reject) => {
+        const writable = this.channel.publish(
+            exchange,
+            routingKey,
+            Buffer.from(
+              JSON.stringify(packet),
+            ),
+            {
+              persistent: true,
+              mandatory: true,
+              messageId: event.eventId,
+              type: routingKey,
+              contentType: 'application/json',
+            },(error) => {
+              if (error) {
+                reject(error);
+                return;
+              }
+              resolve();
+            },
+          );
 
-    if (!published) {
-      await new Promise<void>((resolve) => {
-        this.channel.once('drain', resolve);
+          if (!writable) {
+            this.channel.once('drain', () => {
+              console.log('Channel drained, resuming publish...');
+            });
+          }
       });
-    }
 
-    await this.channel.waitForConfirms();
+    await confirmPromise;
+
+    if (this.returnedMessages.delete(event.eventId)) {
+      throw new Error(
+        `Mensagem ${event.eventId} não possui rota RabbitMQ válida`,
+      );
+    }
   }
 
 }
