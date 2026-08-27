@@ -36,17 +36,7 @@ export class UserService {
       createUserDto,
     );
     const nextUrl = await this.authService.getNextUrl('/reader/create');
-
-    const accessToken = await this.authService.signJwtAsync(
-      user.id!,
-      this.jwtConfiguration.expiresIn,
-      { username: user.username!, email: user.email! },
-    );
-
-    const refreshToken = await this.authService.signJwtAsync(
-      user.id!,
-      this.jwtConfiguration.refreshTokenExpiresIn,
-    );
+    const { accessToken, refreshToken } = await this.authService.generateTokens(user);
 
     return {
       message: 'Usuário criado com sucesso',

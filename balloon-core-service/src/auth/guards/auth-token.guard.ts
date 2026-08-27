@@ -32,6 +32,11 @@ export class AuthTokenGuard implements CanActivate {
         token,
         this.jwtConfiguration,
       );
+      
+      if (payload.tokenType !== 'access') {
+        throw new UnauthorizedException('Token de autenticação inválido');
+      }
+            
       request[REQUEST_TOKEN_PAYLOAD_KEY] = payload;
       return true;
     } catch (error: Error | undefined | any) {

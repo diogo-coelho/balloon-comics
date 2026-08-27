@@ -48,7 +48,7 @@ export class OutboxEventsPublisher {
       await this.updateEventStatus(successfulIds, 'published');
 
       for (const { event, error } of failedEvents) {
-        const attempts = (event.attempts ?? 0) + 1;
+        const attempts = event.attempts ?? 1;
 
         await this.updateEventStatus(
           [event.id!],
@@ -90,7 +90,7 @@ export class OutboxEventsPublisher {
         { id: In(eventIds) },
         {
           status: status,
-          publishedAt: new Date(),
+          publishedAt: status === 'published' ? new Date() : null,
           lockedAt: null,
           lastError: lastError ?? null,
         },

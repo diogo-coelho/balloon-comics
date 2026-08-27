@@ -5,9 +5,9 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core/constants';
 
 import { getJoiConfig } from './config/joi.config';
-import { ReaderModule } from './reader/reader.module';
 import { PostgresConfigService } from './config/postgres.config.service';
-
+import { ReaderModule } from './reader/reader.module';
+import { AuthorModule } from './author/author.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,6 +27,7 @@ import { PostgresConfigService } from './config/postgres.config.service';
       inject: [PostgresConfigService],
     }),
     ReaderModule,
+    AuthorModule,
   ],
   controllers: [],
   providers: [

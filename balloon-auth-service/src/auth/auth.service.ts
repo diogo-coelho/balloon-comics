@@ -119,7 +119,7 @@ export class AuthService {
     return nextUrl;
   }
 
-  private async generateTokens(
+  async generateTokens(
     user: UserEntity,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const accessToken = await this.signJwtAsync(
