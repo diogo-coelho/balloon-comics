@@ -4,12 +4,14 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToOne,
 } from 'typeorm';
+import { AuthorEntity } from '../../author/entities/author.entity';
 
 @Entity('readers')
 export class ReaderEntity {
   @PrimaryGeneratedColumn('uuid')
-  id?: string;
+  id!: string;
 
   @Column({ name: 'user_id', unique: true, type: 'uuid', nullable: false })
   userId!: string;
@@ -43,4 +45,8 @@ export class ReaderEntity {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt!: Date;
+
+  @OneToOne(() => AuthorEntity, (author) => author.reader)
+  author?: AuthorEntity;
+  
 }

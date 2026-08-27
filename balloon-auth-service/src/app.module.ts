@@ -28,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     TypeOrmModule.forRootAsync({
       useClass: PostgresConfigService,
+      inject: [PostgresConfigService],
     }),
     AuthModule,
     UserModule,
