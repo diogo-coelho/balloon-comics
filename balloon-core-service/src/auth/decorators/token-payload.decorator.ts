@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-import { REQUEST_TOKEN_PAYLOAD_KEY } from '../../constants/auth.constants';
+import { REQUEST_TOKEN_PAYLOAD_KEY } from '../constants/auth.constant';
 import { TokenPayloadDto } from '../dtos/request/token-payload.dto';
 
 export const TokenPayloadParam = createParamDecorator(

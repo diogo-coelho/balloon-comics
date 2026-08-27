@@ -3,7 +3,8 @@ import * as Joi from 'joi';
 export function getJoiConfig() {
   return Joi.object({
     PORT: Joi.number().default(8081),
-    JWT_SECRET: Joi.string().required(),
+    JWT_PRIVATE_KEY: Joi.string().required(),
+    JWT_PUBLIC_KEY: Joi.string().required(),
     JWT_TOKEN_AUDIENCE: Joi.string().required(),
     JWT_TOKEN_ISSUER: Joi.string().required(),
     JWT_TOKEN_EXPIRATION: Joi.number().default(3600),

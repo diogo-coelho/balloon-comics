@@ -30,7 +30,10 @@ export class AuthTokenGuard implements CanActivate {
     try {
       const payload = await this.jwtService.verifyAsync(
         token,
-        this.jwtConfiguration,
+        {
+          publicKey: this.jwtConfiguration.publicKey,
+          ...this.jwtConfiguration.verifyOptions,
+        },
       );
 
       if (payload.tokenType !== 'access') {

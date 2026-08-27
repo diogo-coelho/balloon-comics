@@ -1,14 +1,11 @@
-import { ForbiddenException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import type { ConfigType } from '@nestjs/config';
 import { UserEntity } from './entities/user.entity';
 import { OutboxEventEntity } from './entities/outbox-event.entity';
 
 import { HashingServiceProtocol } from '../auth/hashing/hashing.service';
 import { AuthService } from '../auth/auth.service';
-import jwtConfig from '../auth/config/jwt.config';
 import { TokenPayloadDto } from '../auth/dtos/request/token-payload.dto';
-import { UserNotFoundError } from './error/user-not-found.error';
 
 import { CreateUserDto } from './dtos/request/create-user.dto';
 import { UpdateUserDto } from './dtos/request/update-user.dto';
@@ -22,9 +19,7 @@ export class UserService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly hashingService: HashingServiceProtocol,
-    private readonly authService: AuthService,
-    @Inject(jwtConfig.KEY)
-    private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+    private readonly authService: AuthService
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
@@ -40,7 +35,17 @@ export class UserService {
 
     return {
       message: 'Usuário criado com sucesso',
-      data: { accessToken, refreshToken },
+      data: { 
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        }, 
+      },
+      accessToken, 
+      refreshToken,
       next: nextUrl,
     };
   }
@@ -112,7 +117,7 @@ export class UserService {
       const currentUser = await manager.findOne(UserEntity, { where: { id } });
 
       if (!currentUser)
-        throw new UserNotFoundError(`Usuário com ID ${id} não encontrado`);
+        throw new NotFoundException(`Usuário com ID ${id} não encontrado`);
 
       if (tokenPayload.sub !== currentUser.id) {
         throw new ForbiddenException(
@@ -120,20 +125,10 @@ export class UserService {
         );
       }
 
-      const usernameChanged =
-        updateUserDto.username !== undefined &&
-        updateUserDto.username !== currentUser.username;
-
-      const emailChanged =
-        updateUserDto.email !== undefined &&
-        updateUserDto.email !== currentUser.email;
-
-      currentUser.username = usernameChanged
-        ? updateUserDto.username
-        : currentUser.username;
-      currentUser.email = emailChanged
-        ? updateUserDto.email
-        : currentUser.email;
+      const usernameChanged = updateUserDto.username !== undefined && updateUserDto.username !== currentUser.username;
+      const emailChanged = updateUserDto.email !== undefined && updateUserDto.email !== currentUser.email;
+      currentUser.username = usernameChanged ? updateUserDto.username : currentUser.username;
+      currentUser.email = emailChanged ? updateUserDto.email : currentUser.email;
 
       if (updateUserDto.password) {
         const passwordHash = await this.hashingService.hash(
@@ -171,7 +166,7 @@ export class UserService {
     return await this.dataSource.transaction(async (manager) => {
       const currentUser = await manager.findOne(UserEntity, { where: { id } });
       if (!currentUser)
-        throw new UserNotFoundError(`Usuário com ID ${id} não encontrado`);
+        throw new NotFoundException(`Usuário com ID ${id} não encontrado`);
 
       if (tokenPayload.sub !== currentUser.id) {
         throw new ForbiddenException(

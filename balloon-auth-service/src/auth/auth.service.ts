@@ -57,7 +57,10 @@ export class AuthService {
     try {
       const payload = await this.jwtService.verifyAsync(
         refreshTokenDto.refreshToken,
-        this.jwtConfiguration,
+        {
+          publicKey: this.jwtConfiguration.publicKey,
+          ...this.jwtConfiguration.verifyOptions,
+        },
       );
 
       if (payload.tokenType !== 'refresh') {
@@ -106,9 +109,10 @@ export class AuthService {
         ...payload,
       },
       {
-        audience: this.jwtConfiguration.audience,
-        issuer: this.jwtConfiguration.issuer,
-        secret: this.jwtConfiguration.secret,
+        algorithm: 'RS256',
+        audience: this.jwtConfiguration.signOptions.audience,
+        issuer: this.jwtConfiguration.signOptions.issuer,
+        privateKey: this.jwtConfiguration.privateKey,
         expiresIn: expiresIn,
       },
     );
