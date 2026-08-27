@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core/constants';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core/constants';
 
 import { PostgresConfigService } from './config/postgres.config.service';
 import { getJoiConfig } from './config/joi.config.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-
+import { CustomExceptionFilter } from './filters/custom-exception.filter';
 
 @Module({
   imports: [
@@ -39,6 +39,10 @@ import { AuthModule } from './auth/auth.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    {
+      provide: APP_FILTER,
+      useClass: CustomExceptionFilter,
+    }
   ],
 })
 export class AppModule {}
