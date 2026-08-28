@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
+import { MediaService } from '../media/media.service';
 
+import { ImageType } from '../media/enums/image-type.enum';
 import { ProcessedEventEntity } from './entities/processed-event.entity';
 import { ReaderEntity } from './entities/reader.entity';
 import { StorageService } from '../storage/storage.service';
@@ -17,6 +19,7 @@ export class ReaderService {
     private readonly readerRepository: Repository<ReaderEntity>,
     private readonly dataSource: DataSource,
     private readonly storageService: StorageService,
+    private readonly mediaService: MediaService,
   ) {}
 
   async updateReader(updateReaderDto: { userId: string, uploadReaderDto: UploadReaderDto }): Promise<any> {
@@ -37,19 +40,23 @@ export class ReaderService {
 
   async uploadImageReader(userId: string, file: Express.Multer.File): Promise<ResponseReaderDto> {
     const objectName = 'readers';
-    const key = await this.storageService.uploadFile(file, objectName);
-    const imageUrl = this.storageService.getPublicUrl(key);
+    const processedImage = await this.mediaService.processImage(file, ImageType.USER_AVATAR);
+    const key = await this.storageService.uploadFile(processedImage, objectName);
 
     await this.readerRepository.update(
       { userId },
-      { imageUrl, updatedAt: new Date() },
+      { imageUrl: key, updatedAt: new Date() },
     );
 
     const reader = await this.readerRepository.findOneByOrFail({ userId });
+    const publicImageUrl = this.storageService.getPublicUrl(reader.imageUrl as string);
 
     return {
       message: 'Imagem do leitor atualizada com sucesso',
-      data: reader,
+      data: {
+        ...reader,
+        imageUrl: publicImageUrl,
+      },
     };
 
   }

@@ -11,6 +11,7 @@ import { CustomExceptionFilter } from './filters/custom-exception.filter';
 import { ReaderModule } from './reader/reader.module';
 import { AuthorModule } from './author/author.module';
 import { StorageModule } from './storage/storage.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { StorageModule } from './storage/storage.module';
     ReaderModule,
     AuthorModule,
     StorageModule,
+    MediaModule,
   ],
   controllers: [],
   providers: [

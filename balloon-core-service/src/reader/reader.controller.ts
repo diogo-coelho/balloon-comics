@@ -1,6 +1,17 @@
-import { Body, Controller, UseGuards, Patch, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import type { Express } from 'express';
+import { 
+  Body, 
+  Controller, 
+  UseGuards, 
+  Patch, 
+  Post, 
+  UseInterceptors, 
+  UploadedFile, 
+  ParseFilePipe, 
+  MaxFileSizeValidator, 
+  FileTypeValidator
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { ReaderService } from './reader.service';
 import { AuthTokenGuard } from '../auth/guards/auth-token.guard';
@@ -36,7 +47,15 @@ export class ReaderController {
   @Post('/me/image')
   async uploadImage(
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: true,
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 }),
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|webp)' }),
+        ]
+      })
+    ) file: Express.Multer.File,
   ): Promise<ResponseReaderDto> {
     const { sub: userId } = tokenPayload;
     return await this.readerService.uploadImageReader(userId, file);

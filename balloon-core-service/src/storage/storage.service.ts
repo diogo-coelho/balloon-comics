@@ -33,7 +33,7 @@ export class StorageService {
   }
 
   getPublicUrl(key: string): string {
-    return `${process.env.AWS_S3_ENDPOINT}/${process.env.AWS_S3_BUCKET_NAME}/${key}`;
+    return `${process.env.AWS_CLOUDFRONT_CDN_URL}/${process.env.AWS_S3_BUCKET_NAME}/${key}`;
   }
 
 }
