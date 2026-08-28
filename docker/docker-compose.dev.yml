@@ -104,7 +104,7 @@ services:
       - ../.env
 
     volumes:
-      - ./balloon-auth-service:/app/keys:ro
+      - ../balloon-auth-service/keys:/app/keys:ro
 
     environment:
       NODE_ENV: development
@@ -156,7 +156,7 @@ services:
       - ../.env
 
     volumes:
-      - ./balloon-core-service:/app/keys:ro
+      - ../balloon-core-service/keys:/app/keys:ro
 
     environment:
       NODE_ENV: development
