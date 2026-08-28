@@ -18,5 +18,8 @@ export function getJoiConfig() {
     RABBITMQ_QUEUE_KEY: Joi.string().required(),
     RABBITMQ_DEAD_LETTER_EXCHANGE: Joi.string().required(),
     RABBITMQ_DEAD_LETTER_ROUTING_KEY: Joi.string().required(),
+    AWS_REGION: Joi.string().required(),
+    AWS_ACCESS_KEY_ID: Joi.string().required(),
+    AWS_SECRET_ACCESS_KEY: Joi.string().required(),
   });
 }

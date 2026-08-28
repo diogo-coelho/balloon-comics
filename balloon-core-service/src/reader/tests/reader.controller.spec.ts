@@ -4,7 +4,7 @@ import { ReaderController } from '../reader.controller';
 import { ReaderService } from '../reader.service';
 import { AuthTokenGuard } from '../../auth/guards/auth-token.guard';
 import { TokenPayloadDto } from '../../auth/dtos/request/token-payload.dto';
-import { RequestReaderDto } from '../dtos/request/request-reader.dto';
+import { RequestReaderDto } from '../dtos/request/upload-reader.dto';
 import { ResponseReaderDto } from '../dtos/response/response-reader.dto';
 
 describe('ReaderController', () => {
@@ -28,7 +28,7 @@ describe('ReaderController', () => {
         {
           provide: ReaderService,
           useValue: {
-            createReader: jest.fn(),
+            updateReader: jest.fn(),
           },
         },
       ],
@@ -45,30 +45,28 @@ describe('ReaderController', () => {
     jest.clearAllMocks();
   });
 
-  describe('createReader', () => {
+  describe('updateReader', () => {
     const requestReaderDto: RequestReaderDto = {
       name: 'Nome do leitor',
       imageUrl: 'http://imagem.com/foto.png',
       description: 'Descrição do leitor',
     };
 
-    it('deve montar o CreateReaderDto a partir do token e delegar para o ReaderService', async () => {
+    it('deve montar o payload a partir do id do usuário no token e delegar para o ReaderService', async () => {
       const response: ResponseReaderDto = {
-        message: 'Leitor criado com sucesso',
+        message: 'Leitor atualizado com sucesso',
         data: { id: 'reader-id' },
       };
-      readerService.createReader.mockResolvedValue(response);
+      readerService.updateReader.mockResolvedValue(response);
 
-      const result = await readerController.createReader(
+      const result = await readerController.updateReader(
         tokenPayload,
         requestReaderDto,
       );
 
-      expect(readerService.createReader).toHaveBeenCalledWith({
+      expect(readerService.updateReader).toHaveBeenCalledWith({
         userId: tokenPayload.sub,
-        email: tokenPayload.email,
-        username: tokenPayload.username,
-        ...requestReaderDto,
+        requestReaderDto,
       });
       expect(result).toBe(response);
     });

@@ -4,7 +4,7 @@ import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { ROUTING_KEYS } from './constants/routing-keys.constant';
 import { ReaderService } from './reader.service';
 import { UserQueueDto } from './dtos/request/user-queue.dto';
-import type { IntegrationEvent } from './dtos/request/integration-event.dto';
+import type { IntegrationEvent } from '../auth/dtos/request/integration-event.dto';
 
 @Controller()
 export class ReaderConsumer {

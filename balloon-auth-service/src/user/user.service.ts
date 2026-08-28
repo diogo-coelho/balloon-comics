@@ -30,7 +30,7 @@ export class UserService {
       passwordHash,
       createUserDto,
     );
-    const nextUrl = await this.authService.getNextUrl('/reader/create');
+    const nextUrl = await this.authService.getNextUrl('\/readers\/me');
     const { accessToken, refreshToken } = await this.authService.generateTokens(user);
 
     return {

@@ -2,12 +2,16 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core/constants';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core/constants';
 
 import { getJoiConfig } from './config/joi.config';
 import { PostgresConfigService } from './config/postgres.config.service';
+import { CustomExceptionFilter } from './filters/custom-exception.filter';
+
 import { ReaderModule } from './reader/reader.module';
 import { AuthorModule } from './author/author.module';
+import { StorageModule } from './storage/storage.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +32,7 @@ import { AuthorModule } from './author/author.module';
     }),
     ReaderModule,
     AuthorModule,
+    StorageModule,
   ],
   controllers: [],
   providers: [
@@ -35,6 +40,10 @@ import { AuthorModule } from './author/author.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    {
+      provide: APP_FILTER,
+      useClass: CustomExceptionFilter,
+    }
   ],
 })
 export class AppModule {}

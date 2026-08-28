@@ -30,7 +30,7 @@ export class UserController {
   }
 
   @UseGuards(AuthTokenGuard)
-  @Patch('/me/:id')
+  @Patch('/:id')
   async updateUser(
     @Body() updateUserDto: UpdateUserDto,
     @Param('id') id: string,
@@ -40,7 +40,7 @@ export class UserController {
   }
 
   @UseGuards(AuthTokenGuard)
-  @Delete('/me/:id')
+  @Delete('/:id')
   async deleteUser(
     @Param('id') id: string,
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,

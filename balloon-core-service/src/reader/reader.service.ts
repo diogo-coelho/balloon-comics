@@ -1,12 +1,14 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { ProcessedEventEntity } from './entities/processed-event.entity';
 import { ReaderEntity } from './entities/reader.entity';
-import { CreateReaderDto } from './dtos/request/create-reader.dto';
+import { StorageService } from '../storage/storage.service';
+import { IntegrationEvent } from '../auth/dtos/request/integration-event.dto';
+import { UploadReaderDto } from './dtos/request/upload-reader.dto';
+import { ResponseReaderDto } from './dtos/response/response-reader.dto';
 import { UserQueueDto } from './dtos/request/user-queue.dto';
-import { IntegrationEvent } from './dtos/request/integration-event.dto';
 
 @Injectable()
 export class ReaderService {
@@ -14,28 +16,42 @@ export class ReaderService {
     @InjectRepository(ReaderEntity)
     private readonly readerRepository: Repository<ReaderEntity>,
     private readonly dataSource: DataSource,
+    private readonly storageService: StorageService,
   ) {}
 
-  async createReader(createReaderDto: CreateReaderDto): Promise<any> {
-    const existingReader = await this.readerRepository.findOne({
-      where: { userId: createReaderDto.userId },
-    });
-
-    await this.readerRepository.upsert(
-      { ...createReaderDto, updatedAt: new Date() },
-      ['userId'],
+  async updateReader(updateReaderDto: { userId: string, uploadReaderDto: UploadReaderDto }): Promise<any> {
+    await this.readerRepository.update(
+      { userId: updateReaderDto.userId },
+      { ...updateReaderDto.uploadReaderDto, updatedAt: new Date() },
     );
 
     const reader = await this.readerRepository.findOneByOrFail({
-      userId: createReaderDto.userId,
+      userId: updateReaderDto.userId,
     });
 
     return {
-      message: existingReader
-        ? 'Leitor atualizado com sucesso'
-        : 'Leitor criado com sucesso',
+      message: 'Leitor atualizado com sucesso',
       data: reader,
     };
+  }
+
+  async uploadImageReader(userId: string, file: Express.Multer.File): Promise<ResponseReaderDto> {
+    const objectName = 'readers';
+    const key = await this.storageService.uploadFile(file, objectName);
+    const imageUrl = this.storageService.getPublicUrl(key);
+
+    await this.readerRepository.update(
+      { userId },
+      { imageUrl, updatedAt: new Date() },
+    );
+
+    const reader = await this.readerRepository.findOneByOrFail({ userId });
+
+    return {
+      message: 'Imagem do leitor atualizada com sucesso',
+      data: reader,
+    };
+
   }
 
   async handleUserCreated(

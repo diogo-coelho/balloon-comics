@@ -5,8 +5,8 @@ import { DataSource, Repository } from 'typeorm';
 import { ReaderService } from '../reader.service';
 import { ReaderEntity } from '../entities/reader.entity';
 import { ProcessedEventEntity } from '../entities/processed-event.entity';
-import { CreateReaderDto } from '../dtos/request/create-reader.dto';
-import { IntegrationEvent } from '../dtos/request/integration-event.dto';
+import { RequestReaderDto } from '../dtos/request/upload-reader.dto';
+import { IntegrationEvent } from '../../auth/dtos/request/integration-event.dto';
 import { UserQueueDto } from '../dtos/request/user-queue.dto';
 
 describe('ReaderService', () => {
@@ -78,8 +78,7 @@ describe('ReaderService', () => {
         {
           provide: getRepositoryToken(ReaderEntity),
           useValue: {
-            findOne: jest.fn(),
-            upsert: jest.fn(),
+            update: jest.fn(),
             findOneByOrFail: jest.fn(),
           },
         },
@@ -101,41 +100,38 @@ describe('ReaderService', () => {
     jest.clearAllMocks();
   });
 
-  describe('createReader', () => {
-    const createReaderDto: CreateReaderDto = {
-      userId: 'user-id',
-      email: 'usuario@teste.com',
-      username: 'usuario',
+  describe('updateReader', () => {
+    const requestReaderDto: RequestReaderDto = {
+      name: 'Novo nome',
+      imageUrl: 'http://imagem.com/foto.png',
+      description: 'Nova descrição',
     };
 
-    it('deve retornar mensagem de criação quando o leitor ainda não existir', async () => {
-      readerRepository.findOne.mockResolvedValue(null);
+    it('deve retornar mensagem de sucesso e os dados atualizados do leitor', async () => {
+      readerRepository.update.mockResolvedValue({} as any);
       readerRepository.findOneByOrFail.mockResolvedValue(reader);
 
-      const result = await readerService.createReader(createReaderDto);
+      const result = await readerService.updateReader({
+        userId: reader.userId,
+        requestReaderDto,
+      });
 
-      expect(result.message).toBe('Leitor criado com sucesso');
+      expect(result.message).toBe('Leitor atualizado com sucesso');
       expect(result.data).toBe(reader);
     });
 
-    it('deve retornar mensagem de atualização quando o leitor já existir', async () => {
-      readerRepository.findOne.mockResolvedValue(reader);
+    it('deve atualizar o leitor filtrando pelo userId com os dados informados', async () => {
+      readerRepository.update.mockResolvedValue({} as any);
       readerRepository.findOneByOrFail.mockResolvedValue(reader);
 
-      const result = await readerService.createReader(createReaderDto);
+      await readerService.updateReader({
+        userId: reader.userId,
+        requestReaderDto,
+      });
 
-      expect(result.message).toBe('Leitor atualizado com sucesso');
-    });
-
-    it('deve fazer upsert do leitor com base no userId', async () => {
-      readerRepository.findOne.mockResolvedValue(null);
-      readerRepository.findOneByOrFail.mockResolvedValue(reader);
-
-      await readerService.createReader(createReaderDto);
-
-      expect(readerRepository.upsert).toHaveBeenCalledWith(
-        expect.objectContaining({ userId: createReaderDto.userId }),
-        ['userId'],
+      expect(readerRepository.update).toHaveBeenCalledWith(
+        { userId: reader.userId },
+        expect.objectContaining(requestReaderDto),
       );
     });
   });

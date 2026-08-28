@@ -2,7 +2,7 @@ import { RmqContext } from '@nestjs/microservices';
 
 import { ReaderConsumer } from '../reader.consumer';
 import { ReaderService } from '../reader.service';
-import { IntegrationEvent } from '../dtos/request/integration-event.dto';
+import { IntegrationEvent } from '../../auth/dtos/request/integration-event.dto';
 import { UserQueueDto } from '../dtos/request/user-queue.dto';
 
 describe('ReaderConsumer', () => {
