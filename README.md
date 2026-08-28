@@ -22,3 +22,8 @@ docker compose --env-file .env -f docker/docker-compose.dev.yml exec auth-servic
 
 docker compose --env-file .env -f docker/docker-compose.dev.yml exec core-service npm run migration:container
 ```
+
+Também será necessário configurar o bucket S3 do LocalStack:
+```bash
+docker exec balloon-s3 awslocal s3api create-bucket --bucket {{AWS_S3_BUCKET_NAME}}
+```

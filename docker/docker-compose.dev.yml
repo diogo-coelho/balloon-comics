@@ -192,6 +192,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      localstack:
+        condition: service_started
 
     networks:
       - edge
@@ -230,7 +232,8 @@ services:
       - DEBUG=1
 
     volumes:
-      - localstack-data:/var/lib/localstack 
+      - localstack-data:/var/lib/localstack
+      - ./localstack/init-s3.sh:/etc/localstack/init/ready.d/init-s3.sh
 
     networks:
       - edge   

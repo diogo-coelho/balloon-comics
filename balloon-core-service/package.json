@@ -21,7 +21,7 @@
     "typeorm": "npx typeorm-ts-node-commonjs --dataSource src/db/data-source-cli.ts",
     "migration:run": "npm run typeorm migration:run",
     "typeorm:container": "typeorm --dataSource dist/db/data-source-cli.js",
-    "migration:container": "npm run typeorm:container migration:run"
+    "migration:container": "typeorm migration:run -d dist/db/data-source-cli.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1120.0",
