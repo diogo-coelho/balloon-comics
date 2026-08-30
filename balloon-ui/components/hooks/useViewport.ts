@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 const useViewport = () => {
   const TABLET_BREAKPOINT = 720;
-  const DESKTOP_BREAKPOINT = 960;
+  const DESKTOP_BREAKPOINT = 1080;
   
   const [screenWidth, setScreenWidth] = useState<number | null>(null);
 

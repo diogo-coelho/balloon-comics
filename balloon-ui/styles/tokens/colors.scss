@@ -7,9 +7,13 @@
   --bc-color-gray-50: #f8f9fa;
   --bc-color-gray-100: #f1f3f5;
   --bc-color-gray-200: #e9ecef;
-  --bc-color-gray-700: #495057;
-  --bc-color-gray-800: #343a40;
-  --bc-color-gray-900: #212529;
+  --bc-color-gray-300: #dee2e6;
+  --bc-color-gray-400: #ced4da;
+  --bc-color-gray-500: #adb5bd;
+  --bc-color-gray-600: #495057;
+  --bc-color-gray-700: #343a40;
+  --bc-color-gray-800: #212529;
+  --bc-color-gray-900: #121416;
 
   --bc-color-transparent: transparent;
 
@@ -22,5 +26,8 @@
   --bc-color-primary-700: #a90c21;
   --bc-color-primary-800: #860a1a;
   --bc-color-primary-900: #640714;
+
+  --bc-color-primary-light-transparent: rgba(230, 178, 185, 0.5);
+  --bc-color-primary-dark-transparent: rgba(180, 36, 55, 0.5);
 
 }

@@ -12,18 +12,20 @@
     padding: var(--bc-spacing-smallest) var(--bc-spacing-small);
     background-color: var(--bc-color-background);
     border: 1px solid var(--bc-color-border);
+    outline: none;
+    box-shadow: none;
 
-    transition: border 0.3s ease-out, background-color 0.3s ease-out;
+    transition: border 0.3s ease-out, background-color 0.3s ease-out, box-shadow 0.3s ease-out;
 
     &:hover,
     &:focus,
     &:focus-within,
     &:focus-visible {
-      border: 1px solid var(--bc-color-primary-500);
-      outline: 2px solid var(--bc-color-primary-200);
+      border: 1px solid var(--bc-color-border-hover);
       background-color: var(--bc-color-background-secondary);
+      box-shadow: var(--bc-color-outline-hover);
 
-      transition: border 0.3s ease-in, background-color 0.3s ease-in;
+      transition: border 0.3s ease-in, background-color 0.3s ease-in, box-shadow 0.3s ease-in;
     }
   }
 
