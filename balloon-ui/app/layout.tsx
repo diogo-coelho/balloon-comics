@@ -30,6 +30,9 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#ffffff"></meta>
         <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png"></meta>
         <meta name="theme-color" content="#ffffff"></meta>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+        </style>
       </head>
       <body>{children}</body>
     </html>

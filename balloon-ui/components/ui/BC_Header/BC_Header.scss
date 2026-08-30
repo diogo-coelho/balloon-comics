@@ -5,6 +5,9 @@
   background-color: var(--bc-color-background);
   border-bottom: 1px solid var(--bc-color-border);
   box-shadow: var(--bc-shadow);
+  overflow-y: visible;
+  position: fixed;
+  z-index: 10;
 
   &-container {
     width: 100%;

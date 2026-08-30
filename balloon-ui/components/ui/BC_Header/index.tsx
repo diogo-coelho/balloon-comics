@@ -2,9 +2,8 @@
 
 import "./BC_Header.scss";
 import React, { JSX } from "react";
-import { IconSearch, IconMenu } from '@tabler/icons-react';
-import BC_Button from "@/components/design/BC_Button";
 import BC_Search from "@/components/ui/BC_Search";
+import BC_Drawer from "@/components/ui/BC_Drawer";
 
 const BC_Header: React.FC<{}> = (): JSX.Element => {
   return (
@@ -21,12 +20,7 @@ const BC_Header: React.FC<{}> = (): JSX.Element => {
 
           <nav className="header-area">
             <BC_Search />
-
-            <div>
-              <BC_Button variant="transparent">
-                <IconMenu className="icon-menu"/>
-              </BC_Button>
-            </div>
+            <BC_Drawer />
           </nav>
         </div>
       </header>
