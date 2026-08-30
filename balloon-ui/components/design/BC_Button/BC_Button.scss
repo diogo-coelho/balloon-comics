@@ -1,0 +1,8 @@
+.button {
+  
+  &.transparent {
+    background-color: var(--bc-color-background);
+    border: 1px solid var(--bc-color-background);
+  }
+
+}

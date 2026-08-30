@@ -1,0 +1,18 @@
+// ---------------- Light Theme ---------------- //
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --bc-color-background: var(--bc-color-white);
+  --bc-color-background-secondary: var(--bc-color-gray-50);
+
+  --bc-color-surface: var(--bc-color-white);
+
+  --bc-color-text-primary: var(--bc-color-gray-900);
+  --bc-color-text-secondary: var(--bc-color-gray-700);
+
+  --bc-color-border: var(--bc-color-gray-200);
+
+  --bc-shadow: 0 2px 5px rgba(190, 190, 190, 0.5);
+}

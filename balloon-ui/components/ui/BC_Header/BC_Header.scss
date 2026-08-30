@@ -1,0 +1,85 @@
+@use '../../../styles/tokens/breakpoints.scss' as bp;
+
+.header {
+  width: 100%;
+  background-color: var(--bc-color-background);
+
+  &-container {
+    width: 100%;
+    padding: var(--bc-spacing-small);
+    border-bottom: 1px solid var(--bc-color-border);
+    box-shadow: var(--bc-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &-area {
+    display: flex;
+    align-items: center;
+    gap: var(--bc-spacing-small);
+
+    figure {
+      img {
+        max-width: 100px;
+        height: auto;
+      }
+    }
+
+    .icon-search, .icon-menu {
+      color: var(--bc-color-text-primary);
+      height: 20px;
+      width: 20px;
+
+      &:hover {
+        color: var(--bc-color-primary);
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: #{bp.$bc-viewport-tablet}) {
+  .header {
+    &-container {
+      width: 100%;
+      padding: var(--bc-spacing-small);
+      border-bottom: 1px solid var(--bc-color-border);
+      box-shadow: var(--bc-shadow);
+    }
+
+    &-area {
+      figure {
+        img {
+          max-width: 120px;
+          height: auto;
+        }
+      }
+
+      .icon-search, .icon-menu {
+        height: 24px;
+        width: 24px;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: #{bp.$bc-viewport-desktop}) { 
+  .header {
+    &-container {
+      width: 100%;
+      padding: var(--bc-spacing-medium);
+      border-bottom: 1px solid var(--bc-color-border);
+      box-shadow: var(--bc-shadow);
+    }
+
+    &-area {
+      figure {
+        img {
+          max-width: 140px;
+          height: auto;
+        }
+      }
+    }
+  }
+}
