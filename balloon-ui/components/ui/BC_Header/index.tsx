@@ -1,12 +1,12 @@
 "use client";
 
-import React, { JSX } from "react";
 import "./BC_Header.scss";
+import React, { JSX } from "react";
 import { IconSearch, IconMenu } from '@tabler/icons-react';
 import BC_Button from "@/components/design/BC_Button";
+import BC_Search from "@/components/ui/BC_Search";
 
-const BC_Header = (): JSX.Element => {
-
+const BC_Header: React.FC<{}> = (): JSX.Element => {
   return (
     <>
       <header className="header">
@@ -20,11 +20,7 @@ const BC_Header = (): JSX.Element => {
           </div>
 
           <nav className="header-area">
-            <div>
-              <BC_Button variant="transparent">
-                <IconSearch className="icon-search"/>
-              </BC_Button>
-            </div>
+            <BC_Search />
 
             <div>
               <BC_Button variant="transparent">
