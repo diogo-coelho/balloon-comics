@@ -11,6 +11,10 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty({ message: 'Nome de usuário não pode ser vazio' })
+  @MinLength(3, { message: 'Nome de usuário deve ter no mínimo 3 caracteres' })
+  @Matches(/^[a-zA-Z0-9_]{3,20}$/, {
+    message: 'O usuário deve ter entre 3 e 20 caracteres e pode conter apenas letras, números e underscores',
+  })
   readonly username?: string;
 
   @IsOptional()

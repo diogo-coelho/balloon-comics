@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { isEmail, isEmpty, hasPasswordValidFormat } from "@/shared/utils/StringUtils";
+import { isEmail, isEmpty, hasPasswordValidFormat, hasValidUserNameFormat } from "@/shared/utils/StringUtils";
 
 const useFieldValidation = (fields: string[]) => { 
   const [userName, setUserName] = useState<string | undefined>(undefined);
@@ -20,6 +20,11 @@ const useFieldValidation = (fields: string[]) => {
   const isUserNameValid = (): boolean => {
     if (!userName || isEmpty(userName)) {
       setErrorUserName("Dado incorreto. Revise e digite novamente.")
+      return false;
+    }
+
+    if (!!userName && !hasValidUserNameFormat(userName)) {
+      setErrorUserName("O usuário deve ter entre 3 e 20 caracteres e pode conter apenas letras, números e underscores.")
       return false;
     }
 

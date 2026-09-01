@@ -17,3 +17,9 @@ export const hasPasswordValidFormat = (value: string): boolean => {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\s])\S{8,}$/;
   return regex.test(value);
 }
+
+export const hasValidUserNameFormat = (value: string): boolean => {
+  if (!value) return false;
+  const regex = /^[a-zA-Z0-9_]{3,20}$/;
+  return regex.test(value);
+}

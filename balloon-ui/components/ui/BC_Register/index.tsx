@@ -4,6 +4,7 @@ import "./BC_Register.scss";
 import useFieldValidation from "@/components/hooks/useFieldValidation";
 import BC_Button from "@/components/design/BC_Button";
 import BC_Input from "@/components/design/BC_Input";
+import { createUser } from "@/services/user.service";
 
 const BCRegister = () => {
 
@@ -11,7 +12,6 @@ const BCRegister = () => {
     userName,
     email,
     password,
-    confirmPassword,
     errorUserName,
     errorEmail,
     errorPassword,
@@ -22,15 +22,25 @@ const BCRegister = () => {
     getEmailValue,
     getPasswordValue,
     getConfirmPasswordValue,
-  } = useFieldValidation(["userName", "email", "password", "confirmPassword"]);
+  } = useFieldValidation(["userName", "email", "password", "confirmPassword"]);  
 
-  
-
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     
-    if (validateRequiredFields()) {
-      console.log("Form submitted successfully");
+    if (!validateRequiredFields()) return
+
+    try {
+      const response = await createUser({
+        username: userName as string,
+        email: email as string,
+        password: password as string
+      });
+
+      console.log("Usuário criado com sucesso:", response.data);
+
+
+    } catch (error: Error | unknown) {
+      console.error(error);
     }
   };
   
