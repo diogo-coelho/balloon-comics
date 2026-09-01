@@ -33,11 +33,12 @@ const BC_Input: React.FC<InputProps> = (props: InputProps): JSX.Element => {
           <div className={`suffix${props.active === 'true' ? ` active` : ''}`}
             onClick={ (event) => props.handleOnClick?.(event)}
           >
-            <IconSearch className="icon-search"/>
+            { props.suffixIcon ?? <IconSearch className="icon-search"/> }
           </div>
         }
       </div>
       { props.error && (<span>{ props.error }</span>)}
+      { props.helpText && (<span className="help-text">{ props.helpText }</span>)}
     </>
   );
 };

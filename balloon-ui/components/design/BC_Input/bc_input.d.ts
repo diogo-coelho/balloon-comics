@@ -56,6 +56,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   currentValue?: string,
   "current-value"?: string,
   error?: string,
+  helpText?: string | JSX.Element<T>,
+  suffixIcon?: JSX.Element,
   handleOnChange?: (
     data: { 
       args?: T | T[], 

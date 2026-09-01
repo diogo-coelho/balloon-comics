@@ -41,7 +41,7 @@
       align-items: center;
       justify-content: center;
 
-      .icon-search {
+      .icon, .icon-search {
         color: var(--bc-color-text-primary);
         height: 20px;
         width: 20px;
@@ -50,7 +50,14 @@
       }
     }  
 
-    &:hover .icon-search  {
+    &:hover .icon, 
+    &:hover .icon-search,
+    &:focus .icon, 
+    &:focus .icon-search,
+    &:focus-within .icon, 
+    &:focus-within .icon-search,
+    &:focus-visible .icon, 
+    &:focus-visible .icon-search {
       color: var(--bc-color-primary-500);
       cursor: pointer;
 
@@ -64,5 +71,18 @@
       top: -5px;
     }
   }
+}
 
+.help-text {
+  color: var(--bc-color-text-secondary);
+  font-size: var(--bc-font-size-extra-small);
+  position: relative;
+  top: -5px;
+  line-height: var(--bc-font-size-medium);
+
+  ul {
+    list-style-type: disc;
+    margin-left: 5px;
+    padding-left: var(--bc-spacing-small);
+  }
 }
