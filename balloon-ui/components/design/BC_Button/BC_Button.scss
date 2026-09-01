@@ -4,6 +4,10 @@
   border: 1px solid var(--bc-color-primary-500);
   color: var(--bc-color-white);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bc-spacing-smallest);
 
   &:disabled {
     cursor: not-allowed;

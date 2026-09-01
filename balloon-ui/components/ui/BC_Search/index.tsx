@@ -4,7 +4,7 @@ import './BC_Search.scss';
 import { JSX } from "react";
 import { IconSearch } from '@tabler/icons-react';
 import BC_Button from "@/components/design/BC_Button";
-import useViewport from '@/components/hooks/useViewport';
+import useViewport from '@/hooks/useViewport';
 import BC_Input from '@/components/design/BC_Input';
 
 const BCSearch = (): JSX.Element => {

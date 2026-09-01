@@ -6,7 +6,9 @@ import {
   Param,
   Delete,
   UseGuards,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { UserService } from './user.service';
 
 import { AuthTokenGuard } from '../auth/guards/auth-token.guard';
@@ -25,8 +27,27 @@ export class UserController {
   @Post('/me')
   async createUser(
     @Body() createUserDto: CreateUserDto,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<ResponseUserDto> {
-    return this.userService.createUser(createUserDto);
+    const responseData = await this.userService.createUser(createUserDto);
+
+    response.cookie("accessToken", responseData.accessToken as string, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 15 * 60 * 1000,
+      path: "/",
+    });
+    
+    response.cookie("refreshToken", responseData.refreshToken as string, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/auth/refresh",
+    });
+
+    return responseData;
   }
 
   @UseGuards(AuthTokenGuard)

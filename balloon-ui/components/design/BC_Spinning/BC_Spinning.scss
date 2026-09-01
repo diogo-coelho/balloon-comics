@@ -1,0 +1,14 @@
+.spinner {
+  width: inherit;
+  height: inherit;
+  border: var(--border-width) solid var(--bc-color-background);
+  border-top: var(--border-width) solid var(--bc-color-primary-500);
+  border-radius: 50%; 
+  animation: spin .75s linear infinite; 
+}
+
+/* The actual rotation engine */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

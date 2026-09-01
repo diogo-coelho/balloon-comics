@@ -1,4 +1,5 @@
 import '../styles/app.scss';
+import { QueryProvider } from '@/providers/query-provider';
 
 export const metadata = {
   title: 'Balloon Comics',
@@ -34,7 +35,11 @@ export default function RootLayout({
           @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
         </style>
       </head>
-      <body>{children}</body>
+      <body>
+        <QueryProvider>
+          {children}
+        </QueryProvider>
+      </body>
     </html>
   )
 }

@@ -75,7 +75,6 @@ const useFieldValidation = (fields: string[]) => {
     });
 
     const errors = promises.reduce((acc, curr) => acc + (curr ? 0 : 1), 0);
-    console.log('errors:', errors);
     return errors === 0;
   }
 

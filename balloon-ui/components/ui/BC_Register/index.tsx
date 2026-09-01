@@ -1,12 +1,17 @@
 "use client";
 
 import "./BC_Register.scss";
-import useFieldValidation from "@/components/hooks/useFieldValidation";
+import useFieldValidation from "@/hooks/useFieldValidation";
+import { useRouter } from "next/navigation";
+import { useCreatedUser } from "@/hooks/queries/useUser";
 import BC_Button from "@/components/design/BC_Button";
 import BC_Input from "@/components/design/BC_Input";
-import { createUser } from "@/services/user.service";
+import BC_Spinning from "@/components/design/BC_Spinning";
 
 const BCRegister = () => {
+  const router = useRouter();
+  const mutation = useCreatedUser();
+  const { isPending } = mutation;
 
   const {
     userName,
@@ -25,20 +30,16 @@ const BCRegister = () => {
   } = useFieldValidation(["userName", "email", "password", "confirmPassword"]);  
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-    
+    e.preventDefault();    
     if (!validateRequiredFields()) return
-
     try {
-      const response = await createUser({
+      const response = await mutation.mutateAsync({
         username: userName as string,
         email: email as string,
         password: password as string
-      });
-
-      console.log("Usuário criado com sucesso:", response.data);
-
-
+      });  
+      router.push("/reader");
+      
     } catch (error: Error | unknown) {
       console.error(error);
     }
@@ -115,7 +116,12 @@ const BCRegister = () => {
             variant="primary" 
             size="small"
             handleOnClick={(e) => onSubmit(e.event)}
-          >Cadastrar</BC_Button>
+          >
+            { isPending && 
+              <BC_Spinning width="16px" height="16px" borderWidth="2px" />
+            }
+            Cadastrar
+          </BC_Button>
         </form>
       </div>
     </div>

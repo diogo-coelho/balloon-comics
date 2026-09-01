@@ -3,7 +3,7 @@
 import "./BC_Drawer.scss";
 import React, { JSX } from "react";
 import BC_Button from "@/components/design/BC_Button";
-import useViewport from "@/components/hooks/useViewport";
+import useViewport from "@/hooks/useViewport";
 import { IconMenu, IconX } from "@tabler/icons-react";
 
 const DCDrawer = (): JSX.Element => {
