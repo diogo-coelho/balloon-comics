@@ -10,7 +10,7 @@ const BCButton: React.FC<ButtonProps> = (props: ButtonProps): JSX.Element => {
     props.variant ?? `primary`,
     props.size ?? ``,
     props.outline === 'on' ? `outline` : ``
-  ].toString().replaceAll(",", " ").trim();
+  ].toString().replaceAll(",", " ").replace(/\s+/g, " ").trim();
   
   return (
     <button 

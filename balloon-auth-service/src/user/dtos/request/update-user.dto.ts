@@ -21,7 +21,7 @@ export class UpdateUserDto {
   @IsString()
   @IsNotEmpty({ message: 'Senha não pode ser vazia' })
   @MinLength(8, { message: 'Senha deve ter no mínimo 8 caracteres' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).+$/, {
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\s])\S{8,}$/, {
     message:
       'Senha deve possuir pelo menos uma letra maiúscula, uma letra minúscula e um caractere especial',
   })

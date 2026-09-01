@@ -13,9 +13,19 @@ body {
   font-size: 100%;
   list-style-type: none;
   font-family: var(--bc-font-family);
+  font-size: var(--bc-font-size-small);
+}
+
+a {
+  color: var(--bc-color-gray-900);
+  text-decoration: none;
 }
 
 button {
   appearance: none;
   color: none;
+}
+
+h1 {
+  font-size: var(--bc-font-size-extra-large);
 }

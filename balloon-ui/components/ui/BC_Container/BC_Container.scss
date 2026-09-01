@@ -1,0 +1,20 @@
+.container {
+  .main {
+    &-container {
+      background-color: var(--bc-color-background-secondary);
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      min-height: calc(100vh - 50px);
+      width: 100%;
+      position: relative;
+      top: 50px;
+      z-index: 0;
+    }
+  }
+
+  .no-header {
+    min-height: 100vh;
+    top: 0;
+  }
+}

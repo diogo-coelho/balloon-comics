@@ -1,8 +1,31 @@
 .button {
+  padding: var(--bc-spacing-smallest) var(--bc-spacing-small);
+  border-radius: var(--bc-border-radius-pill);
+  border: 1px solid var(--bc-color-primary-500);
+  color: var(--bc-color-white);
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
   
   &.transparent {
     background-color: var(--bc-color-background);
     border: 1px solid var(--bc-color-background);
+  }
+
+  &.primary,
+  &.primary:disabled {
+    background-color: var(--bc-color-primary-500);
+    color: var(--bc-color-white);
+    border: 2px solid var(--bc-color-primary-500);
+    transition: background-color .2s ease-in, border .2s ease-in;
+
+    &:hover:not(:disabled) {
+      background-color: var(--bc-color-primary-700);
+      border: 2px solid var(--bc-color-primary-700);
+      transition: background-color .2s ease-out, border .2s ease-out;
+    }
   }
 
 }

@@ -1,55 +1,68 @@
-.input-container {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-
-  .input {
-    height: 36px;
-    width: inherit;
-    border-radius: var(--bc-border-radius-pill);
-    border: 1px solid var(--bc-color-gray-100);
-    padding: var(--bc-spacing-smallest) var(--bc-spacing-small);
-    background-color: var(--bc-color-background);
-    border: 1px solid var(--bc-color-border);
-    outline: none;
-    box-shadow: none;
-
-    transition: border 0.3s ease-out, background-color 0.3s ease-out, box-shadow 0.3s ease-out;
-
-    &:hover,
-    &:focus,
-    &:focus-within,
-    &:focus-visible {
-      border: 1px solid var(--bc-color-border-hover);
-      background-color: var(--bc-color-background-secondary);
-      box-shadow: var(--bc-color-outline-hover);
-
-      transition: border 0.3s ease-in, background-color 0.3s ease-in, box-shadow 0.3s ease-in;
-    }
-  }
-
-  .suffix {
-    position: absolute;
-    right: var(--bc-spacing-small);
+.input {
+  &-container {
+    position: relative;
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
 
-    .icon-search {
-      color: var(--bc-color-text-primary);
-      height: 20px;
-      width: 20px;
+    .input {
+      height: 36px;
+      width: inherit;
+      border-radius: var(--bc-border-radius-pill);
+      border: 1px solid var(--bc-color-gray-100);
+      padding: var(--bc-spacing-smallest) var(--bc-spacing-small);
+      background-color: var(--bc-color-background);
+      border: 1px solid var(--bc-color-border);
+      outline: none;
+      box-shadow: none;
 
-      transition: color 0.3s ease-out;
+      transition: border 0.3s ease-out, background-color 0.3s ease-out, box-shadow 0.3s ease-out;
+
+      &:hover,
+      &:focus,
+      &:focus-within,
+      &:focus-visible {
+        border: 1px solid var(--bc-color-border-hover);
+        background-color: var(--bc-color-background);
+        box-shadow: var(--bc-color-outline-hover);
+
+        transition: border 0.3s ease-in, background-color 0.3s ease-in, box-shadow 0.3s ease-in;
+      }
+
+      &.error {
+        border: 1px solid var(--bc-color-primary-500);
+      }
     }
-  }  
 
-  &:hover .icon-search  {
-    color: var(--bc-color-primary-500);
-    cursor: pointer;
+    .suffix {
+      position: absolute;
+      right: var(--bc-spacing-small);
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-    transition: color 0.3s ease-in;
+      .icon-search {
+        color: var(--bc-color-text-primary);
+        height: 20px;
+        width: 20px;
+
+        transition: color 0.3s ease-out;
+      }
+    }  
+
+    &:hover .icon-search  {
+      color: var(--bc-color-primary-500);
+      cursor: pointer;
+
+      transition: color 0.3s ease-in;
+    }
+
+    &.error + span {
+      color: var(--bc-color-primary-500);
+      font-size: var(--bc-font-size-extra-small);
+      position: relative;
+      top: -5px;
+    }
   }
 
 }
