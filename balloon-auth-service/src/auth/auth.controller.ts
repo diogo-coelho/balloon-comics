@@ -22,23 +22,13 @@ export class AuthController {
   ): Promise<ResponseAuthDto> {
     const responseData = await this.authService.login(loginDto);
 
-    response.cookie("accessToken", responseData.data!.accessToken as string, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 15 * 60 * 1000,
-      path: "/",
-    });
+    this.setAccessTokenCookie(response, responseData.accessToken as string);
+    this.setRefreshTokenCookie(response, responseData.refreshToken as string);
 
-    response.cookie("refreshToken", responseData.data!.refreshToken as string, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/auth/refresh",
-    });
-
-    return responseData;
+    return {
+      message: 'Acesso concedido',
+      next: responseData.next,
+    };
   }
 
   @UseGuards(AuthTokenGuard)
@@ -54,5 +44,25 @@ export class AuthController {
   @Post('refresh')
   async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto): Promise<ResponseAuthDto> {
     return this.authService.refreshTokens(refreshTokenDto);
+  }
+
+  private setAccessTokenCookie (response: Response, accessToken: string) {
+    response.cookie("accessToken", accessToken as string, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 15 * 60 * 1000,
+      path: "/",
+    });
+  }
+
+  private setRefreshTokenCookie (response: Response, refreshToken: string) {
+    response.cookie("refreshToken", refreshToken as string, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/auth/refresh",
+    });
   }
 }

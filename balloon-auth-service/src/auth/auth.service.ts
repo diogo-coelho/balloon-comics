@@ -10,7 +10,7 @@ import { UserEntity } from '../user/entities/user.entity';
 
 import { LoginDto } from './dtos/request/login.dto';
 import { RefreshTokenDto } from './dtos/request/refresh-token.dto';
-import { ResponseAuthDto } from './dtos/response/response-auth.dto';
+import { AuthDataDto } from './dtos/response/auth-data.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<ResponseAuthDto> {
+  async login(loginDto: LoginDto): Promise<AuthDataDto> {
     const { email, password } = loginDto;
 
     const user = await this.userRepository.findOne({ where: { email } });
@@ -40,11 +40,8 @@ export class AuthService {
     const nextUrl = await this.getNextUrl('\/home');
 
     return {
-      message: 'Acesso concedido',
-      data: {
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      },
+      accessToken: accessToken,
+      refreshToken: refreshToken,
       next: nextUrl,
     };
   }
@@ -53,7 +50,7 @@ export class AuthService {
     await this.userRepository.update(userId, { refreshTokenHash: null });
   }
 
-  async refreshTokens(refreshTokenDto: RefreshTokenDto): Promise<ResponseAuthDto> {
+  async refreshTokens(refreshTokenDto: RefreshTokenDto): Promise<AuthDataDto> {
     try {
       const payload = await this.jwtService.verifyAsync(
         refreshTokenDto.refreshToken,
@@ -88,8 +85,8 @@ export class AuthService {
       const { accessToken, refreshToken } = await this.generateTokens(user);
 
       return {
-        message: 'Tokens renovados com sucesso',
-        data: { accessToken, refreshToken },
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       };
     } catch (error: Error | undefined | any) {
       throw new UnauthorizedException(

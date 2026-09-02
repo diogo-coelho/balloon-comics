@@ -1,0 +1,24 @@
+.reader {
+  &-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: inherit;
+    padding: var(--bc-spacing-large) var(--bc-spacing-medium);
+    gap: var(--bc-spacing-large);
+  }
+
+  &-card {
+    width: 90%;
+    max-width: 400px;
+    background-color: var(--bc-color-background);
+    padding: var(--bc-spacing-large) var(--bc-spacing-medium);
+    border-radius: var(--bc-spacing-smallest);
+    box-shadow: var(--bc-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--bc-spacing-medium);
+  }
+}

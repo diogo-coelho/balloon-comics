@@ -17,6 +17,7 @@ const BCRegister = () => {
   const { isPending } = mutation;
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
   const {
     userName,
@@ -58,10 +59,6 @@ const BCRegister = () => {
         <strong>Exemplo:</strong> P@ssw0rd123
       </>
     );
-  }
-
-  const togglePasswordViewType = () => {
-    setIsPasswordVisible(!isPasswordVisible);
   }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
@@ -130,9 +127,9 @@ const BCRegister = () => {
                 helpText={helpTextPassword()}
                 suffix={true}
                 suffixIcon={
-                  isPasswordVisible ? 
-                  <IconEyeOff className="icon" onClick={() => setIsPasswordVisible(false)} /> : 
-                  <IconEye className="icon" onClick={() => setIsPasswordVisible(true)} />
+                  isPasswordVisible ?
+                  <IconEye className="icon" onClick={() => setIsPasswordVisible(false)} /> : 
+                  <IconEyeOff className="icon" onClick={() => setIsPasswordVisible(true)} /> 
                 }
                 handleOnChange={(event) => getPasswordValue?.(event.args)}
                 handleOnClick={() => onClick("password")}
@@ -144,15 +141,15 @@ const BCRegister = () => {
               <BC_Input 
                 id="confirm-password" 
                 name="confirm-password" 
-                type={isPasswordVisible ? "text" : "password"} 
+                type={isConfirmPasswordVisible ? "text" : "password"} 
                 placeholder="Confirme sua senha"
                 autoComplete="off" 
                 error={errorConfirmPassword}
                 suffix={true}
                 suffixIcon={
-                  isPasswordVisible ? 
-                  <IconEyeOff className="icon" onClick={() => setIsPasswordVisible(false)} /> : 
-                  <IconEye className="icon" onClick={() => setIsPasswordVisible(true)} />
+                  isConfirmPasswordVisible ?
+                  <IconEye className="icon" onClick={() => setIsConfirmPasswordVisible(false)} /> : 
+                  <IconEyeOff className="icon" onClick={() => setIsConfirmPasswordVisible(true)} /> 
                 }
                 handleOnChange={(event) => getConfirmPasswordValue?.(event.args)}
                 handleOnClick={() => onClick("confirmPassword")}

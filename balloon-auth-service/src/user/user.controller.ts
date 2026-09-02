@@ -30,22 +30,11 @@ export class UserController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<ResponseUserDto> {
     const responseData = await this.userService.createUser(createUserDto);
+    this.setAccessTokenCookie(response, responseData.accessToken as string);
+    this.setRefreshTokenCookie(response, responseData.refreshToken as string);
 
-    response.cookie("accessToken", responseData.accessToken as string, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 15 * 60 * 1000,
-      path: "/",
-    });
-    
-    response.cookie("refreshToken", responseData.refreshToken as string, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/auth/refresh",
-    });
+    delete responseData.accessToken;
+    delete responseData.refreshToken;
 
     return responseData;
   }
@@ -68,4 +57,24 @@ export class UserController {
   ): Promise<void> {
     return this.userService.deleteUser(id, tokenPayload);
   }
+
+  private setAccessTokenCookie (response: Response, accessToken: string) {
+    response.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 15 * 60 * 1000,
+      path: "/",
+    });
+  };
+
+  private setRefreshTokenCookie (response: Response, refreshToken: string) {
+    response.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/auth/refresh",
+    });
+  };
 }

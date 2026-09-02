@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyToken } from "./auth/auth";
 
 const protectedPaths = ["/reader", "/dashboard"];
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const isProtectedPath = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );
@@ -12,9 +13,15 @@ export function proxy(request: NextRequest) {
   }
 
   const accessToken = request.cookies.get("accessToken")?.value;
-  console.log('Access Token:', accessToken);
-
   if (!accessToken) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
+
+    return NextResponse.redirect(loginUrl);
+  }
+
+  const isValidToken = await verifyToken(accessToken as string);
+  if (!isValidToken) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
 
