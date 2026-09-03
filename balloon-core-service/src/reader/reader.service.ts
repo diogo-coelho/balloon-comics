@@ -1,16 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Repository } from 'typeorm';
-import { MediaService } from '../media/media.service';
+import { DataSource, EntityManager, In, Repository } from 'typeorm';
 
 import { ImageType } from '../media/enums/image-type.enum';
-import { ProcessedEventEntity } from './entities/processed-event.entity';
 import { ReaderEntity } from './entities/reader.entity';
+import { ProcessedEventEntity } from './entities/processed-event.entity';
+import { AgeVerificationEntity } from '../age-verification/entities/age-verification.entity';
+import { SocialMediaLinkEntity } from '../social-media-link/entities/social-media-link.entity';
+
+import { MediaService } from '../media/media.service';
 import { StorageService } from '../storage/storage.service';
+import { AgeVerificationService } from '../age-verification/age-verification.service';
 import { IntegrationEvent } from '../auth/dtos/request/integration-event.dto';
+
 import { UploadReaderDto } from './dtos/request/upload-reader.dto';
 import { ResponseReaderDto } from './dtos/response/response-reader.dto';
 import { UserQueueDto } from './dtos/request/user-queue.dto';
+import { CreateAgeVerificationDto } from '../age-verification/dtos/request/create-age-verification.dto';
+import { CreateSocialMediaLinkDto } from '../social-media-link/dtos/request/create-social-media-link.dto';
+
+import { AgeVerificationMapper } from '../age-verification/mappers/age-verification.mapper';
+import { SocialMediaLinkMapper } from '../social-media-link/mappers/social-media-link.mapper';
 
 @Injectable()
 export class ReaderService {
@@ -20,22 +30,50 @@ export class ReaderService {
     private readonly dataSource: DataSource,
     private readonly storageService: StorageService,
     private readonly mediaService: MediaService,
+    private readonly ageVerificationService: AgeVerificationService,
+    private readonly ageVerificationMapper: AgeVerificationMapper,
+    private readonly socialMediaLinkMapper: SocialMediaLinkMapper,
   ) {}
 
   async updateReader(updateReaderDto: { userId: string, uploadReaderDto: UploadReaderDto }): Promise<any> {
-    await this.readerRepository.update(
-      { userId: updateReaderDto.userId },
-      { ...updateReaderDto.uploadReaderDto, updatedAt: new Date() },
-    );
+    try {
+      return await this.dataSource.transaction(async (manager) => {
+        const { ageVerification, socialMediaLinks, ...readerData } = updateReaderDto.uploadReaderDto;
+        let ageVerificationRecord;
+        let socialMediaLinkRecords;
 
-    const reader = await this.readerRepository.findOneByOrFail({
-      userId: updateReaderDto.userId,
-    });
+        await manager.update(
+          ReaderEntity,
+          { userId: updateReaderDto.userId },
+          { ...readerData, updatedAt: new Date() },
+        );
 
-    return {
-      message: 'Leitor atualizado com sucesso',
-      data: reader,
-    };
+        const reader = await manager.findOneByOrFail(ReaderEntity, {
+          userId: updateReaderDto.userId,
+        });
+
+        if (ageVerification) 
+          ageVerificationRecord = await this.saveAgeVerificationInDatabase(manager, reader, ageVerification);
+
+        if (socialMediaLinks?.length)
+          socialMediaLinkRecords = await this.saveSocialMediaLinkInDatabase(manager, reader, socialMediaLinks);
+
+        return {
+          message: 'Leitor atualizado com sucesso',
+          data: {
+            ...reader,
+            ageVerification: ageVerificationRecord
+              ? this.ageVerificationMapper.toModelFromEntity(ageVerificationRecord)
+              : null,
+            socialMediaLink: socialMediaLinkRecords
+              ? socialMediaLinkRecords.map((record) => this.socialMediaLinkMapper.toModelFromEntity(record))
+              : null,
+          },
+        };
+      });
+    } catch (error: Error | unknown) {
+      throw new Error(`Failed to update reader: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async uploadImageReader(userId: string, file: Express.Multer.File): Promise<ResponseReaderDto> {
@@ -132,4 +170,62 @@ export class ReaderService {
       await handler(manager);
     });
   }
+
+  private async saveAgeVerificationInDatabase(
+    manager: EntityManager, 
+    reader: ReaderEntity, 
+    ageVerification: CreateAgeVerificationDto
+  ): Promise<AgeVerificationEntity> {
+    const result = await manager.createQueryBuilder()
+      .insert()
+      .into(AgeVerificationEntity)
+      .values({
+        reader: { id: reader.id },
+        hasLegalAge: this.ageVerificationService.hasLegalAge(ageVerification.dateOfBirth),
+        dateOfBirth: ageVerification.dateOfBirth,
+      })
+      .orIgnore()
+      .returning('*')
+      .execute();
+
+    return manager.findOneOrFail(AgeVerificationEntity, {
+      where: {
+        reader: { id: reader.id },
+      },
+      relations: {
+        reader: true,
+      },
+    });
+  }
+
+  private async saveSocialMediaLinkInDatabase(
+    manager: EntityManager,
+    reader: ReaderEntity,
+    socialMediaLinks: CreateSocialMediaLinkDto[]
+  ): Promise<SocialMediaLinkEntity[]> {
+    const result = await manager.createQueryBuilder()
+      .insert()
+      .into(SocialMediaLinkEntity)
+      .values(
+        socialMediaLinks.map((link) => ({
+          reader: { id: reader.id },
+          name: link.name as string,
+          url: link.url,
+        })),
+      )
+      .orIgnore()
+      .returning('*')
+      .execute();
+
+    return manager.find(SocialMediaLinkEntity, {
+      where: {
+        reader: { id: reader.id },
+        name: In(socialMediaLinks.map((link) => link.name)),
+      },
+      relations: {
+        reader: true,
+      },
+    });
+  }
+
 }

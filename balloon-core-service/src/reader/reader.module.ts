@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
 import { StorageModule } from '../storage/storage.module';
 import { MediaModule } from '../media/media.module';
+import { AgeVerificationModule } from '../age-verification/age-verification.module';
+import { SocialMediaLinkModule } from '../social-media-link/social-media-link.module';
 
 import { ReaderController } from './reader.controller';
 import { ReaderService } from './reader.service';
@@ -17,6 +19,8 @@ import { ProcessedEventEntity } from './entities/processed-event.entity';
     AuthModule,
     StorageModule,
     MediaModule,
+    AgeVerificationModule,
+    SocialMediaLinkModule,
   ],
   controllers: [ReaderController, ReaderConsumer],
   providers: [ReaderService],

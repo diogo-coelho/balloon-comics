@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import type { Response } from 'express';
 
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 import { AuthTokenGuard } from '../guards/auth-token.guard';
 import { LoginDto } from '../dtos/request/login.dto';
 import { RefreshTokenDto } from '../dtos/request/refresh-token.dto';
-import { ResponseAuthDto } from '../dtos/response/response-auth.dto';
+import { AuthDataDto } from '../dtos/response/auth-data.dto';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -43,16 +44,33 @@ describe('AuthController', () => {
         email: 'usuario@teste.com',
         password: 'Senha@123',
       };
-      const response: ResponseAuthDto = {
-        message: 'Acesso concedido',
-        data: { accessToken: 'token', refreshToken: 'refresh' },
+      const response: AuthDataDto = {
+        accessToken: 'token',
+        refreshToken: 'refresh',
+        next: 'http://localhost:3000/home',
       };
       authService.login.mockResolvedValue(response);
+      const mockResponse = {
+        cookie: jest.fn(),
+      } as unknown as Response;
 
-      const result = await authController.login(loginDto);
+      const result = await authController.login(loginDto, mockResponse);
 
       expect(authService.login).toHaveBeenCalledWith(loginDto);
-      expect(result).toBe(response);
+      expect(mockResponse.cookie).toHaveBeenCalledWith(
+        'accessToken',
+        'token',
+        expect.any(Object),
+      );
+      expect(mockResponse.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'refresh',
+        expect.any(Object),
+      );
+      expect(result).toEqual({
+        message: 'Acesso concedido',
+        next: response.next,
+      });
     });
   });
 
@@ -71,9 +89,9 @@ describe('AuthController', () => {
       const refreshTokenDto: RefreshTokenDto = {
         refreshToken: 'refresh-token',
       };
-      const response: ResponseAuthDto = {
-        message: 'Tokens renovados com sucesso',
-        data: { accessToken: 'novo-token', refreshToken: 'novo-refresh' },
+      const response: AuthDataDto = {
+        accessToken: 'novo-token',
+        refreshToken: 'novo-refresh',
       };
       authService.refreshTokens.mockResolvedValue(response);
 

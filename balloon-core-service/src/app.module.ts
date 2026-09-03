@@ -12,6 +12,8 @@ import { ReaderModule } from './reader/reader.module';
 import { AuthorModule } from './author/author.module';
 import { StorageModule } from './storage/storage.module';
 import { MediaModule } from './media/media.module';
+import { AgeVerificationModule } from './age-verification/age-verification.module';
+import { SocialMediaLinkModule } from './social-media-link/social-media-link.module';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { MediaModule } from './media/media.module';
     AuthorModule,
     StorageModule,
     MediaModule,
+    AgeVerificationModule,
+    SocialMediaLinkModule,
   ],
   controllers: [],
   providers: [

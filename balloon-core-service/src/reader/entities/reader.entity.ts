@@ -5,8 +5,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 import { AuthorEntity } from '../../author/entities/author.entity';
+import { AgeVerificationEntity } from '../../age-verification/entities/age-verification.entity';
+import { SocialMediaLinkEntity } from '../../social-media-link/entities/social-media-link.entity';
 
 @Entity('readers')
 export class ReaderEntity {
@@ -48,5 +51,11 @@ export class ReaderEntity {
 
   @OneToOne(() => AuthorEntity, (author) => author.reader)
   author?: AuthorEntity;
+
+  @OneToOne(() => AgeVerificationEntity, (ageVerification) => ageVerification.reader)
+  ageVerification?: AgeVerificationEntity;
+
+  @OneToMany(() => SocialMediaLinkEntity, (socialMediaLink) => socialMediaLink.reader)
+  socialMediaLinks?: SocialMediaLinkEntity[];
   
 }

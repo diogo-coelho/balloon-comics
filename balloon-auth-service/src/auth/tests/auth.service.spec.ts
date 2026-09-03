@@ -104,9 +104,8 @@ describe('AuthService', () => {
 
       const result = await authService.login(loginDto);
 
-      expect(result.message).toBe('Acesso concedido');
-      expect(result.data?.accessToken).toBe('token-gerado');
-      expect(result.data?.refreshToken).toBe('token-gerado');
+      expect(result.accessToken).toBe('token-gerado');
+      expect(result.refreshToken).toBe('token-gerado');
       expect(result.next).toBe('http://localhost:3000/home');
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { email: loginDto.email },
@@ -162,8 +161,7 @@ describe('AuthService', () => {
 
       const result = await authService.refreshTokens(refreshTokenDto);
 
-      expect(result.message).toBe('Tokens renovados com sucesso');
-      expect(result.data?.accessToken).toBe('token-renovado');
+      expect(result.accessToken).toBe('token-renovado');
     });
 
     it('deve lançar UnauthorizedException quando o tipo do token não for refresh', async () => {

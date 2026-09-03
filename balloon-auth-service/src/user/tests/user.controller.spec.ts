@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import type { Response } from 'express';
 
 import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
@@ -72,11 +73,29 @@ describe('UserController', () => {
         next: 'http://localhost:3000/reader/create',
       };
       userService.createUser.mockResolvedValue(response);
+      const mockResponse = {
+        cookie: jest.fn(),
+      } as unknown as Response;
 
-      const result = await userController.createUser(createUserDto);
+      const result = await userController.createUser(
+        createUserDto,
+        mockResponse,
+      );
 
       expect(userService.createUser).toHaveBeenCalledWith(createUserDto);
+      expect(mockResponse.cookie).toHaveBeenCalledWith(
+        'accessToken',
+        'access-token',
+        expect.any(Object),
+      );
+      expect(mockResponse.cookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'refresh-token',
+        expect.any(Object),
+      );
       expect(result).toBe(response);
+      expect(result.accessToken).toBeUndefined();
+      expect(result.refreshToken).toBeUndefined();
     });
   });
 

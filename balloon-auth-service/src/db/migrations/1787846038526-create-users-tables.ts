@@ -12,5 +12,5 @@ export class CreateUsersTables1787846038526 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "users"`);
         await queryRunner.query(`DROP TABLE "outbox_events"`);
     }
-
+    
 }
