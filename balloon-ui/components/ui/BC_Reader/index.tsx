@@ -1,11 +1,16 @@
 import "./BC_Reader.scss";
 import BC_Input from "@/components/design/BC_Input";
+import { useCurrentReader } from "@/hooks/queries/useReader";
 
 const BC_Reader = () => {
+  const { isLoading, isError, data } = useCurrentReader();
+
+  
+
   return (
     <div className="reader-container">
       <div className="reader-card">
-        <h1>Meus dados</h1>
+        <h1>Complete seu perfil</h1>
 
         <form>
           <p></p>

@@ -9,7 +9,8 @@ import {
   UploadedFile, 
   ParseFilePipe, 
   MaxFileSizeValidator, 
-  FileTypeValidator
+  FileTypeValidator,
+  Get
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -25,6 +26,15 @@ export class ReaderController {
   constructor(
     private readonly readerService: ReaderService,
   ) {}
+
+  @UseGuards(AuthTokenGuard)
+  @Get('/me')
+  async getReader(
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+  ): Promise<ResponseReaderDto> {
+    const { sub: userId } = tokenPayload;
+    return this.readerService.getReader(userId);
+  }
 
   @UseGuards(AuthTokenGuard)
   @Patch('/me')

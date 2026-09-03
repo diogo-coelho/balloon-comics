@@ -42,7 +42,7 @@ describe('AgeVerificationService', () => {
           provide: getRepositoryToken(AgeVerificationEntity),
           useValue: {
             save: jest.fn(),
-            findOneBy: jest.fn(),
+            findOne: jest.fn(),
           },
         },
         {
@@ -84,24 +84,27 @@ describe('AgeVerificationService', () => {
           dateOfBirth: createAgeVerificationDto.dateOfBirth,
         }),
       );
-      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(ageVerification);
+      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(ageVerification, true);
       expect(result).toBe(responseDto);
     });
   });
 
   describe('getAgeVerificationByReaderId', () => {
     it('deve retornar o modelo mapeado quando a verificação de idade existir', async () => {
-      repository.findOneBy.mockResolvedValue(ageVerification);
+      repository.findOne.mockResolvedValue(ageVerification);
       mapper.toModelFromEntity.mockReturnValue(responseDto);
 
       const result = await service.getAgeVerificationByReaderId(reader);
 
-      expect(repository.findOneBy).toHaveBeenCalledWith({ reader });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { reader: { id: reader.id } },
+      });
+      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(ageVerification, false);
       expect(result).toBe(responseDto);
     });
 
     it('deve retornar null quando não houver verificação de idade para o leitor', async () => {
-      repository.findOneBy.mockResolvedValue(null);
+      repository.findOne.mockResolvedValue(null);
 
       const result = await service.getAgeVerificationByReaderId(reader);
 

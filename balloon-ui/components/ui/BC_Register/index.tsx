@@ -83,7 +83,10 @@ const BCRegister = () => {
         <h1>Criar uma conta</h1>
 
         <form onSubmit={(e) => onSubmit(e)}>
-          <p>Preencha os campos abaixo para criar sua conta.</p>
+          <p>
+            Faça parte da nossa comunidade de quadrinhos. <br/>
+            Preencha os campos abaixo para criar sua conta
+          </p>
 
           <div className="input-area">
             <div className="input-group">
@@ -164,7 +167,7 @@ const BCRegister = () => {
             handleOnClick={(e) => onSubmit(e.event)}
           >
             { isPending && 
-              <BC_Spinning width="16px" height="16px" borderWidth="2px" />
+              <BC_Spinning width="14px" height="14px" borderWidth="2px" />
             }
             Cadastrar
           </BC_Button>

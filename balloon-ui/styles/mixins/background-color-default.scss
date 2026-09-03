@@ -1,0 +1,28 @@
+@mixin background-color-default {
+  background: linear-gradient(
+    120deg,
+    var(--bc-analogous-primary-color-500),
+    var(--bc-analogous-primary-color-600),
+    var(--bc-analogous-primary-color-700),
+    var(--bc-analogous-primary-color-800)
+  );
+  background-size: 200% 200%;
+  animation: background-gradient 5s ease infinite;
+  border: 2px solid var(--bc-analogous-primary-color-500);
+}
+
+@mixin background-gradient-animation {
+  @keyframes background-gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+}

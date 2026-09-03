@@ -3,10 +3,10 @@ import { AgeVerificationEntity } from "../entities/age-verification.entity";
 
 export class AgeVerificationMapper {  
 
-  toModelFromEntity(ageVerification: AgeVerificationEntity): ResponseAgeVerificationDto {
+  toModelFromEntity(ageVerification: AgeVerificationEntity, related: boolean): ResponseAgeVerificationDto {
     return {
       id: ageVerification.id,
-      readerId: ageVerification.reader.id,
+      readerId: related ? ageVerification.reader.id : undefined,
       hasLegalAge: ageVerification.hasLegalAge,
       dateOfBirth: ageVerification.dateOfBirth,
       createdAt: ageVerification.createdAt,

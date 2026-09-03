@@ -1,11 +1,11 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { createUser } from "@/services/user.service";
+import { login } from "@/services/auth.service";
 
-export const useCreatedUser = () => {
+export const useLogin = () => {
   return useMutation({
-    mutationFn: createUser,
+    mutationFn: login,
 
     onSuccess: (data) => {
       return data;

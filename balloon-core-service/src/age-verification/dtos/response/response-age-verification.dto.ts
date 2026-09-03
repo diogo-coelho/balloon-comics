@@ -1,6 +1,6 @@
 export class ResponseAgeVerificationDto {
   id!: string;
-  readerId!: string;
+  readerId?: string;
   hasLegalAge!: boolean;
   dateOfBirth!: Date;
   createdAt!: Date;

@@ -20,7 +20,7 @@ describe('AgeVerificationMapper', () => {
         updatedAt: new Date('2024-01-02'),
       } as AgeVerificationEntity;
 
-      const result = mapper.toModelFromEntity(ageVerification);
+      const result = mapper.toModelFromEntity(ageVerification, true);
 
       expect(result).toEqual({
         id: ageVerification.id,

@@ -12,6 +12,7 @@ import { MediaService } from '../media/media.service';
 import { StorageService } from '../storage/storage.service';
 import { AgeVerificationService } from '../age-verification/age-verification.service';
 import { IntegrationEvent } from '../auth/dtos/request/integration-event.dto';
+import { SocialMediaLinkService } from '../social-media-link/social-media-link.service';
 
 import { UploadReaderDto } from './dtos/request/upload-reader.dto';
 import { ResponseReaderDto } from './dtos/response/response-reader.dto';
@@ -33,7 +34,30 @@ export class ReaderService {
     private readonly ageVerificationService: AgeVerificationService,
     private readonly ageVerificationMapper: AgeVerificationMapper,
     private readonly socialMediaLinkMapper: SocialMediaLinkMapper,
+    private readonly socialMediaLinkService: SocialMediaLinkService,
   ) {}
+
+  async getReader(userId: string): Promise<ResponseReaderDto> {
+    const reader = await this.readerRepository.findOneByOrFail({ userId });
+    const publicImageUrl = this.storageService.getPublicUrl(reader.imageUrl as string);
+
+    const ageVerification = await this.ageVerificationService.getAgeVerificationByReaderId(reader);
+    const socialMediaLinks = await this.socialMediaLinkService.getSocialMediaLinksByReaderId(reader);
+
+    return {
+      message: 'Leitor recuperado com sucesso',
+      data: {
+        id: reader.id,
+        email: reader.email,
+        username: reader.username,
+        name: reader.name,
+        imageUrl: publicImageUrl,
+        description: reader.description,
+        ageVerification: ageVerification ?? undefined,
+        socialMediaLinks: socialMediaLinks ?? undefined,
+      },      
+    };
+  }
 
   async updateReader(updateReaderDto: { userId: string, uploadReaderDto: UploadReaderDto }): Promise<any> {
     try {
@@ -63,10 +87,10 @@ export class ReaderService {
           data: {
             ...reader,
             ageVerification: ageVerificationRecord
-              ? this.ageVerificationMapper.toModelFromEntity(ageVerificationRecord)
+              ? this.ageVerificationMapper.toModelFromEntity(ageVerificationRecord, false)
               : null,
             socialMediaLink: socialMediaLinkRecords
-              ? socialMediaLinkRecords.map((record) => this.socialMediaLinkMapper.toModelFromEntity(record))
+              ? socialMediaLinkRecords.map((record) => this.socialMediaLinkMapper.toModelFromEntity(record, false))
               : null,
           },
         };
@@ -92,7 +116,7 @@ export class ReaderService {
     return {
       message: 'Imagem do leitor atualizada com sucesso',
       data: {
-        ...reader,
+        id: reader.id,
         imageUrl: publicImageUrl,
       },
     };

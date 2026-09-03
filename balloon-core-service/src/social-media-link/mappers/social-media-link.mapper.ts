@@ -3,10 +3,10 @@ import { ResponseSocialMediaLinkDto } from "../dtos/response/response-social-med
 
 export class SocialMediaLinkMapper {
   
-  toModelFromEntity(entity: SocialMediaLinkEntity): ResponseSocialMediaLinkDto {
+  toModelFromEntity(entity: SocialMediaLinkEntity, related: boolean): ResponseSocialMediaLinkDto {
     return {
       id: entity.id,
-      readerId: entity.reader.id,
+      readerId: related ? entity.reader.id : undefined,
       name: entity.name,
       url: entity.url,
       createdAt: entity.createdAt,

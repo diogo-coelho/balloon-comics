@@ -1,6 +1,6 @@
 export class ResponseSocialMediaLinkDto {
   id!: string;
-  readerId!: string;
+  readerId?: string;
   name!: string;
   url!: string;
   createdAt!: Date;

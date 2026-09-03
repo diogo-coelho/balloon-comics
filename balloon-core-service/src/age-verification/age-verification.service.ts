@@ -29,13 +29,15 @@ export class AgeVerificationService {
       ...createAgeVerificationDto,
     });
 
-    return this.ageVerificationMapper.toModelFromEntity(ageVerification);
+    return this.ageVerificationMapper.toModelFromEntity(ageVerification, true);
   }
 
   async getAgeVerificationByReaderId(reader: ReaderEntity): Promise<ResponseAgeVerificationDto | null> {
-    const ageVerification = await this.ageVerificationRepository.findOneBy({ reader });
-    
-    return ageVerification ? this.ageVerificationMapper.toModelFromEntity(ageVerification) : null;
+    const ageVerification = await this.ageVerificationRepository.findOne({
+      where: { reader: { id: reader.id } },
+    });
+
+    return ageVerification ? this.ageVerificationMapper.toModelFromEntity(ageVerification, false) : null;
   }
 
   public hasLegalAge(dateOfBirth: string): boolean {
