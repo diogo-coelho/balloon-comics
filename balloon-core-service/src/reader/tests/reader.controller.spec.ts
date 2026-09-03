@@ -4,7 +4,7 @@ import { ReaderController } from '../reader.controller';
 import { ReaderService } from '../reader.service';
 import { AuthTokenGuard } from '../../auth/guards/auth-token.guard';
 import { TokenPayloadDto } from '../../auth/dtos/request/token-payload.dto';
-import { RequestReaderDto } from '../dtos/request/upload-reader.dto';
+import { UploadReaderDto } from '../dtos/request/upload-reader.dto';
 import { ResponseReaderDto } from '../dtos/response/response-reader.dto';
 
 describe('ReaderController', () => {
@@ -46,9 +46,8 @@ describe('ReaderController', () => {
   });
 
   describe('updateReader', () => {
-    const requestReaderDto: RequestReaderDto = {
+    const uploadReaderDto: UploadReaderDto = {
       name: 'Nome do leitor',
-      imageUrl: 'http://imagem.com/foto.png',
       description: 'Descrição do leitor',
     };
 
@@ -61,12 +60,12 @@ describe('ReaderController', () => {
 
       const result = await readerController.updateReader(
         tokenPayload,
-        requestReaderDto,
+        uploadReaderDto,
       );
 
       expect(readerService.updateReader).toHaveBeenCalledWith({
         userId: tokenPayload.sub,
-        requestReaderDto,
+        uploadReaderDto,
       });
       expect(result).toBe(response);
     });
