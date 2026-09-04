@@ -14,6 +14,7 @@ const BC_Input: React.FC<InputProps> = (props: InputProps): JSX.Element => {
       (props.inputSize || props['input-size']) ?? ``,
       props.error ? `error` : ``,
       props.align ? `align-${props.align}` : ``,
+      props.disabled ? `disabled` : ``,
     ].toString().replaceAll(",", " ").replace(/\s+/g, " ").trim();
   }
 

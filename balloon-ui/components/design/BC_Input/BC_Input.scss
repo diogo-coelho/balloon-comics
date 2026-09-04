@@ -32,6 +32,23 @@
       &.error {
         border: 1px solid var(--bc-color-primary-500);
       }
+
+      &.disabled,
+      &.disabled:hover,
+      &.disabled:focus,
+      &.disabled:focus-within,
+      &.disabled:focus-visible,
+      &:disabled,
+      &:disabled:hover,
+      &:disabled:focus,
+      &:disabled:focus-within,
+      &:disabled:focus-visible {
+        background-color: var(--bc-color-background-disabled);
+        color: var(--bc-color-text-disabled);
+        border: 1px solid var(--bc-color-border);
+        cursor: not-allowed;
+        box-shadow: none;
+      }
     }
 
     .suffix {

@@ -1,0 +1,90 @@
+.textarea {
+  &-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    .textarea {
+      height: inherit;
+      min-height: 36px;
+      width: inherit;
+      border-radius: var(--bc-border-radius-small);
+      border: 1px solid var(--bc-color-gray-100);
+      padding: var(--bc-spacing-smallest) var(--bc-spacing-small);
+      background-color: var(--bc-color-background);
+      border: 1px solid var(--bc-color-border);
+      outline: none;
+      box-shadow: none;
+
+      transition: border 0.3s ease-out, background-color 0.3s ease-out, box-shadow 0.3s ease-out;
+
+      &:hover,
+      &:focus,
+      &:focus-within,
+      &:focus-visible {
+        border: 1px solid var(--bc-color-border-hover);
+        background-color: var(--bc-color-background);
+        box-shadow: var(--bc-color-outline-hover);
+
+        transition: border 0.3s ease-in, background-color 0.3s ease-in, box-shadow 0.3s ease-in;
+      }
+
+      &.error {
+        border: 1px solid var(--bc-color-primary-500);
+      }
+
+      &.disabled,
+      &.disabled:hover,
+      &.disabled:focus,
+      &.disabled:focus-within,
+      &.disabled:focus-visible,
+      &:disabled,
+      &:disabled:hover,
+      &:disabled:focus,
+      &:disabled:focus-within,
+      &:disabled:focus-visible {
+        background-color: var(--bc-color-background-disabled);
+        color: var(--bc-color-text-disabled);
+        border: 1px solid var(--bc-color-border-disabled);
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    } 
+
+    &:hover .icon, 
+    &:hover .icon-search,
+    &:focus .icon, 
+    &:focus .icon-search,
+    &:focus-within .icon, 
+    &:focus-within .icon-search,
+    &:focus-visible .icon, 
+    &:focus-visible .icon-search {
+      color: var(--bc-color-primary-500);
+      cursor: pointer;
+
+      transition: color 0.3s ease-in;
+    }
+
+    &.error + span {
+      color: var(--bc-color-primary-500);
+      font-size: var(--bc-font-size-extra-small);
+      position: relative;
+      top: -5px;
+    }
+  }
+}
+
+.help-text {
+  color: var(--bc-color-text-secondary);
+  font-size: var(--bc-font-size-extra-small);
+  position: relative;
+  top: -5px;
+  line-height: var(--bc-font-size-medium);
+
+  ul {
+    list-style-type: disc;
+    margin-left: 5px;
+    padding-left: var(--bc-spacing-small);
+  }
+}

@@ -1,6 +1,7 @@
 @use '@/styles/mixins/background-color-default' as background;
 
 .button {
+  width: inherit;
   padding: var(--bc-spacing-smallest) var(--bc-spacing-small);
   border-radius: var(--bc-border-radius-pill);
   border: 1px solid var(--bc-color-primary-500);
@@ -23,17 +24,48 @@
   &.primary,
   &.primary:disabled { 
     @include background.background-color-default;
+    position: relative;
     color: var(--bc-color-white);
-    transition: background-color .2s ease-in, border .2s ease-in, transform .2s ease-in;
+    top: 0px;
+    transition: background-color .2s ease-in, border .2s ease-in, top .1s ease-in, transform .2s ease-in;
 
     &:hover:not(:disabled) {
       background-color: var(--bc-color-primary-500);
       border: 2px solid var(--bc-color-primary-600);
-      transform: scale(1.01);
+      transform: scale(1.005);
+      top: -1px;
       box-shadow: var(--bc-shadow-medium);
-      transition: background-color .2s ease-out, border .2s ease-out, transform .2s ease-out;
+      transition: background-color .2s ease-out, border .2s ease-out, top .1s ease-out, transform .2s ease-out;
+    }
+  }
+
+  &.secondary,
+  &.secondary:disabled { 
+    @include background.background-color-secondary;
+    position: relative;
+    color: var(--bc-color-gray-600);
+    top: 0px;
+    transition: background-color .2s ease-in, border .2s ease-in, top .1s ease-in, transform .2s ease-in;
+
+    &:hover:not(:disabled) {
+      background-color: var(--bc-color-gray-300);
+      border: 2px solid var(--bc-color-gray-300);
+      transform: scale(1.005);
+      top: -1px;
+      box-shadow: var(--bc-shadow-medium);
+      transition: background-color .2s ease-out, border .2s ease-out, top .1s ease-out, transform .2s ease-out;
     }
   }
 
   @include background.background-gradient-animation;
+
+  &.small {
+    width: 100%;
+    max-width: 145px;
+  }
+
+  &.medium {
+    width: 100%;
+    max-width: 250px;
+  }
 }

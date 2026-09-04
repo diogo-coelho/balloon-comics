@@ -70,7 +70,7 @@ const BCRegister = () => {
         email: email as string,
         password: password as string
       });  
-      router.push("/reader");
+      router.push("/reader/create");
       
     } catch (error: Error | unknown) {
       console.error(error);
@@ -163,7 +163,6 @@ const BCRegister = () => {
           <BC_Button 
             type="submit" 
             variant="primary" 
-            size="small"
             handleOnClick={(e) => onSubmit(e.event)}
           >
             { isPending && 

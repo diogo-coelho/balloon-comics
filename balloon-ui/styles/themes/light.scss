@@ -5,12 +5,14 @@
   color-scheme: light;
 
   --bc-color-background: var(--bc-color-white);
-  --bc-color-background-secondary: var(--bc-color-gray-50);
+  --bc-color-background-secondary: var(--bc-color-gray-100);
+  --bc-color-background-disabled: var(--bc-color-gray-50);
 
   --bc-color-surface: var(--bc-color-white);
 
   --bc-color-text-primary: var(--bc-color-gray-900);
   --bc-color-text-secondary: var(--bc-color-gray-700);
+  --bc-color-text-disabled: var(--bc-color-gray-500);
 
   --bc-color-border: var(--bc-color-gray-200);
 
@@ -18,4 +20,5 @@
 
   --bc-color-border-hover: var(--bc-color-primary-500);
   --bc-color-outline-hover: 0 0 4px 2px  var(--bc-color-primary-light-transparent);
+  --bc-color-border-disabled: var(--bc-color-gray-200);
 }

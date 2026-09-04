@@ -3,12 +3,23 @@
     120deg,
     var(--bc-analogous-primary-color-500),
     var(--bc-analogous-primary-color-600),
-    var(--bc-analogous-primary-color-700),
-    var(--bc-analogous-primary-color-800)
+    var(--bc-analogous-primary-color-700)
   );
   background-size: 200% 200%;
   animation: background-gradient 5s ease infinite;
   border: 2px solid var(--bc-analogous-primary-color-500);
+}
+
+@mixin background-color-secondary {
+  background: linear-gradient(
+    120deg,
+    var(--bc-analogous-secondary-color-500),
+    var(--bc-analogous-secondary-color-600),
+    var(--bc-analogous-secondary-color-700)
+  );
+  background-size: 200% 200%;
+  animation: background-gradient 5s ease infinite;
+  border: 2px solid var(--bc-analogous-secondary-color-500);
 }
 
 @mixin background-gradient-animation {

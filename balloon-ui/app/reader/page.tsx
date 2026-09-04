@@ -1,14 +1,15 @@
 "use client";
 
 import BC_Container from "@/components/ui/BC_Container";
-import BC_Reader from "@/components/ui/BC_Reader";
+import BC_Header from "@/components/ui/BC_Header";
 
 export default function ReaderPage() {
   return (
-    <div>
-      <BC_Container hasHeader={false}>
-        <BC_Reader />
+    <>
+      <BC_Header />
+      <BC_Container hasHeader={true}>
+        <p>Template de leitor</p>
       </BC_Container>
-    </div>
-  );
+    </>
+  )
 }

@@ -5,7 +5,7 @@ import { getCurrentReader } from "@/services/reader.service";
 
 export const useCurrentReader = () => {
   return useQuery({
-    queryKey: ['reader', 'me'],
+    queryKey: ['readers', 'me'],
     queryFn: getCurrentReader,
   });
 }

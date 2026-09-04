@@ -3,7 +3,7 @@ import { verifyToken } from "./auth/auth";
 
 const protectedPaths = ["/reader", "/dashboard"];
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const isProtectedPath = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );
@@ -20,8 +20,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const isValidToken = await verifyToken(accessToken as string);
-  if (!isValidToken) {
+  try {
+    await verifyToken(accessToken);
+  } catch {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
 
@@ -32,5 +33,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/reader/:path*", "/dashboard/:path*"],
+  matcher: [
+    "/reader/:path*", 
+    "/dashboard/:path*"
+  ],
+  runtime: "nodejs",
 };
