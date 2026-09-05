@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 
@@ -27,6 +27,10 @@ export class AuthController {
 
     return {
       message: 'Acesso concedido',
+      data: {
+        id: responseData.user?.id as string,
+        email: responseData.user?.email as string,
+      },
       next: responseData.next,
     };
   }
@@ -44,6 +48,15 @@ export class AuthController {
   @Post('refresh')
   async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto): Promise<ResponseAuthDto> {
     return this.authService.refreshTokens(refreshTokenDto);
+  }
+
+  @UseGuards(AuthTokenGuard)
+  @Get('me')
+  async getProfile(@TokenPayloadParam() tokenPayload: TokenPayloadDto) {
+    return {
+      id: tokenPayload.sub,
+      email: tokenPayload.email,
+    };
   }
 
   private setAccessTokenCookie (response: Response, accessToken: string) {

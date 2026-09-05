@@ -1,11 +1,13 @@
 .container {
+  height: fit-content;
+  
   .main {
     &-container {
       position: relative;
       background-color: var(--bc-color-background-secondary);
       display: flex;
       flex-direction: column;
-      height: auto;
+      height: fit-content;
       min-height: calc(100vh - 63px);
       width: 100%;
       position: relative;
