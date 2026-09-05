@@ -3,3 +3,8 @@ export type LoginData = {
   password: string;
 };
 
+export type AuthUser = {
+  id: string;
+  email: string;
+};
+

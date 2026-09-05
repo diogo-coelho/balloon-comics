@@ -2,14 +2,24 @@
 
 import "./BC_Drawer.scss";
 import React, { JSX } from "react";
+import { IconMenu, IconX } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import BC_Button from "@/components/design/BC_Button";
 import useViewport from "@/hooks/useViewport";
-import { IconMenu, IconX } from "@tabler/icons-react";
+import { useAuthStore } from "@/store/auth.store";
 
 const DCDrawer = (): JSX.Element => {
+  const router = useRouter();
+  const isAuthenticated = useAuthStore(
+    (state) => state.isAuthenticated
+  );
 
   const [ isDrawerOpen, setIsDrawerOpen ] = React.useState(false);
   const { isMobileView } = useViewport();
+
+  const navigateToLogin = () => {
+    router.push("/login");
+  }
   
   return (
     <>
@@ -38,12 +48,25 @@ const DCDrawer = (): JSX.Element => {
 
             <div className="drawer-body">
               <ul>
-                <a href="/login"><li>Login</li></a>
+                { !isAuthenticated && (<a href="/login"><li>Login</li></a>) }
               </ul>
             </div>
           </aside>
         </>
-      ) }
+      )}
+      {!isMobileView() && (
+        <div className="drawer-desktop">
+          { !isAuthenticated && (
+            <BC_Button
+              type="button"
+              variant="primary"
+              handleOnClick={(event) => navigateToLogin()}
+            >
+              Login
+            </BC_Button>
+          )}          
+        </div>
+      )}
     </>
   );
 }

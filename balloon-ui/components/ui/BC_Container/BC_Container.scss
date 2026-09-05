@@ -1,6 +1,7 @@
 .container {
   .main {
     &-container {
+      position: relative;
       background-color: var(--bc-color-background-secondary);
       display: flex;
       flex-direction: column;
@@ -16,5 +17,11 @@
   .no-header {
     min-height: 100vh;
     top: 0;
+  }
+}
+
+@media only screen and (min-width: 960px) {
+  .container {
+    min-height: 100vh;
   }
 }

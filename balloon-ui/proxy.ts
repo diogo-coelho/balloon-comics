@@ -3,7 +3,7 @@ import { verifyToken } from "./auth/auth";
 
 const protectedPaths = ["/reader", "/dashboard"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const isProtectedPath = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );
@@ -36,6 +36,5 @@ export const config = {
   matcher: [
     "/reader/:path*", 
     "/dashboard/:path*"
-  ],
-  runtime: "nodejs",
+  ]
 };

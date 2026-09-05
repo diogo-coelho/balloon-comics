@@ -1,0 +1,21 @@
+.social-media-links {
+  &-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--bc-spacing-large);
+  }
+
+  &-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bc-spacing-medium); 
+  }
+
+  &-segment {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--bc-spacing-large);
+  }
+}

@@ -1,4 +1,4 @@
-export interface ReaderProps {
+export interface CreateReaderProps {
   isLoading: boolean;
   readerData: ReaderData;
 }

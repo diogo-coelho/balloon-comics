@@ -1,11 +1,13 @@
 "use client";
 
 import './BC_Input.scss';
-import React, { JSX } from "react";
+import React, { JSX, useEffect, useState } from "react";
 import { InputProps } from './bc_input';
 import { IconSearch } from '@tabler/icons-react';
 
 const BC_Input: React.FC<InputProps> = (props: InputProps): JSX.Element => {
+  const externalValue = props.currentValue ?? props['current-value'];
+  const [internalValue, setInternalValue] = useState(externalValue ?? '');
 
   const className = (mainClass: string): string => {
     return [
@@ -18,6 +20,12 @@ const BC_Input: React.FC<InputProps> = (props: InputProps): JSX.Element => {
     ].toString().replaceAll(",", " ").replace(/\s+/g, " ").trim();
   }
 
+  useEffect(() => {
+    if (externalValue !== undefined) {
+      setInternalValue(externalValue);
+    }
+  }, [externalValue]);
+
   return (
     <>
       <div className={className('input-container')} >
@@ -26,8 +34,11 @@ const BC_Input: React.FC<InputProps> = (props: InputProps): JSX.Element => {
           type={ props.type || `text` } 
           placeholder={ props.placeholder }
           disabled={ props.disabled || false }
-          value={props.currentValue || props['current-value']}
-          onChange={ (event) => props.handleOnChange?.({ args: event.target.value, event }) }
+          value={internalValue}
+          onChange={ (event) => {
+            setInternalValue(event.target.value);
+            props.handleOnChange?.({ args: event.target.value, event });
+          }}
           onClick={ (event) => props.handleOnClick?.(event)}
         />
         { props.suffix && 

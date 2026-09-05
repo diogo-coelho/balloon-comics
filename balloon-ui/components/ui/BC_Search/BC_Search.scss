@@ -1,7 +1,7 @@
 @use '../../../styles/tokens/breakpoints.scss' as bp;
 
 .bc-search {
-  width: 24px;
+  min-width: 24px;
    
   .icon-search {
     color: var(--bc-color-text-primary);

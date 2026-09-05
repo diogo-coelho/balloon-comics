@@ -1,3 +1,4 @@
+import { AuthInitializer } from '@/providers/auth-provider';
 import '../styles/app.scss';
 import { QueryProvider } from '@/providers/query-provider';
 
@@ -37,7 +38,9 @@ export default function RootLayout({
       </head>
       <body>
         <QueryProvider>
-          {children}
+          <AuthInitializer>
+            {children}
+          </AuthInitializer>
         </QueryProvider>
       </body>
     </html>
