@@ -14,12 +14,13 @@ export interface SelectProps  extends SelectHTMLAttributes<HTMLSelectElement> {
     value: string;
     label: string;
   }[];
+  currentValue?: string;
   handleOnChange?: (
     data: { 
-      args?: T | T[], 
-      event: ChangeEvent<HTMLInputElement>
-  }) => T,
+      args?: string | string[], 
+      event: ChangeEvent<HTMLSelectElement>
+  }) => void,
   handleOnClick?: (
-    event: MouseEvent<HTMLButtonElement, MouseEvent> 
-  ) => T
+    event: MouseEvent<HTMLSelectElement, MouseEvent> 
+  ) => void
 }
