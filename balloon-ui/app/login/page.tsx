@@ -1,14 +1,17 @@
-"use client";
+import BC_LoginForm from '@/components/ui/BC_LoginForm';
+import BC_Header from '@/components/ui/BC_Header';
+import BC_Toolbar from '@/components/ui/BC_Toolbar';
 
-import BC_Container from "@/components/ui/BC_Container";
-import BC_Login from "@/components/ui/BC_Login";
-
-export default function Login() {
+export default function Home() {  
   return (
-    <div>
-      <BC_Container hasHeader={false}>
-        <BC_Login />
-      </BC_Container>
-    </div>
+    <>
+      <div>
+        <BC_Header />
+        <section></section>
+        <BC_Toolbar />
+      </div>
+
+      <BC_LoginForm />
+    </>
   );
 }

@@ -29,9 +29,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   disabled?: boolean,
   outline?: Outline,
   transparent?: Outline,
+  align?: 'left' | 'center' | 'right',
   handleOnClick?: (
     data: { 
       args?: T | T[], 
-      event: MouseEvent<HTMLButtonElement, MouseEvent> 
+      event: MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent<HTMLButtonElement, KeyboardEvent>
   }) => T,
 }

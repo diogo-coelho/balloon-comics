@@ -20,6 +20,25 @@
     background-color: var(--bc-color-background);
     border: 1px solid var(--bc-color-background);
     padding: var(--bc-spacing-smallest);
+
+    transition: color .2s ease-in;
+
+    * {
+      color: var(--bc-color-text-primary);
+    }
+
+    &:hover:not(:disabled),
+    &:focus:not(:disabled),
+    &:active:not(:disabled),
+    &:focus-visible:not(:disabled),
+    &:focus-within:not(:disabled) {
+      color: var(--bc-color-primary-500);
+      transition: color .2s ease-out;
+
+      * {
+        color: var(--bc-color-primary-500);
+      }
+    }
   }
 
   &.primary,
@@ -60,13 +79,27 @@
 
   @include background.background-gradient-animation;
 
+  &.center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   &.small {
     width: 100%;
     max-width: 145px;
+
+    * {
+      font-size: var(--bc-font-size-extra-small);
+    }
   }
 
   &.medium {
     width: 100%;
     max-width: 250px;
+
+    * {
+      font-size: var(--bc-font-size-medium);
+    }
   }
 }

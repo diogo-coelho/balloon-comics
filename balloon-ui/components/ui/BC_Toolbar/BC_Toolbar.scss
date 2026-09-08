@@ -1,0 +1,35 @@
+.toolbar {
+  &-container {
+    position: fixed;
+    bottom: 16px;
+    display: flex;
+    width: calc(100% - 24px);
+    margin: 0px 12px;
+    border-radius: var(--bc-border-radius-small);
+    border-top: 1px solid var(--bc-color-border);
+    background-color: var(--bc-color-background);
+    box-shadow: var(--bc-shadow);
+  }
+
+  &-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  &-item {
+    width: 100%;
+    border-right: 1px solid var(--bc-color-border);
+
+    &:last-child {
+      border-right: none;
+    }
+
+    .icon {
+      height: 20px;
+      width: 20px;
+      color: var(--bc-color-text-primary);
+    }
+  }
+}

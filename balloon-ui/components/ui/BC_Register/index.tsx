@@ -3,19 +3,21 @@
 import "./BC_Register.scss";
 import { useRouter } from "next/navigation";
 import { JSX } from "react/jsx-runtime";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
-import useFieldValidation from "@/hooks/useFieldValidation";
 import { useCreatedUser } from "@/hooks/queries/useUser";
+import useFieldValidation from "@/hooks/useFieldValidation";
 import BC_Button from "@/components/design/BC_Button";
 import BC_Input from "@/components/design/BC_Input";
 import BC_Spinning from "@/components/design/BC_Spinning";
+import BC_Dialog from "@/components/design/BC_Dialog/BC_Dialog";
 
 const BCRegister = () => {
   const router = useRouter();
   const mutation = useCreatedUser();
   const { isPending } = mutation;
 
+  const [active, setActive] = useState<boolean>(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
@@ -34,6 +36,8 @@ const BCRegister = () => {
     getPasswordValue,
     getConfirmPasswordValue,
   } = useFieldValidation(["userName", "email", "password", "confirmPassword"]); 
+
+  const goToHomepage = (): void => router.push('/');
   
   const helpTextUserName = () : JSX.Element => {
     return (
@@ -76,8 +80,17 @@ const BCRegister = () => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    setTimeout(() => setActive(true), 300);
+  }, [])
   
   return (
+    <BC_Dialog
+      active={ active ? 'on' : 'off'} 
+      setActive={setActive}
+      handleOnClose={() => goToHomepage() }
+    >
     <div className="register-container">
       <div className="register-card">
         <h1>Criar uma conta</h1>
@@ -173,6 +186,7 @@ const BCRegister = () => {
         </form>
       </div>
     </div>
+    </BC_Dialog>
   );
 }
 

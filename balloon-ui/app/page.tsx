@@ -1,4 +1,5 @@
 import BC_Header from '../components/ui/BC_Header';
+import BC_Toolbar from '../components/ui/BC_Toolbar';
 
 export default function Home() {  
   return (
@@ -6,6 +7,7 @@ export default function Home() {
       <div>
         <BC_Header />
         <section></section>
+        <BC_Toolbar />
       </div>
     </>
   );

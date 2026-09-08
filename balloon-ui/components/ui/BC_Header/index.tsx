@@ -4,8 +4,11 @@ import "./BC_Header.scss";
 import React, { JSX } from "react";
 import BC_Search from "@/components/ui/BC_Search";
 import BC_Drawer from "@/components/ui/BC_Drawer";
+import useViewport from "@/hooks/useViewport";
 
 const BC_Header: React.FC<{}> = (): JSX.Element => {
+  const { isMobileView } = useViewport();
+  
   return (
     <>
       <header className="header">
@@ -19,7 +22,7 @@ const BC_Header: React.FC<{}> = (): JSX.Element => {
           </div>
 
           <nav className="header-area">
-            <BC_Search />
+            { !isMobileView() && ( <BC_Search />) }
             <BC_Drawer />
           </nav>
         </div>
