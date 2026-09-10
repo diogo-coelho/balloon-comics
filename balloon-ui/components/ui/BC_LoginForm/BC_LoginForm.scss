@@ -6,6 +6,10 @@
     align-items: center;
     height: inherit;
     gap: var(--bc-spacing-large);
+
+    a {
+      margin-left: .256rem;
+    }
     
     a:hover {
       text-decoration: underline;

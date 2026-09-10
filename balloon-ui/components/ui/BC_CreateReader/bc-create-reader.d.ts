@@ -7,4 +7,5 @@ export interface CreateReaderProps {
   setBiography: React.Dispatch<React.SetStateAction<string>>;
   errorFullName: string | undefined;
   errorBiography: string | undefined;
+  onClick: (args: string) => void;
 }

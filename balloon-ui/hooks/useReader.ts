@@ -13,8 +13,6 @@ const useReader = (fields: string[]) => {
   const [errorDateOfBirth, setErrorDateOfBirth] = useState<string | undefined>(undefined);
 
   const isFullNameValid = (): boolean => {
-    console.log('fullName', fullName)
-    console.log('isEmpty(fullName)', isEmpty(fullName))
     if (!fullName || isEmpty(fullName)) {
       setErrorFullName("Dado incorreto. Revise e digite novamente.")
       return false;
@@ -45,7 +43,7 @@ const useReader = (fields: string[]) => {
     if (links.length > 0 && 
         links.some(link => !hasValidUrlFormat(link.url)
       )) {
-      setErrorLinks("A url informada é inválida. Revise e digite novamente.")
+      setErrorLinks("Uma ou mais URLs estão em formato inválido. Revise e digite novamente.")
       return false;
     }
   
@@ -53,12 +51,14 @@ const useReader = (fields: string[]) => {
   }
 
   const isDateOfBirthValid = (): boolean => {
+    console.log("dateOfBirth", dateOfBirth)
     if (dateOfBirth && isEmpty(dateOfBirth.trim())) {
       setErrorDateOfBirth("Dado incorreto. Revise e digite novamente.")
       return false;
     }
 
-    if (dateOfBirth && hasDateOfBirthValidFormat(dateOfBirth) === false) {
+    if (dateOfBirth && !hasDateOfBirthValidFormat(dateOfBirth)) {
+      console.log('entrou aqui no erro de data')
       setErrorDateOfBirth("A data de nascimento informada é inválida. Revise e digite novamente.")
       return false;
     }
@@ -76,6 +76,29 @@ const useReader = (fields: string[]) => {
     return errors === 0;
   }
 
+  const onClick = (value: string) => {
+    switch(value) {
+      case "fullName":
+        setErrorFullName(undefined);
+        break;
+      case "biography":
+        setErrorBiography(undefined);
+        break;
+      case "links":
+        setErrorLinks(undefined);
+        break;
+      case "dateOfBirth":
+        setErrorDateOfBirth(undefined);
+        break;
+      default:
+        setErrorFullName(undefined);
+        setErrorBiography(undefined);
+        setErrorLinks(undefined);
+        setErrorDateOfBirth(undefined);
+        break;
+    }
+  }
+
   return {
     fullName,
     biography,
@@ -90,6 +113,7 @@ const useReader = (fields: string[]) => {
     setLinks,
     setDateOfBirth,
     validateRequiredFields,
+    onClick,
   };
 };
 

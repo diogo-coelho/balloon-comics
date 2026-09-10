@@ -115,8 +115,7 @@ const BCLogin = () => {
           </div>
 
           <p className="flex justify-center">
-            Ainda não possui uma conta? <a href="/register">
-            <strong>Cadastre-se</strong></a>
+            <span>Ainda não possui uma conta?</span><a href="/register"><strong>Cadastre-se</strong></a>
           </p>
         </div>
       </BC_Dialog>

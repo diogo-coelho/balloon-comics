@@ -68,6 +68,7 @@ const BCCreateReader = (props: CreateReaderProps) => {
                     placeholder="Insira seu nome completo"
                     currentValue={props.fullName}
                     handleOnChange={(event) => props.setFullName(event.args)}
+                    handleOnClick={() => props.onClick("fullName")}
                     error={props.errorFullName}
                     autoComplete="off"
                   />
@@ -83,6 +84,7 @@ const BCCreateReader = (props: CreateReaderProps) => {
                     rows={5}
                     currentValue={props.biography}
                     handleOnChange={(event) => props.setBiography(event.args)}
+                    handleOnClick={() => props.onClick("biography")}
                     error={props.errorBiography}
                   />
                 </div>

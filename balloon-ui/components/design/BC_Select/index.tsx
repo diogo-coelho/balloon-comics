@@ -45,7 +45,7 @@ const BCSelect: React.FC<SelectProps> = (props: SelectProps): JSX.Element => {
         <span className="select-icon">
           <IconCaretDownFilled width={16} height={16} />
         </span>
-        { props.error && (<span>{ props.error }</span>)}
+        { props.error && (<span className="error-text">{ props.error }</span>)}
       </div>
     </>
   )

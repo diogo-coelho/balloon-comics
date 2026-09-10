@@ -9,7 +9,24 @@
   &-section {
     display: flex;
     flex-direction: column;
-    gap: var(--bc-spacing-large); 
+    gap: var(--bc-spacing-large);
+
+    .input-area,
+    .select-area,
+    .input-segment,
+    .select-segment {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--bc-spacing-large);
+    }
+
+    .input-group,
+    .select-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--bc-spacing-small);
+    }
   }
 
   &-segment {
@@ -21,7 +38,7 @@
     .select-segment {
       display: flex;
       flex-direction: column;
-      gap: var(--bc-spacing-large);
+      gap: var(--bc-spacing-extra-large);
     }
 
     .links-list {
@@ -73,6 +90,7 @@
       .select-segment {
         width: 100%;
         flex-direction: row;
+        gap: var(--bc-spacing-large);
 
         .select-area,
         .input-area {

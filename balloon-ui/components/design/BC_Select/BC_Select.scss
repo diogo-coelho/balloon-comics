@@ -63,11 +63,13 @@
       pointer-events: none;
     }
 
-    &.error + span {
+    .error-text {
       color: var(--bc-color-primary-500);
       font-size: var(--bc-font-size-extra-small);
-      position: relative;
-      top: -5px;
+      position: absolute;
+      top: 43px;
+      left: 0;
     }
   }
 }
+

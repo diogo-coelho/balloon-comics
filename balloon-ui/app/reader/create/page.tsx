@@ -29,6 +29,7 @@ export default function CreateReaderPage() {
     setLinks,
     setDateOfBirth,
     validateRequiredFields,
+    onClick,
   } = useReader(["fullName", "biography", "links", "dateOfBirth"]);
 
   const { isLoading, isError, data } = useCurrentReader();
@@ -39,8 +40,10 @@ export default function CreateReaderPage() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
     if (!validateRequiredFields()) return
    
+    /** 
     try {
       await mutation.mutateAsync({
         name: fullName,
@@ -52,10 +55,11 @@ export default function CreateReaderPage() {
           dateOfBirth: dateOfBirth
         } : undefined
       });  
-      router.push("/reader");      
+      router.push("/reader"); 
+           
     } catch (error: Error | unknown) {
       console.error(error);
-    }
+    }*/
   };
 
   return (
@@ -76,16 +80,19 @@ export default function CreateReaderPage() {
               setBiography={setBiography}
               errorFullName={errorFullName}
               errorBiography={errorBiography}
+              onClick={onClick}
             />
             <BC_AgeVerification 
               dateOfBirth={dateOfBirth}
               setDateOfBirth={setDateOfBirth}
               errorDateOfBirth={errorDateOfBirth}
+              onClick={onClick}
             />
             <BC_SocialMediaLinks 
               links={links} 
               setLinks={setLinks}
               errorLinks={errorLinks}
+              onClick={onClick}
             />
 
             <div className="flex flex-end">

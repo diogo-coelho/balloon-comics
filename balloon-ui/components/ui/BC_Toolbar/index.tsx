@@ -30,7 +30,7 @@ const BCToolbar = (): JSX.Element => {
 
   const gotoProfile = () => {
     if (isAuthenticated) {
-      router.push("/profile");
+      router.push("/reader");
     } else {
       router.push("/login");
     }

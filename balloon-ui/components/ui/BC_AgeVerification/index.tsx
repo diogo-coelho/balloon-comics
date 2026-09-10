@@ -24,7 +24,9 @@ const BCAgeVerification = (props: AgeVerificationProps): JSX.Element => {
                     name="dateOfBirth" 
                     type="date"
                     currentValue={props.dateOfBirth} 
-                    handleOnChange={(event) => props.setDateOfBirth(event.args.value)}
+                    handleOnChange={(event) => props.setDateOfBirth(event.args)}
+                    handleOnClick={() => props.onClick("dateOfBirth")}
+                    error={props.errorDateOfBirth}
                   />
                 </div>
               </div>

@@ -5,6 +5,7 @@ const BC_Textarea = (props: TextAreaProps) => {
   const className = (mainClass: string): string => {
     return [
       mainClass,
+      props.error ? `error` : ``,
     ].toString().replaceAll(",", " ").replace(/\s+/g, " ").trim();
   }
 

@@ -6,4 +6,5 @@ export interface SocialMediaLinksProps {
   }[];
   setLinks: React.Dispatch<React.SetStateAction<{ name: string, label: string, url: string }[]>>;
   errorLinks: string | undefined;
+  onClick: (args: string) => void;
 }
