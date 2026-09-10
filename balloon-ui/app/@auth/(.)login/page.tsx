@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from 'react';
-import BC_LoginForm from '@/components/ui/BC_LoginForm';
-import BC_Alert from '@/components/design/BC_Alert';
+import { useState } from "react";
+import BC_LoginForm from "@/components/ui/BC_LoginForm";
+import BC_Alert from "@/components/design/BC_Alert";
 
 export default function Login() {  
   const [active, setActive] = useState<boolean>(false);

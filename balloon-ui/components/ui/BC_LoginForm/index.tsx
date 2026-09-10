@@ -1,7 +1,7 @@
 "use client";
 
 import "./BC_LoginForm.scss";
-import { JSX, useEffect, useState } from "react";
+import { JSX, useLayoutEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import { useLogin } from "@/hooks/queries/useAuth";
@@ -42,15 +42,14 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
         email: email as string,
         password: password as string,
       });
-      router.push("/reader/create");
+      window.location.assign("/reader");
     } catch (error: Error | unknown) {
-      console.log("error", error);
       props.setAlertActive(true);
       props.setAlertMessage(error instanceof Error ? error.message : String(error));
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setTimeout(() => setActive(true), 300);
   }, [])
 
@@ -106,8 +105,7 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
 
               <BC_Button 
                 type="submit" 
-                variant="primary" 
-                handleOnClick={(e) => onSubmit(e.event)}
+                variant="primary"
               >
                 { isPending && 
                   <BC_Spinning width="14px" height="14px" borderWidth="2px" />

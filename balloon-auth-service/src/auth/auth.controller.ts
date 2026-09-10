@@ -38,10 +38,11 @@ export class AuthController {
   @UseGuards(AuthTokenGuard)
   @Post('logout')
   async logout(
-    @TokenPayloadParam() tokenPayload: TokenPayloadDto
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
     const { sub: userId } = tokenPayload;
-    console.log('Logging out user with ID:', userId);
+    this.clearAuthCookies(response);
     return this.authService.logout(userId);
   }
 
@@ -77,5 +78,10 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/auth/refresh",
     });
+  }
+
+  private clearAuthCookies(response: Response) {
+    response.clearCookie("accessToken", { path: "/" });
+    response.clearCookie("refreshToken", { path: "/auth/refresh" });
   }
 }

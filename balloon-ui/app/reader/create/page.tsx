@@ -6,7 +6,6 @@ import { useUpdateCurrentReader } from "@/hooks/queries/useReader";
 import useReader from "@/hooks/useReader";
 import BC_Card from "@/components/ui/BC_Card";
 import BC_Container from "@/components/ui/BC_Container";
-import BC_Header from "@/components/ui/BC_Header";
 import BC_CreateReader from "@/components/ui/BC_CreateReader";
 import BC_SocialMediaLinks from "@/components/ui/BC_SocialMediaLinks";
 import BC_AgeVerification from "@/components/ui/BC_AgeVerification";
@@ -68,8 +67,7 @@ export default function CreateReaderPage() {
 
   return (
     <div>
-      <BC_Header />
-      <BC_Container hasHeader={true}>
+      <BC_Container>
         <BC_Card
           title="Complete seu perfil"
           subtitle="E melhore ainda mais a sua experiência na plataforma Balloon Comics."
@@ -114,6 +112,7 @@ export default function CreateReaderPage() {
           </form>
         </BC_Card>
       </BC_Container>
+
       <BC_Alert
         active={isActive}
         setActive={setIsActive}

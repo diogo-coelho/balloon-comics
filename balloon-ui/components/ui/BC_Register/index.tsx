@@ -3,7 +3,7 @@
 import "./BC_Register.scss";
 import { useRouter } from "next/navigation";
 import { JSX } from "react/jsx-runtime";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import { useCreatedUser } from "@/hooks/queries/useUser";
 import { RegisterProps } from "./bc-register";
@@ -82,7 +82,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setTimeout(() => setActiveDialog(true), 300);
   }, [])
   

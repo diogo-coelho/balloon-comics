@@ -1,6 +1,8 @@
-import { AuthInitializer } from '@/providers/auth-provider';
 import '../styles/app.scss';
 import { QueryProvider } from '@/providers/query-provider';
+import { AuthInitializer } from '@/providers/auth-provider';
+import BC_Header from '@/components/ui/BC_Header';
+import BC_Toolbar from '@/components/ui/BC_Toolbar';
 
 export const metadata = {
   title: 'Balloon Comics',
@@ -9,9 +11,11 @@ export const metadata = {
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+  auth,
+}: Readonly<{
+  children: React.ReactNode;
+  auth: React.ReactNode;
+}>) {
   return (
     <html lang="pt-BR" data-theme="light">
       <head>
@@ -36,10 +40,19 @@ export default function RootLayout({
           @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
         </style>
       </head>
+      
       <body>
         <QueryProvider>
           <AuthInitializer>
-            {children}
+            <div>
+              <BC_Header />
+              
+              <main>
+                {children}
+              </main>         
+            </div>
+
+            {auth}
           </AuthInitializer>
         </QueryProvider>
       </body>

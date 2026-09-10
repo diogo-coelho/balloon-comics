@@ -74,4 +74,12 @@
       }
     }
   }
+
+  &-desktop {
+    .user-area {
+      display: flex;
+      flex-direction: row;
+      gap: var(--bc-spacing-small);
+    }
+  }
 }

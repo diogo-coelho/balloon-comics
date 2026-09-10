@@ -13,9 +13,17 @@ const login = async (
   }
 };
 
+const logout = async (): Promise<void> => {
+  try {
+    await api.post("/auth/logout");
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getProfile = async (): Promise<HttpResponse<AuthUser>> => {
   const response = await api.get("/auth/me");
   return response.data;
 };
 
-export { login, getProfile };
+export { login, logout, getProfile };

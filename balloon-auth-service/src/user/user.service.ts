@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { OutboxEventEntity } from './entities/outbox-event.entity';
 
@@ -13,16 +13,24 @@ import { ResponseUpdatedUserDto } from './dtos/response/response-updated-user.dt
 import { ResponseUserDto } from './dtos/response/response-user.dto';
 
 import { AUTH_ROUTING_KEYS } from '../constants/routing-keys';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
   constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly dataSource: DataSource,
     private readonly hashingService: HashingServiceProtocol,
     private readonly authService: AuthService
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
+    const existingUser = await this.userRepository.findOne({ where: { email: createUserDto.email } });
+    if (existingUser) {
+      throw new ForbiddenException('Email informado já está em uso');
+    }
+
     const passwordHash = await this.hashingService.hash(
       createUserDto.password,
     );

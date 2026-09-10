@@ -4,21 +4,42 @@ import "./BC_Drawer.scss";
 import React, { JSX } from "react";
 import { IconMenu, IconX } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth.store";
+import { logout } from "@/services/auth.service";
 import BC_Button from "@/components/design/BC_Button";
 import useViewport from "@/hooks/useViewport";
-import { useAuthStore } from "@/store/auth.store";
+import { useShallow } from "zustand/react/shallow";
+
 
 const DCDrawer = (): JSX.Element => {
   const router = useRouter();
-  const isAuthenticated = useAuthStore(
-    (state) => state.isAuthenticated
+  const { isAuthenticated, clearUser } = useAuthStore(
+    useShallow((state) => ({
+      isAuthenticated: state.isAuthenticated,
+      clearUser: state.clearUser,
+    })),
   );
 
   const [ isDrawerOpen, setIsDrawerOpen ] = React.useState(false);
   const { isMobileView } = useViewport();
 
+  const navigateToLogout = async () => {
+    try {
+      await logout();
+      clearUser();
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Erro ao sair:", error);
+    }
+  };
+
   const navigateToLogin = () => {
     router.push("/login");
+  }
+
+  const navigateToPublish = () => {
+    router.push("/author");
   }
   
   return (
@@ -49,11 +70,18 @@ const DCDrawer = (): JSX.Element => {
             <div className="drawer-body">
               <ul>
                 { !isAuthenticated && (<a href="/login"><li>Login</li></a>) }
+                { isAuthenticated && (
+                  <>
+                    <a href="/author"><li>Publicar minhas HQs</li></a>
+                    <a onClick={navigateToLogout} href="#"><li>Sair</li></a>
+                  </>
+                )}
               </ul>
             </div>
           </aside>
         </>
       )}
+
       {!isMobileView() && (
         <div className="drawer-desktop">
           { !isAuthenticated && (
@@ -64,7 +92,26 @@ const DCDrawer = (): JSX.Element => {
             >
               Login
             </BC_Button>
-          )}          
+          )} 
+          { isAuthenticated && (
+            <div className="user-area">            
+              <BC_Button
+                type="button"
+                variant="primary"
+                handleOnClick={(event) => navigateToPublish()}
+              >
+                Publicar
+              </BC_Button>
+
+              <BC_Button
+                type="button"
+                variant="secondary"
+                handleOnClick={(event) => navigateToLogout()}
+              >
+                Sair
+              </BC_Button>
+            </div>
+          )}         
         </div>
       )}
     </>

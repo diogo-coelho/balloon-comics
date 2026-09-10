@@ -4,8 +4,7 @@ export default function Home() {
   return (
     <>
       <div>
-        <BC_Header />
-        <section>Página não encontrada</section>
+        Página não encontrada
       </div>
     </>
   );

@@ -22,7 +22,7 @@ const BCDialog = (props: DialogProps): JSX.Element => {
 
   return (
     <>
-      <div className="dialog">
+      <div className={getClassName('dialog')}>
         <div className={getClassName('dialog-container')} ref={ref}>
           { props.children }
           <div className="close-button">
