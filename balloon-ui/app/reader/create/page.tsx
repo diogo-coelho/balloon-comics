@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCurrentReader } from "@/hooks/queries/useReader";
 import { useUpdateCurrentReader } from "@/hooks/queries/useReader";
+import useReader from "@/hooks/useReader";
 import BC_Card from "@/components/ui/BC_Card";
 import BC_Container from "@/components/ui/BC_Container";
 import BC_Header from "@/components/ui/BC_Header";
@@ -10,10 +11,14 @@ import BC_CreateReader from "@/components/ui/BC_CreateReader";
 import BC_SocialMediaLinks from "@/components/ui/BC_SocialMediaLinks";
 import BC_AgeVerification from "@/components/ui/BC_AgeVerification";
 import BC_Button from "@/components/design/BC_Button";
-import useReader from "@/hooks/useReader";
 import BC_Spinning from "@/components/design/BC_Spinning";
+import { useState } from "react";
+import BC_Alert from "@/components/design/BC_Alert";
 
 export default function CreateReaderPage() {
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isActive, setIsActive] = useState<boolean>(false);
+  
   const router = useRouter();
   const { 
     fullName, 
@@ -32,18 +37,16 @@ export default function CreateReaderPage() {
     onClick,
   } = useReader(["fullName", "biography", "links", "dateOfBirth"]);
 
-  const { isLoading, isError, data } = useCurrentReader();
+  const { isLoading, data } = useCurrentReader();
   const readerData = data?.data;
 
   const mutation = useUpdateCurrentReader();
   const { isPending } = mutation;
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
+    e.preventDefault();    
     if (!validateRequiredFields()) return
-   
-    /** 
+    
     try {
       await mutation.mutateAsync({
         name: fullName,
@@ -58,8 +61,9 @@ export default function CreateReaderPage() {
       router.push("/reader"); 
            
     } catch (error: Error | unknown) {
-      console.error(error);
-    }*/
+      setIsActive(true);
+      setErrorMessage(error instanceof Error ? error.message : String(error));
+    }
   };
 
   return (
@@ -110,6 +114,11 @@ export default function CreateReaderPage() {
           </form>
         </BC_Card>
       </BC_Container>
+      <BC_Alert
+        active={isActive}
+        setActive={setIsActive}
+        message={errorMessage}
+      />
     </div>
   );
 }

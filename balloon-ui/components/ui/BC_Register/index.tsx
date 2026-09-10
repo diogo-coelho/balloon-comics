@@ -6,18 +6,19 @@ import { JSX } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import { useCreatedUser } from "@/hooks/queries/useUser";
+import { RegisterProps } from "./bc-register";
 import useFieldValidation from "@/hooks/useFieldValidation";
 import BC_Button from "@/components/design/BC_Button";
 import BC_Input from "@/components/design/BC_Input";
 import BC_Spinning from "@/components/design/BC_Spinning";
 import BC_Dialog from "@/components/design/BC_Dialog/BC_Dialog";
 
-const BCRegister = () => {
+const BCRegister = (props: RegisterProps): JSX.Element => {
   const router = useRouter();
   const mutation = useCreatedUser();
   const { isPending } = mutation;
 
-  const [active, setActive] = useState<boolean>(false);
+  const [activeDialog, setActiveDialog] = useState<boolean>(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
@@ -74,21 +75,21 @@ const BCRegister = () => {
         email: email as string,
         password: password as string
       });  
-      router.push("/reader/create");
-      
+      router.push("/reader/create");      
     } catch (error: Error | unknown) {
-      console.error(error);
+      props.setAlertActive(true);
+      props.setAlertMessage(error instanceof Error ? error.message : String(error));
     }
   };
 
   useEffect(() => {
-    setTimeout(() => setActive(true), 300);
+    setTimeout(() => setActiveDialog(true), 300);
   }, [])
   
   return (
     <BC_Dialog
-      active={ active ? 'on' : 'off'} 
-      setActive={setActive}
+      active={ activeDialog ? 'on' : 'off'} 
+      setActive={setActiveDialog}
       handleOnClose={() => goToHomepage() }
     >
     <div className="register-container">
