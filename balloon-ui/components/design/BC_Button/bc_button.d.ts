@@ -30,6 +30,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   outline?: Outline,
   transparent?: Outline,
   align?: 'left' | 'center' | 'right',
+  className?: string,
   handleOnClick?: (
     data: { 
       args?: T | T[], 

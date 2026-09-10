@@ -46,3 +46,12 @@
     }
   }
 }
+
+@media only screen and (min-width: 720px) {
+  .login {
+    &-card {
+      width: 90%;
+      max-width: 90%;
+    }
+  }
+}

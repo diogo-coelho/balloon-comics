@@ -6,3 +6,23 @@ export const api = axios.create({
   withCredentials: true,
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const apiData = error.response?.data;
+
+    if (apiData) {
+      const rawMessage = apiData.message || apiData.error;
+
+      if (rawMessage) {
+        const message = Array.isArray(rawMessage)
+          ? rawMessage.join(", ")
+          : rawMessage;
+
+        error.message = message;
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);

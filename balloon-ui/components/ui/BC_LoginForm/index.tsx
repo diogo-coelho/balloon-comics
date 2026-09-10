@@ -1,17 +1,18 @@
 "use client";
 
 import "./BC_LoginForm.scss";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import { useLogin } from "@/hooks/queries/useAuth";
+import { LoginFormProps } from "./bc-login-form";
 import BC_Button from "@/components/design/BC_Button";
 import BC_Input from "@/components/design/BC_Input";
 import useFieldValidation from "@/hooks/useFieldValidation";
 import BC_Spinning from "@/components/design/BC_Spinning";
 import BC_Dialog from "@/components/design/BC_Dialog/BC_Dialog";
 
-const BCLogin = () => {
+const BCLogin = (props: LoginFormProps): JSX.Element => {
   const router = useRouter();
   const mutation = useLogin();
   const { isPending } = mutation;
@@ -43,7 +44,9 @@ const BCLogin = () => {
       });
       router.push("/reader/create");
     } catch (error: Error | unknown) {
-      console.error(error);
+      console.log("error", error);
+      props.setAlertActive(true);
+      props.setAlertMessage(error instanceof Error ? error.message : String(error));
     }
   }
 

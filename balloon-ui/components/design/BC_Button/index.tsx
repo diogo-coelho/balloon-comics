@@ -11,6 +11,7 @@ const BCButton: React.FC<ButtonProps> = (props: ButtonProps): JSX.Element => {
     props.size ?? ``,
     props.outline === 'on' ? `outline` : ``,
     props.align ?? ``,
+    props.className ?? ``,
   ].toString().replaceAll(",", " ").replace(/\s+/g, " ").trim();
   
   return (
