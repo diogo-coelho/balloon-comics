@@ -1,28 +1,37 @@
 import "./BC_SocialMediaLinks.scss";
 import React from "react";
 import { BCSocialMediaLinksEnum } from "./bc-social-media-links.enum";
+import { SocialMediaLinksProps } from "./bc-social-media-links";
 import { IconTrash } from '@tabler/icons-react';
 import BC_Select from "@/components/design/BC_Select";
 import BC_Input from "@/components/design/BC_Input";
 import BC_Button from "@/components/design/BC_Button";
 
-const BCSocialMediaLinks = () => {
-  const [selectedOption, setSelectedOption] = React.useState({ value: '', label: 'Selecione uma opção' });
+const BCSocialMediaLinks = (props: SocialMediaLinksProps) => {
+  const [selectedOption, setSelectedOption] = React.useState({ name: '', label: 'Selecione uma opção' });
   const [url, setUrl] = React.useState('');
-  const [links, setLinks] = React.useState<{ value: string, label: string, url: string }[]>([]);
 
   const options = [
-    { key: '', value: '', label: 'Selecione uma opção' },
-    { key: BCSocialMediaLinksEnum.FACEBOOK, value: BCSocialMediaLinksEnum.FACEBOOK, label: BCSocialMediaLinksEnum.FACEBOOK },
-    { key: BCSocialMediaLinksEnum.TWITTER, value: BCSocialMediaLinksEnum.TWITTER, label: BCSocialMediaLinksEnum.TWITTER },
-    { key: BCSocialMediaLinksEnum.INSTAGRAM, value: BCSocialMediaLinksEnum.INSTAGRAM, label: BCSocialMediaLinksEnum.INSTAGRAM },
-    { key: BCSocialMediaLinksEnum.LINKEDIN, value: BCSocialMediaLinksEnum.LINKEDIN, label: BCSocialMediaLinksEnum.LINKEDIN }
+    { key: '', name: '', label: 'Selecione uma opção' },
+    { key: BCSocialMediaLinksEnum.APOIA_SE, name: BCSocialMediaLinksEnum.APOIA_SE, label: BCSocialMediaLinksEnum.APOIA_SE },
+    { key: BCSocialMediaLinksEnum.BLUESKY, name: BCSocialMediaLinksEnum.BLUESKY, label: BCSocialMediaLinksEnum.BLUESKY },
+    { key: BCSocialMediaLinksEnum.CATARSE, name: BCSocialMediaLinksEnum.CATARSE, label: BCSocialMediaLinksEnum.CATARSE },
+    { key: BCSocialMediaLinksEnum.DISCORD, name: BCSocialMediaLinksEnum.DISCORD, label: BCSocialMediaLinksEnum.DISCORD },
+    { key: BCSocialMediaLinksEnum.FACEBOOK, name: BCSocialMediaLinksEnum.FACEBOOK, label: BCSocialMediaLinksEnum.FACEBOOK },
+    { key: BCSocialMediaLinksEnum.INSTAGRAM, name: BCSocialMediaLinksEnum.INSTAGRAM, label: BCSocialMediaLinksEnum.INSTAGRAM },
+    { key: BCSocialMediaLinksEnum.LINKEDIN, name: BCSocialMediaLinksEnum.LINKEDIN, label: BCSocialMediaLinksEnum.LINKEDIN },
+    { key: BCSocialMediaLinksEnum.PATREON, name: BCSocialMediaLinksEnum.PATREON, label: BCSocialMediaLinksEnum.PATREON },
+    { key: BCSocialMediaLinksEnum.TIKTOK, name: BCSocialMediaLinksEnum.TIKTOK, label: BCSocialMediaLinksEnum.TIKTOK },
+    { key: BCSocialMediaLinksEnum.TWITCH, name: BCSocialMediaLinksEnum.TWITCH, label: BCSocialMediaLinksEnum.TWITCH },
+    { key: BCSocialMediaLinksEnum.TWITTER, name: BCSocialMediaLinksEnum.TWITTER, label: BCSocialMediaLinksEnum.TWITTER },
+    { key: BCSocialMediaLinksEnum.WEBSITE, name: BCSocialMediaLinksEnum.WEBSITE, label: BCSocialMediaLinksEnum.WEBSITE },
+    { key: BCSocialMediaLinksEnum.YOUTUBE, name: BCSocialMediaLinksEnum.YOUTUBE, label: BCSocialMediaLinksEnum.YOUTUBE },
   ]
 
   const handleOptionChange = (event: any) => {
     const selectedValue = event.args;
-    const selectedLabel = options.find(option => option.value === selectedValue)?.label || 'Selecione uma opção';
-    setSelectedOption({ value: selectedValue, label: selectedLabel });
+    const selectedLabel = options.find(option => option.name === selectedValue)?.label || 'Selecione uma opção';
+    setSelectedOption({ name: selectedValue, label: selectedLabel });
   }
 
   const handleUrlChange = (event: any) => {
@@ -30,9 +39,12 @@ const BCSocialMediaLinks = () => {
   }
 
   const handleAddLink = () => {
-    if (selectedOption.value && url) {
-      setLinks([...links, { value: selectedOption.value, label: selectedOption.label, url }]);
-      setSelectedOption({ value: '', label: 'Selecione uma opção' });
+    if (selectedOption.name && url) {
+      props.setLinks([
+        ...props.links, 
+        { name: selectedOption.name, label: selectedOption.label, url }
+      ]);
+      setSelectedOption({ name: '', label: 'Selecione uma opção' });
       setUrl('');
     }
   }
@@ -49,8 +61,15 @@ const BCSocialMediaLinks = () => {
               <div className="input-group">
                 <BC_Select 
                   name="social-media-links"
-                  options={options}
-                  selected={selectedOption}
+                  options={options.map(option => ({ 
+                    key: option.key, 
+                    value: option.name, 
+                    label: option.label 
+                  }))}
+                  selected={{
+                    value: selectedOption.name,
+                    label: selectedOption.label
+                  }}
                   handleOnChange={(e) => handleOptionChange(e)}
                 />
               </div>
@@ -82,9 +101,10 @@ const BCSocialMediaLinks = () => {
           </div>
         </div>
 
+        { props.links.length > 0 && (
         <div className="social-media-links-segment">
           <div className="links-list">
-            {links.map((link, index) => (
+            {props.links.map((link, index) => (
               <div key={index} className="link-item">
                 <div>
                 <p>{link.label}</p>
@@ -96,8 +116,8 @@ const BCSocialMediaLinks = () => {
                   variant="transparent"
                   size="small"
                   handleOnClick={() => {
-                    const updatedLinks = links.filter((_, i) => i !== index);
-                    setLinks(updatedLinks);
+                    const updatedLinks = props.links.filter((_, i) => i !== index);
+                    props.setLinks(updatedLinks);
                   }}
                 >
                   <IconTrash className="icon" width={16} height={16} />
@@ -106,6 +126,7 @@ const BCSocialMediaLinks = () => {
             ))}
           </div>
         </div>
+        )}
       </section>
     </div>
     </>

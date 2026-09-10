@@ -11,6 +11,7 @@ const BCSelect: React.FC<SelectProps> = (props: SelectProps): JSX.Element => {
     return [
       mainClass,
       props.disabled ? `disabled` : ``,
+      props.error ? `error` : ``,
     ].toString().replaceAll(",", " ").replace(/\s+/g, " ").trim();
   }
 
@@ -44,6 +45,7 @@ const BCSelect: React.FC<SelectProps> = (props: SelectProps): JSX.Element => {
         <span className="select-icon">
           <IconCaretDownFilled width={16} height={16} />
         </span>
+        { props.error && (<span>{ props.error }</span>)}
       </div>
     </>
   )

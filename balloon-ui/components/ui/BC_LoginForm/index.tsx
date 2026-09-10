@@ -106,10 +106,10 @@ const BCLogin = () => {
                 variant="primary" 
                 handleOnClick={(e) => onSubmit(e.event)}
               >
-                  { isPending && 
-                    <BC_Spinning width="14px" height="14px" borderWidth="2px" />
-                  }
-                  Entrar
+                { isPending && 
+                  <BC_Spinning width="14px" height="14px" borderWidth="2px" />
+                }
+                Entrar
               </BC_Button>
             </form>
           </div>

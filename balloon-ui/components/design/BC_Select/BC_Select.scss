@@ -50,6 +50,10 @@
         cursor: not-allowed;
         box-shadow: none;
       }
+
+      &.error {
+        border: 1px solid var(--bc-color-primary-500);
+      }
     }
 
     .select-icon {
@@ -57,6 +61,13 @@
       position: absolute;
       right: var(--bc-spacing-small);
       pointer-events: none;
+    }
+
+    &.error + span {
+      color: var(--bc-color-primary-500);
+      font-size: var(--bc-font-size-extra-small);
+      position: relative;
+      top: -5px;
     }
   }
 }

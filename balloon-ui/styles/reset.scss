@@ -29,3 +29,11 @@ button {
 h1 {
   font-size: var(--bc-font-size-extra-large);
 }
+
+.flex {
+  display: flex;
+
+  &-end {
+    justify-content: flex-end;
+  }
+}

@@ -4,7 +4,7 @@ import BC_Input from "@/components/design/BC_Input";
 import BC_Button from "@/components/design/BC_Button";
 import BC_Textarea from "@/components/design/BC_Textarea";
 
-const BCCreateReader = ({ isLoading, readerData }: CreateReaderProps) => {
+const BCCreateReader = (props: CreateReaderProps) => {
   return (
     <>
     <div className="create-reader-container">
@@ -20,7 +20,7 @@ const BCCreateReader = ({ isLoading, readerData }: CreateReaderProps) => {
                   id="username" 
                   name="username" 
                   type="text"
-                  currentValue={readerData?.username ?? ""} 
+                  currentValue={props.readerData?.username ?? ""} 
                   disabled
                  />
               </div>
@@ -33,7 +33,7 @@ const BCCreateReader = ({ isLoading, readerData }: CreateReaderProps) => {
                   id="email" 
                   name="email" 
                   type="email"
-                  currentValue={readerData?.email ?? ""} 
+                  currentValue={props.readerData?.email ?? ""} 
                   disabled
                 />
               </div>
@@ -53,7 +53,7 @@ const BCCreateReader = ({ isLoading, readerData }: CreateReaderProps) => {
 
         <div className="divider"></div>            
 
-        <form className="create-reader-section">
+        <div className="create-reader-section">
           <div className="create-reader-segment">
             <h3>Informações adicionais</h3>
                     
@@ -66,6 +66,9 @@ const BCCreateReader = ({ isLoading, readerData }: CreateReaderProps) => {
                     name="name" 
                     type="text"
                     placeholder="Insira seu nome completo"
+                    currentValue={props.fullName}
+                    handleOnChange={(event) => props.setFullName(event.args)}
+                    error={props.errorFullName}
                     autoComplete="off"
                   />
                 </div>
@@ -78,12 +81,15 @@ const BCCreateReader = ({ isLoading, readerData }: CreateReaderProps) => {
                     placeholder="Escreva uma breve biografia sobre você"
                     autoComplete="off"
                     rows={5}
+                    currentValue={props.biography}
+                    handleOnChange={(event) => props.setBiography(event.args)}
+                    error={props.errorBiography}
                   />
                 </div>
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </>
   )

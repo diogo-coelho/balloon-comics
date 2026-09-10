@@ -11,4 +11,15 @@ const getCurrentReader = async (): Promise<HttpResponse<ReaderData>> => {
   }
 };
 
-export { getCurrentReader };
+const updateCurrentReader = async (
+  data: Partial<ReaderData>
+): Promise<HttpResponse<ReaderData>> => {
+  try {
+    const response = await api.patch("/readers/me", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export { getCurrentReader, updateCurrentReader };

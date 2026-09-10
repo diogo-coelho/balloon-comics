@@ -15,6 +15,7 @@ export interface SelectProps  extends SelectHTMLAttributes<HTMLSelectElement> {
     label: string;
   }[];
   currentValue?: string;
+  error?: string;
   handleOnChange?: (
     data: { 
       args?: string | string[], 

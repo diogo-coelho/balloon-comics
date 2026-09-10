@@ -20,7 +20,7 @@
     gap: var(--bc-spacing-medium);
   }
 
-  .wrapper {
+  .wrapper, form {
     width: 100%;
     flex-direction: column;
     display: flex;

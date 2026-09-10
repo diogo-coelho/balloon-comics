@@ -8,8 +8,8 @@ export type ReaderData = {
   name?: string;
   imageUrl?: string;
   description?: string;
-  ageVerification?: AgeVerificationData;
-  socialMediaLinks: SocialMediaLinksData[];
+  ageVerification?: Partial<AgeVerificationData>;
+  socialMediaLinks: Partial<SocialMediaLinksData>[];
   createdAt: Date;
   updatedAt: Date;
 }

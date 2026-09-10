@@ -76,7 +76,7 @@ export class ReaderService {
           userId: updateReaderDto.userId,
         });
 
-        if (ageVerification) 
+        if (ageVerification?.dateOfBirth)
           ageVerificationRecord = await this.saveAgeVerificationInDatabase(manager, reader, ageVerification);
 
         if (socialMediaLinks?.length)
