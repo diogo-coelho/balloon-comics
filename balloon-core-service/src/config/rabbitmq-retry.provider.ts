@@ -21,20 +21,21 @@ export class RabbitMqRetryProvider
     const url = this.configService.getOrThrow<string>('RABBITMQ_URL');
     const retryExchange = this.configService.getOrThrow<string>('RABBITMQ_RETRY_EXCHANGE');
 
-    this.connection =  amqpConnectionManager.connect([url], { heartbeatIntervalInSeconds: 30, reconnectTimeInSeconds: 5 });
-    this.channel =
-      this.connection.createChannel({
-        confirm: true,
-        publishTimeout: 10_000,
+    this.connection =  amqpConnectionManager.connect(
+      [url], { heartbeatIntervalInSeconds: 30, reconnectTimeInSeconds: 5 });
+      
+    this.channel = this.connection.createChannel({
+      confirm: true,
+      publishTimeout: 10_000,
 
-        setup: async (channel) => {
-          await channel.assertExchange(
-            retryExchange,
-            'topic',
-            { durable: true },
-          );
-        },
-      });
+      setup: async (channel) => {
+        await channel.assertExchange(
+          retryExchange,
+          'topic',
+          { durable: true },
+        );
+      },
+    });
   }
 
   async publishRetry(

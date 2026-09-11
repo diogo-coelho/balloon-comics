@@ -27,7 +27,6 @@ export async function setupRabbitMQ(
   );
   const dlq = `${queue}.dlq`;
 
-  // 1. Asserta a topologia (Exchanges, DLX, DLQ e Binds) via amqplib
   const connection = await amqp.connect(url);
   const channel = await connection.createChannel();
 
@@ -36,15 +35,12 @@ export async function setupRabbitMQ(
   await channel.assertExchange(retryExchange, 'topic', { durable: true});
 
   await channel.assertQueue(dlq, { durable: true });
-  await channel.assertQueue(retryQueue, { durable: true, messageTtl: retryDelay, deadLetterExchange: exchange });
   await channel.bindQueue(dlq, deadLetterExchange, deadLetterRoutingKey);
+  
+  await channel.assertQueue(retryQueue, { durable: true, messageTtl: retryDelay, deadLetterExchange: exchange });
   await channel.bindQueue(retryQueue, retryExchange, '#');
 
-  await channel.assertQueue(queue, {
-    durable: true,
-    deadLetterExchange,
-    deadLetterRoutingKey,
-  });
+  await channel.assertQueue(queue, { durable: true, deadLetterExchange, deadLetterRoutingKey });
   await channel.bindQueue(queue, exchange, queueKey);
 
   await channel.close();

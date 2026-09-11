@@ -12,6 +12,7 @@ import { ReaderService } from './reader.service';
 import { ReaderConsumer } from './reader.consumer';
 import { ReaderEntity } from './entities/reader.entity';
 import { ProcessedEventEntity } from './entities/processed-event.entity';
+import { RabbitMqRetryProvider } from '../config/rabbitmq-retry.provider';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { ProcessedEventEntity } from './entities/processed-event.entity';
     SocialMediaLinkModule,
   ],
   controllers: [ReaderController, ReaderConsumer],
-  providers: [ReaderService],
+  providers: [ReaderService, RabbitMqRetryProvider,],
   exports: [TypeOrmModule],
 })
 export class ReaderModule {}
