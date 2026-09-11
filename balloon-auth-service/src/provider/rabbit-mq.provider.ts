@@ -26,6 +26,8 @@ export class RabbitMQProvider implements OnModuleInit {
 
       this.channel = await this.connection?.createChannel({
         json: false,
+        confirm: true,
+        publishTimeout: 10_000,
         setup: async (channel) => {
           await channel.assertExchange(AUTH_EXCHANGE, 'topic', {
             durable: true,
