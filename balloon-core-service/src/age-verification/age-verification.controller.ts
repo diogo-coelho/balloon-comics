@@ -7,12 +7,14 @@ import { AuthTokenGuard } from '../auth/guards/auth-token.guard';
 import { TokenPayloadDto } from '../auth/dtos/request/token-payload.dto';
 import { TokenPayloadParam } from '../auth/decorators/token-payload.decorator';
 import { Repository } from 'typeorm/repository/Repository.js';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Controller('age-verification')
 export class AgeVerificationController {
   constructor(
-    private readonly readerRepository: Repository<ReaderEntity>,
     private readonly ageVerificationService: AgeVerificationService,
+    @InjectRepository(ReaderEntity)
+    private readonly readerRepository: Repository<ReaderEntity>,
   ) {}
 
   @UseGuards(AuthTokenGuard)
