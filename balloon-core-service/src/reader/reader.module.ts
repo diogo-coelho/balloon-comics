@@ -24,5 +24,6 @@ import { ProcessedEventEntity } from './entities/processed-event.entity';
   ],
   controllers: [ReaderController, ReaderConsumer],
   providers: [ReaderService],
+  exports: [TypeOrmModule],
 })
 export class ReaderModule {}
