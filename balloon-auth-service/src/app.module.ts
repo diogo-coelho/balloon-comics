@@ -21,7 +21,7 @@ import { CustomExceptionFilter } from './filters/custom-exception.filter';
     ThrottlerModule.forRoot({
       throttlers: [
         {
-          ttl: 60,
+          ttl: 60000,
           limit: 10,
         },
       ],
