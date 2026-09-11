@@ -24,7 +24,7 @@ import { SocialMediaLinkModule } from './social-media-link/social-media-link.mod
     ThrottlerModule.forRoot({
       throttlers: [
         {
-          ttl: 60,
+          ttl: 60000,
           limit: 10,
         },
       ],

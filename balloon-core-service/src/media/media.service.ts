@@ -56,7 +56,7 @@ export class MediaService {
         originalname:
           file.originalname.split('.').shift() + '.' + profile.format,
         buffer: processedBuffer,
-        mimetype: profile.format,
+        mimetype: `image/${profile.format}`,
         size: processedBuffer.length,
       };
     } catch (error: Error | unknown) {
