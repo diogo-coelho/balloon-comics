@@ -1,7 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { registerAs } from '@nestjs/config';
 
-const readKeyFile = (path: string | undefined, variableName: string): string => {
+const readKeyFile = (
+  path: string | undefined,
+  variableName: string,
+): string => {
   if (!path) {
     throw new Error(`${variableName} não foi configurada.`);
   }

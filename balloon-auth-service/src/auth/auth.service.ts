@@ -1,4 +1,8 @@
-import { Inject, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -37,7 +41,7 @@ export class AuthService {
     }
 
     const { accessToken, refreshToken } = await this.generateTokens(user);
-    const nextUrl = await this.getNextUrl('\/home');
+    const nextUrl = await this.getNextUrl('/home');
 
     return {
       accessToken: accessToken,
@@ -132,7 +136,7 @@ export class AuthService {
     const refreshToken = await this.signJwtAsync(
       user.id,
       this.jwtConfiguration.refreshTokenExpiresIn,
-      { tokenType: 'refresh' }
+      { tokenType: 'refresh' },
     );
 
     const refreshTokenHash = await this.hashingService.hash(refreshToken);

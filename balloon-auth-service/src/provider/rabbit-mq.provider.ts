@@ -15,33 +15,30 @@ export class RabbitMQProvider implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      const connectionUrl = this.configService.getOrThrow<string>(
-        'RABBITMQ_URL',
-      ) as string;
+      const connectionUrl =
+        this.configService.getOrThrow<string>('RABBITMQ_URL');
 
-      this.connection = await amqpConnectionManager.connect(connectionUrl, 
-        { 
-          heartbeatIntervalInSeconds: 30, 
-          reconnectTimeInSeconds: 5 
-        });
+      this.connection = await amqpConnectionManager.connect(connectionUrl, {
+        heartbeatIntervalInSeconds: 30,
+        reconnectTimeInSeconds: 5,
+      });
       this.handleConnectionLogging();
 
-      this.channel = await this.connection?.createChannel(
-        { 
-          json: false, 
-          setup: async (channel) => {
-            await channel.assertExchange(AUTH_EXCHANGE, 'topic',
-              { durable: true });
+      this.channel = await this.connection?.createChannel({
+        json: false,
+        setup: async (channel) => {
+          await channel.assertExchange(AUTH_EXCHANGE, 'topic', {
+            durable: true,
+          });
 
-            channel.on('return', (message) => {
-              const messageId = message.properties.messageId;
-              if (messageId) {
-                this.returnedMessages.add(messageId);
-              }
-            });
-          },
-        });
-      
+          channel.on('return', (message) => {
+            const messageId = message.properties.messageId;
+            if (messageId) {
+              this.returnedMessages.add(messageId);
+            }
+          });
+        },
+      });
     } catch (error: Error | undefined | any) {
       this.logger.error('Failed to connect to RabbitMQ:', error);
       throw error;
@@ -94,6 +91,6 @@ export class RabbitMQProvider implements OnModuleInit {
 
     this.connection.on('error', (err) => {
       this.logger.error('Erro na conexão com RabbitMQ', err);
-    }); 
+    });
   }
 }

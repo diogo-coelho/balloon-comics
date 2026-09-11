@@ -4,6 +4,6 @@ export class AuthDataDto {
   user?: {
     id: string;
     email: string;
-  }
+  };
   next?: string;
 }

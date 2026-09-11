@@ -58,23 +58,23 @@ export class UserController {
     return this.userService.deleteUser(id, tokenPayload);
   }
 
-  private setAccessTokenCookie (response: Response, accessToken: string) {
-    response.cookie("accessToken", accessToken, {
+  private setAccessTokenCookie(response: Response, accessToken: string) {
+    response.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 15 * 60 * 1000,
-      path: "/",
+      path: '/',
     });
-  };
+  }
 
-  private setRefreshTokenCookie (response: Response, refreshToken: string) {
-    response.cookie("refreshToken", refreshToken, {
+  private setRefreshTokenCookie(response: Response, refreshToken: string) {
+    response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/auth/refresh",
+      path: '/auth/refresh',
     });
-  };
+  }
 }

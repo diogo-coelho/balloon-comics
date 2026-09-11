@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { UserService } from '../user.service';
 import { UserEntity } from '../entities/user.entity';
@@ -17,6 +18,7 @@ import { AUTH_ROUTING_KEYS } from '../../constants/routing-keys';
 
 describe('UserService', () => {
   let userService: UserService;
+  let userRepository: jest.Mocked<Repository<UserEntity>>;
   let dataSource: jest.Mocked<DataSource>;
   let hashingService: jest.Mocked<HashingServiceProtocol>;
   let authService: jest.Mocked<AuthService>;
@@ -61,6 +63,12 @@ describe('UserService', () => {
       providers: [
         UserService,
         {
+          provide: getRepositoryToken(UserEntity),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue(null),
+          },
+        },
+        {
           provide: DataSource,
           useValue: {
             transaction: jest.fn((callback: any) => callback(manager)),
@@ -84,6 +92,7 @@ describe('UserService', () => {
     }).compile();
 
     userService = module.get(UserService);
+    userRepository = module.get(getRepositoryToken(UserEntity));
     dataSource = module.get(DataSource);
     hashingService = module.get(HashingServiceProtocol);
     authService = module.get(AuthService);
@@ -112,9 +121,7 @@ describe('UserService', () => {
 
       const result = await userService.createUser(createUserDto);
 
-      expect(hashingService.hash).toHaveBeenCalledWith(
-        createUserDto.password,
-      );
+      expect(hashingService.hash).toHaveBeenCalledWith(createUserDto.password);
       expect(result.message).toBe('Usuário criado com sucesso');
       expect(result.data?.user.username).toBe(createUserDto.username);
       expect(result.data?.user.email).toBe(createUserDto.email);
@@ -125,7 +132,9 @@ describe('UserService', () => {
 
     it('deve persistir um evento outbox do tipo USER_CREATED', async () => {
       hashingService.hash.mockResolvedValue('hash-da-senha');
-      authService.getNextUrl.mockResolvedValue('http://localhost:3000/reader/create');
+      authService.getNextUrl.mockResolvedValue(
+        'http://localhost:3000/reader/create',
+      );
       authService.generateTokens.mockResolvedValue({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
@@ -148,7 +157,9 @@ describe('UserService', () => {
 
     it('deve utilizar a transação do DataSource para criar o usuário', async () => {
       hashingService.hash.mockResolvedValue('hash-da-senha');
-      authService.getNextUrl.mockResolvedValue('http://localhost:3000/reader/create');
+      authService.getNextUrl.mockResolvedValue(
+        'http://localhost:3000/reader/create',
+      );
       authService.generateTokens.mockResolvedValue({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
@@ -157,6 +168,32 @@ describe('UserService', () => {
       await userService.createUser(createUserDto);
 
       expect(dataSource.transaction).toHaveBeenCalledTimes(1);
+    });
+
+    it('deve lançar ForbiddenException quando o email já estiver em uso', async () => {
+      userRepository.findOne.mockResolvedValue({ ...user });
+
+      await expect(userService.createUser(createUserDto)).rejects.toThrow(
+        ForbiddenException,
+      );
+      expect(dataSource.transaction).not.toHaveBeenCalled();
+    });
+
+    it('deve consultar o repositório de usuários pelo email informado', async () => {
+      hashingService.hash.mockResolvedValue('hash-da-senha');
+      authService.getNextUrl.mockResolvedValue(
+        'http://localhost:3000/reader/create',
+      );
+      authService.generateTokens.mockResolvedValue({
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+      });
+
+      await userService.createUser(createUserDto);
+
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { email: createUserDto.email },
+      });
     });
   });
 

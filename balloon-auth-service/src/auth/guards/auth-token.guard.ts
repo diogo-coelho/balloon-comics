@@ -28,18 +28,15 @@ export class AuthTokenGuard implements CanActivate {
       throw new UnauthorizedException('Token de autenticação não fornecido');
 
     try {
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          publicKey: this.jwtConfiguration.publicKey,
-          ...this.jwtConfiguration.verifyOptions,
-        },
-      );
+      const payload = await this.jwtService.verifyAsync(token, {
+        publicKey: this.jwtConfiguration.publicKey,
+        ...this.jwtConfiguration.verifyOptions,
+      });
 
       if (payload.tokenType !== 'access') {
         throw new UnauthorizedException('Token de autenticação inválido');
       }
-      
+
       request[REQUEST_TOKEN_PAYLOAD_KEY] = payload;
       return true;
     } catch (error: Error | undefined | any) {

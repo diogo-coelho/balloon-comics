@@ -4,13 +4,13 @@ export type UserDto = {
   email: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 export class ResponseUserDto {
   message?: string;
   accessToken?: string;
   refreshToken?: string;
   data?: {
-    user: UserDto
+    user: UserDto;
   };
   next?: string;
 }

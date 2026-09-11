@@ -16,7 +16,7 @@ import { CustomExceptionFilter } from './filters/custom-exception.filter';
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
-      validationSchema: getJoiConfig()
+      validationSchema: getJoiConfig(),
     }),
     ThrottlerModule.forRoot({
       throttlers: [
@@ -42,7 +42,7 @@ import { CustomExceptionFilter } from './filters/custom-exception.filter';
     {
       provide: APP_FILTER,
       useClass: CustomExceptionFilter,
-    }
+    },
   ],
 })
 export class AppModule {}

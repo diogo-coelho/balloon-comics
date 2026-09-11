@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { OutboxEventEntity } from './entities/outbox-event.entity';
@@ -22,37 +26,35 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly dataSource: DataSource,
     private readonly hashingService: HashingServiceProtocol,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
-    const existingUser = await this.userRepository.findOne({ where: { email: createUserDto.email } });
+    const existingUser = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
     if (existingUser) {
       throw new ForbiddenException('Email informado já está em uso');
     }
 
-    const passwordHash = await this.hashingService.hash(
-      createUserDto.password,
-    );
-    const user = await this.createUserTransaction(
-      passwordHash,
-      createUserDto,
-    );
+    const passwordHash = await this.hashingService.hash(createUserDto.password);
+    const user = await this.createUserTransaction(passwordHash, createUserDto);
     const nextUrl = await this.authService.getNextUrl('\/readers\/me');
-    const { accessToken, refreshToken } = await this.authService.generateTokens(user);
+    const { accessToken, refreshToken } =
+      await this.authService.generateTokens(user);
 
     return {
       message: 'Usuário criado com sucesso',
-      data: { 
+      data: {
         user: {
           id: user.id,
           username: user.username,
           email: user.email,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
-        }, 
+        },
       },
-      accessToken, 
+      accessToken,
       refreshToken,
       next: nextUrl,
     };
@@ -133,10 +135,18 @@ export class UserService {
         );
       }
 
-      const usernameChanged = updateUserDto.username !== undefined && updateUserDto.username !== currentUser.username;
-      const emailChanged = updateUserDto.email !== undefined && updateUserDto.email !== currentUser.email;
-      currentUser.username = usernameChanged ? updateUserDto.username : currentUser.username;
-      currentUser.email = emailChanged ? updateUserDto.email : currentUser.email;
+      const usernameChanged =
+        updateUserDto.username !== undefined &&
+        updateUserDto.username !== currentUser.username;
+      const emailChanged =
+        updateUserDto.email !== undefined &&
+        updateUserDto.email !== currentUser.email;
+      currentUser.username = usernameChanged
+        ? updateUserDto.username
+        : currentUser.username;
+      currentUser.email = emailChanged
+        ? updateUserDto.email
+        : currentUser.email;
 
       if (updateUserDto.password) {
         const passwordHash = await this.hashingService.hash(

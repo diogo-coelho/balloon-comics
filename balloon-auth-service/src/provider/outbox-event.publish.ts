@@ -38,9 +38,8 @@ export class OutboxEventsPublisher {
       for (const event of events) {
         try {
           await this.publishEvent(event);
-          successfulIds.push(event.id!);
-        }
-        catch (error) {
+          successfulIds.push(event.id);
+        } catch (error) {
           failedEvents.push({ event, error });
         }
       }
@@ -51,7 +50,7 @@ export class OutboxEventsPublisher {
         const attempts = event.attempts ?? 1;
 
         await this.updateEventStatus(
-          [event.id!],
+          [event.id],
           attempts >= 10 ? 'failed' : 'pending',
           error instanceof Error ? error.message : String(error),
         );
@@ -61,7 +60,6 @@ export class OutboxEventsPublisher {
           error instanceof Error ? error.stack : undefined,
         );
       }
-
     } finally {
       this.isPublishing = false;
     }
@@ -69,22 +67,26 @@ export class OutboxEventsPublisher {
 
   private async publishEvent(event: OutboxEventEntity): Promise<void> {
     const message: IntegrationEventContract = {
-      eventId: event.id!,
-      eventType: event.eventType!,
-      aggregateId: event.userId!,
-      occurredAt: event.createdAt!.toISOString(),
+      eventId: event.id,
+      eventType: event.eventType,
+      aggregateId: event.userId,
+      occurredAt: event.createdAt.toISOString(),
       version: 1,
-      data: event.payload!,
+      data: event.payload,
     };
 
     await this.rabbitMqProvider.publish(
       AUTH_EXCHANGE,
-      event.eventType!,
+      event.eventType,
       message,
     );
   }
 
-  private async updateEventStatus(eventIds: string[], status: 'pending' | 'published' | 'failed', lastError?: string): Promise<void> {
+  private async updateEventStatus(
+    eventIds: string[],
+    status: 'pending' | 'published' | 'failed',
+    lastError?: string,
+  ): Promise<void> {
     if (eventIds.length > 0) {
       await this.outboxRepository.update(
         { id: In(eventIds) },

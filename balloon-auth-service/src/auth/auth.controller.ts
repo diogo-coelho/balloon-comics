@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import type { Request,Response } from 'express';
+import type { Request, Response } from 'express';
 
 import { AuthService } from './auth.service';
 import { AuthTokenGuard } from './guards/auth-token.guard';
@@ -8,6 +17,7 @@ import { LoginDto } from './dtos/request/login.dto';
 import { ResponseAuthDto } from './dtos/response/response-auth.dto';
 import { TokenPayloadParam } from './decorators/token-payload.param';
 import { TokenPayloadDto } from './dtos/request/token-payload.dto';
+import { AuthDataDto } from './dtos/response/auth-data.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -50,12 +60,11 @@ export class AuthController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<ResponseAuthDto> {
-    console.log("request.cookies:", request.cookies);
-    const refreshToken = request.cookies?.refreshToken;
-    console.log("refreshToken:", refreshToken);
-    if (!refreshToken) throw new UnauthorizedException('Refresh token não fornecido');
+    const refreshToken: string | undefined = request.cookies?.refreshToken;
+    if (!refreshToken)
+      throw new UnauthorizedException('Refresh token não fornecido');
 
-    const responseData = await this.authService.refreshTokens({ refreshToken });
+    const responseData: AuthDataDto = await this.authService.refreshTokens({ refreshToken });
 
     this.setAccessTokenCookie(response, responseData.accessToken as string);
     this.setRefreshTokenCookie(response, responseData.refreshToken as string);
@@ -67,35 +76,35 @@ export class AuthController {
 
   @UseGuards(AuthTokenGuard)
   @Get('me')
-  async getProfile(@TokenPayloadParam() tokenPayload: TokenPayloadDto) {
+  getProfile(@TokenPayloadParam() tokenPayload: TokenPayloadDto) {
     return {
       id: tokenPayload.sub,
       email: tokenPayload.email,
     };
   }
 
-  private setAccessTokenCookie (response: Response, accessToken: string) {
-    response.cookie("accessToken", accessToken as string, {
+  private setAccessTokenCookie(response: Response, accessToken: string) {
+    response.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 15 * 60 * 1000,
-      path: "/",
+      path: '/',
     });
   }
 
-  private setRefreshTokenCookie (response: Response, refreshToken: string) {
-    response.cookie("refreshToken", refreshToken as string, {
+  private setRefreshTokenCookie(response: Response, refreshToken: string) {
+    response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: "/api/auth/refresh",
+      path: '/api/auth/refresh',
     });
   }
 
   private clearAuthCookies(response: Response) {
-    response.clearCookie("accessToken", { path: "/" });
-    response.clearCookie("refreshToken", { path: "/auth/refresh" });
+    response.clearCookie('accessToken', { path: '/' });
+    response.clearCookie('refreshToken', { path: '/auth/refresh' });
   }
 }

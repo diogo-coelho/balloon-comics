@@ -170,9 +170,9 @@ describe('AuthService', () => {
         tokenType: 'access',
       });
 
-      await expect(
-        authService.refreshTokens(refreshTokenDto),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(authService.refreshTokens(refreshTokenDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('deve lançar UnauthorizedException quando o usuário não possuir refresh token salvo', async () => {
@@ -185,9 +185,9 @@ describe('AuthService', () => {
         refreshTokenHash: null,
       });
 
-      await expect(
-        authService.refreshTokens(refreshTokenDto),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(authService.refreshTokens(refreshTokenDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('deve revogar o refresh token e lançar UnauthorizedException em caso de reuso', async () => {
@@ -199,9 +199,9 @@ describe('AuthService', () => {
       hashingService.compare.mockResolvedValue(false);
       userRepository.update.mockResolvedValue({} as any);
 
-      await expect(
-        authService.refreshTokens(refreshTokenDto),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(authService.refreshTokens(refreshTokenDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
       expect(userRepository.update).toHaveBeenCalledWith(user.id, {
         refreshTokenHash: null,
       });
@@ -210,9 +210,9 @@ describe('AuthService', () => {
     it('deve lançar UnauthorizedException quando o token for inválido ou expirado', async () => {
       jwtService.verifyAsync.mockRejectedValue(new Error('token expirado'));
 
-      await expect(
-        authService.refreshTokens(refreshTokenDto),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(authService.refreshTokens(refreshTokenDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 });
