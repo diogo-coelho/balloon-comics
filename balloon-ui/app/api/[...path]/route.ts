@@ -15,11 +15,18 @@ async function proxyRequest(request: NextRequest, path: string[]) {
   targetUrl.search = request.nextUrl.search;
 
   const accessToken = (await cookies()).get("accessToken")?.value;
+  const refreshToken = (await cookies()).get("refreshToken")?.value;
 
   const headers = new Headers();
   const contentType = request.headers.get("content-type");
   if (contentType) headers.set("content-type", contentType);
   if (accessToken) headers.set("authorization", `Bearer ${accessToken}`);
+
+  const requestPath = path.join("/");
+  
+  if (requestPath === "/auth/refresh" && refreshToken) {
+    headers.set("cookie", `refreshToken=${refreshToken}`);
+  }
 
   const hasBody = !["GET", "HEAD"].includes(request.method);
 

@@ -6,10 +6,42 @@ export const api = axios.create({
   withCredentials: true,
 });
 
+const refreshApi = axios.create({
+  baseURL: "/api",
+  withCredentials: true,
+});
+
+let refreshPromise: Promise<void> | null = null;
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     const apiData = error.response?.data;
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 &&
+      !originalRequest._retry &&
+      originalRequest.url !== "/auth/refresh"
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        if (!refreshPromise) {
+          refreshPromise = refreshApi
+            .post("/auth/refresh")
+            .then(() => undefined)
+            .finally(() => {
+              refreshPromise = null;
+            })
+        }
+
+        await refreshPromise;
+
+        return api(originalRequest);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    }  
 
     if (apiData) {
       const rawMessage = apiData.message || apiData.error;
