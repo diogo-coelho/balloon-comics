@@ -33,9 +33,10 @@ async function proxyRequest(request: NextRequest, path: string[]) {
   const backendResponse = await fetch(targetUrl, {
     method: request.method,
     headers,
-    body: hasBody ? await request.text() : undefined,
+    body: hasBody ? request.body : undefined,
+    duplex: hasBody ? "half" : undefined,
     redirect: "manual",
-  });
+  } as RequestInit);
 
   const responseHeaders = new Headers(backendResponse.headers);
   responseHeaders.delete("content-encoding");
