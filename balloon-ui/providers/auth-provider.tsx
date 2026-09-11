@@ -6,28 +6,33 @@ import { getProfile } from '@/services/auth.service';
 import { AuthUser } from '@/types/auth';
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const setUser = useAuthStore((state) => state.setUser);
-  const clearUser = useAuthStore((state) => state.clearUser);
-  const [isLoading, setIsLoading] = useState(true);
+  const setUser = useAuthStore(
+    (state) => state.setUser
+  );
+
+  const clearUser = useAuthStore(
+    (state) => state.clearUser
+  );
+
+  const setAuthReady = useAuthStore(
+    (state) => state.setAuthReady
+  );
 
   useEffect(() => {
     async function checkAuth() {
       try {
         const response = await getProfile();
+
         setUser(response.data as AuthUser);
       } catch {
         clearUser();
       } finally {
-        setIsLoading(false);
+        setAuthReady(true);
       }
     }
 
     checkAuth();
-  }, [setUser, clearUser]);
-
-  if (isLoading) {
-    return null;
-  }
+  }, [ setUser, clearUser, setAuthReady ]);
 
   return <>{children}</>;
 }

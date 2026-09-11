@@ -2,7 +2,6 @@ import '../styles/app.scss';
 import { QueryProvider } from '@/providers/query-provider';
 import { AuthInitializer } from '@/providers/auth-provider';
 import BC_Header from '@/components/ui/BC_Header';
-import BC_Toolbar from '@/components/ui/BC_Toolbar';
 
 export const metadata = {
   title: 'Balloon Comics',

@@ -24,7 +24,7 @@ async function proxyRequest(request: NextRequest, path: string[]) {
 
   const requestPath = path.join("/");
   
-  if (requestPath === "/auth/refresh" && refreshToken) {
+  if (requestPath === "auth/refresh" && refreshToken) {
     headers.set("cookie", `refreshToken=${refreshToken}`);
   }
 

@@ -38,7 +38,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
     getConfirmPasswordValue,
   } = useFieldValidation(["userName", "email", "password", "confirmPassword"]); 
 
-  const goToHomepage = (): void => router.push('/');
+  const goToHomepage = (): void => window.location.assign('/');
   
   const helpTextUserName = () : JSX.Element => {
     return (

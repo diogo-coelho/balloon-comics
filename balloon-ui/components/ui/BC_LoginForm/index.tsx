@@ -2,7 +2,6 @@
 
 import "./BC_LoginForm.scss";
 import { JSX, useLayoutEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import { useLogin } from "@/hooks/queries/useAuth";
 import { LoginFormProps } from "./bc-login-form";
@@ -13,7 +12,6 @@ import BC_Spinning from "@/components/design/BC_Spinning";
 import BC_Dialog from "@/components/design/BC_Dialog/BC_Dialog";
 
 const BCLogin = (props: LoginFormProps): JSX.Element => {
-  const router = useRouter();
   const mutation = useLogin();
   const { isPending } = mutation;
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -30,7 +28,7 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
     getPasswordValue,
   } = useFieldValidation(["email", "password"]);
 
-  const goToHomepage = (): void => router.push('/');
+  const goToHomepage = (): void => window.location.assign('/');
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();    
