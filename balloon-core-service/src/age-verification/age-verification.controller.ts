@@ -6,10 +6,12 @@ import { ReaderEntity } from '../reader/entities/reader.entity';
 import { AuthTokenGuard } from '../auth/guards/auth-token.guard';
 import { TokenPayloadDto } from '../auth/dtos/request/token-payload.dto';
 import { TokenPayloadParam } from '../auth/decorators/token-payload.decorator';
+import { Repository } from 'typeorm/repository/Repository.js';
 
 @Controller('age-verification')
 export class AgeVerificationController {
   constructor(
+    private readonly readerRepository: Repository<ReaderEntity>,
     private readonly ageVerificationService: AgeVerificationService,
   ) {}
 
@@ -19,9 +21,12 @@ export class AgeVerificationController {
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
     @Body() createAgeVerificationDto: CreateAgeVerificationDto,
   ): Promise<ResponseAgeVerificationDto> {
-    const { sub: readerId } = tokenPayload;
+    const { sub: userId } = tokenPayload;
+    const reader = await this.readerRepository.findOneByOrFail({
+      userId,
+    });
     return this.ageVerificationService.createAgeVerification(
-      readerId,
+      reader.id,
       createAgeVerificationDto,
     );
   }
@@ -31,9 +36,12 @@ export class AgeVerificationController {
   async getAgeVerificationByReaderId(
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
   ): Promise<ResponseAgeVerificationDto | null> {
-    const { sub: readerId } = tokenPayload;
+    const { sub: userId } = tokenPayload;
+    const reader = await this.readerRepository.findOneByOrFail({
+      userId,
+    });
     return this.ageVerificationService.getAgeVerificationByReaderId({
-      id: readerId,
+      id: reader.id,
     } as ReaderEntity);
   }
 }
