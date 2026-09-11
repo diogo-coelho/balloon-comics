@@ -18,9 +18,9 @@ describe('SocialMediaLinkMapper', () => {
         url: 'https://facebook.com/usuario',
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02'),
-      } as SocialMediaLinkEntity;
+      };
 
-      const result = mapper.toModelFromEntity(entity);
+      const result = mapper.toModelFromEntity(entity, true);
 
       expect(result).toEqual({
         id: entity.id,
@@ -30,6 +30,21 @@ describe('SocialMediaLinkMapper', () => {
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
       });
+    });
+
+    it('deve omitir o readerId quando related for false', () => {
+      const entity: SocialMediaLinkEntity = {
+        id: 'social-media-link-id',
+        reader: { id: 'reader-id' } as ReaderEntity,
+        name: 'facebook',
+        url: 'https://facebook.com/usuario',
+        createdAt: new Date('2024-01-01'),
+        updatedAt: new Date('2024-01-02'),
+      };
+
+      const result = mapper.toModelFromEntity(entity, false);
+
+      expect(result.readerId).toBeUndefined();
     });
   });
 });

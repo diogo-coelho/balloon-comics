@@ -52,10 +52,15 @@ export class ReaderEntity {
   @OneToOne(() => AuthorEntity, (author) => author.reader)
   author?: AuthorEntity;
 
-  @OneToOne(() => AgeVerificationEntity, (ageVerification) => ageVerification.reader)
+  @OneToOne(
+    () => AgeVerificationEntity,
+    (ageVerification) => ageVerification.reader,
+  )
   ageVerification?: AgeVerificationEntity;
 
-  @OneToMany(() => SocialMediaLinkEntity, (socialMediaLink) => socialMediaLink.reader)
+  @OneToMany(
+    () => SocialMediaLinkEntity,
+    (socialMediaLink) => socialMediaLink.reader,
+  )
   socialMediaLinks?: SocialMediaLinkEntity[];
-  
 }

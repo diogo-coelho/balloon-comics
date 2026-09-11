@@ -23,7 +23,7 @@ describe('AgeVerificationService', () => {
     dateOfBirth: new Date('2000-01-01'),
     createdAt: new Date(),
     updatedAt: new Date(),
-  } as AgeVerificationEntity;
+  };
 
   const responseDto: ResponseAgeVerificationDto = {
     id: ageVerification.id,
@@ -84,7 +84,10 @@ describe('AgeVerificationService', () => {
           dateOfBirth: createAgeVerificationDto.dateOfBirth,
         }),
       );
-      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(ageVerification, true);
+      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(
+        ageVerification,
+        true,
+      );
       expect(result).toBe(responseDto);
     });
   });
@@ -99,7 +102,10 @@ describe('AgeVerificationService', () => {
       expect(repository.findOne).toHaveBeenCalledWith({
         where: { reader: { id: reader.id } },
       });
-      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(ageVerification, false);
+      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(
+        ageVerification,
+        false,
+      );
       expect(result).toBe(responseDto);
     });
 

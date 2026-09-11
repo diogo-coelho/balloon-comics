@@ -5,7 +5,12 @@ export interface ImageProfile {
   width?: number;
   height?: number;
   quality: number;
-  format: ImageFormat.WEBP | ImageFormat.JPEG | ImageFormat.PNG | ImageFormat.TIFF | ImageFormat.JPG; 
+  format:
+    | ImageFormat.WEBP
+    | ImageFormat.JPEG
+    | ImageFormat.PNG
+    | ImageFormat.TIFF
+    | ImageFormat.JPG;
   fit?: 'cover' | 'inside';
 }
 
@@ -14,7 +19,7 @@ export const IMAGE_PROFILES: Record<ImageType, ImageProfile> = {
     width: 150,
     height: 150,
     quality: 80,
-    format: ImageFormat.WEBP, 
+    format: ImageFormat.WEBP,
     fit: 'cover',
   },
 

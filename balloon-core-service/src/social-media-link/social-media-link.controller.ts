@@ -6,8 +6,9 @@ import { AuthTokenGuard } from '../auth/guards/auth-token.guard';
 
 @Controller('social-media-links')
 export class SocialMediaLinkController {
-
-  constructor(private readonly socialMediaLinkService: SocialMediaLinkService) {}
+  constructor(
+    private readonly socialMediaLinkService: SocialMediaLinkService,
+  ) {}
 
   @UseGuards(AuthTokenGuard)
   @Get('/reader/:id')
@@ -15,7 +16,9 @@ export class SocialMediaLinkController {
     @Param('id') readerId: string,
     @Body('name') name: string,
   ): Promise<ResponseSocialMediaLinkDto> {
-    return this.socialMediaLinkService.getSocialMediaLinkByReaderIdAndName({ id: readerId } as ReaderEntity, name);
+    return this.socialMediaLinkService.getSocialMediaLinkByReaderIdAndName(
+      { id: readerId } as ReaderEntity,
+      name,
+    );
   }
-
 }

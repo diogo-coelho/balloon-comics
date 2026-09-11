@@ -15,7 +15,7 @@ import { AgeVerificationEntity } from '../../age-verification/entities/age-verif
 import { AgeVerificationMapper } from '../../age-verification/mappers/age-verification.mapper';
 import { SocialMediaLinkEntity } from '../../social-media-link/entities/social-media-link.entity';
 import { SocialMediaLinkMapper } from '../../social-media-link/mappers/social-media-link.mapper';
-import { create } from 'domain';
+import { SocialMediaLinkService } from '../../social-media-link/social-media-link.service';
 
 describe('ReaderService', () => {
   let readerService: ReaderService;
@@ -23,8 +23,10 @@ describe('ReaderService', () => {
   let dataSource: jest.Mocked<DataSource>;
   let storageService: jest.Mocked<StorageService>;
   let mediaService: jest.Mocked<MediaService>;
+  let ageVerificationService: jest.Mocked<AgeVerificationService>;
   let ageVerificationMapper: jest.Mocked<AgeVerificationMapper>;
   let socialMediaLinkMapper: jest.Mocked<SocialMediaLinkMapper>;
+  let socialMediaLinkService: jest.Mocked<SocialMediaLinkService>;
 
   let insertQueryBuilder: {
     insert: jest.Mock;
@@ -55,7 +57,7 @@ describe('ReaderService', () => {
     description: undefined,
     createdAt: new Date(),
     updatedAt: new Date(),
-  } as ReaderEntity;
+  };
 
   const event: IntegrationEvent<UserQueueDto> = {
     eventId: 'event-id',
@@ -123,6 +125,7 @@ describe('ReaderService', () => {
           provide: AgeVerificationService,
           useValue: {
             hasLegalAge: jest.fn(),
+            getAgeVerificationByReaderId: jest.fn(),
           },
         },
         {
@@ -137,6 +140,12 @@ describe('ReaderService', () => {
             toModelFromEntity: jest.fn(),
           },
         },
+        {
+          provide: SocialMediaLinkService,
+          useValue: {
+            getSocialMediaLinksByReaderId: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -145,12 +154,82 @@ describe('ReaderService', () => {
     dataSource = module.get(DataSource);
     storageService = module.get(StorageService);
     mediaService = module.get(MediaService);
+    ageVerificationService = module.get(AgeVerificationService);
     ageVerificationMapper = module.get(AgeVerificationMapper);
     socialMediaLinkMapper = module.get(SocialMediaLinkMapper);
+    socialMediaLinkService = module.get(SocialMediaLinkService);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('getReader', () => {
+    it('deve retornar o leitor com a verificação de idade e as redes sociais mapeadas', async () => {
+      const mappedAgeVerification = {
+        id: 'age-verification-id',
+        readerId: reader.id,
+        hasLegalAge: true,
+        dateOfBirth: new Date('2000-01-01'),
+      };
+      const mappedSocialMediaLinks = [
+        {
+          id: 'social-media-link-id',
+          readerId: reader.id,
+          name: 'facebook',
+          url: 'https://facebook.com/usuario',
+        },
+      ];
+      readerRepository.findOneByOrFail.mockResolvedValue(reader);
+      storageService.getPublicUrl.mockReturnValue(
+        'https://cdn.balloon.com/readers/imagem.png',
+      );
+      ageVerificationService.getAgeVerificationByReaderId.mockResolvedValue(
+        mappedAgeVerification,
+      );
+      socialMediaLinkService.getSocialMediaLinksByReaderId.mockResolvedValue(
+        mappedSocialMediaLinks,
+      );
+
+      const result = await readerService.getReader(reader.userId);
+
+      expect(readerRepository.findOneByOrFail).toHaveBeenCalledWith({
+        userId: reader.userId,
+      });
+      expect(
+        ageVerificationService.getAgeVerificationByReaderId,
+      ).toHaveBeenCalledWith(reader);
+      expect(
+        socialMediaLinkService.getSocialMediaLinksByReaderId,
+      ).toHaveBeenCalledWith(reader);
+      expect(result.message).toBe('Leitor recuperado com sucesso');
+      expect(result.data).toEqual(
+        expect.objectContaining({
+          id: reader.id,
+          imageUrl: 'https://cdn.balloon.com/readers/imagem.png',
+          ageVerification: mappedAgeVerification,
+          socialMediaLinks: mappedSocialMediaLinks,
+        }),
+      );
+    });
+
+    it('deve retornar undefined para verificação de idade e redes sociais quando não existirem', async () => {
+      readerRepository.findOneByOrFail.mockResolvedValue(reader);
+      storageService.getPublicUrl.mockReturnValue(
+        'https://cdn.balloon.com/readers/imagem.png',
+      );
+      ageVerificationService.getAgeVerificationByReaderId.mockResolvedValue(
+        null,
+      );
+      socialMediaLinkService.getSocialMediaLinksByReaderId.mockResolvedValue(
+        [],
+      );
+
+      const result = await readerService.getReader(reader.userId);
+
+      expect(result.data.ageVerification).toBeUndefined();
+      expect(result.data.socialMediaLinks).toEqual([]);
+    });
   });
 
   describe('updateReader', () => {
@@ -169,7 +248,11 @@ describe('ReaderService', () => {
 
       expect(result.message).toBe('Leitor atualizado com sucesso');
       expect(result.data).toEqual(
-        expect.objectContaining({ ...reader, ageVerification: null, socialMediaLink: null }),
+        expect.objectContaining({
+          ...reader,
+          ageVerification: null,
+          socialMediaLink: null,
+        }),
       );
     });
 
@@ -195,8 +278,8 @@ describe('ReaderService', () => {
         hasLegalAge: true,
         dateOfBirth: new Date('2000-01-01'),
       };
-      const mappedAgeVerification = { 
-        id: 'age-verification-id', 
+      const mappedAgeVerification = {
+        id: 'age-verification-id',
         readerId: reader.id,
         hasLegalAge: true,
         dateOfBirth: new Date('2000-01-01'),
@@ -219,20 +302,30 @@ describe('ReaderService', () => {
         },
       });
 
-      expect(insertQueryBuilder.into).toHaveBeenCalledWith(AgeVerificationEntity);
-      expect(manager.findOneOrFail).toHaveBeenCalledWith(AgeVerificationEntity, {
-        where: { reader: { id: reader.id } },
-        relations: { reader: true },
-      });
+      expect(insertQueryBuilder.into).toHaveBeenCalledWith(
+        AgeVerificationEntity,
+      );
+      expect(manager.findOneOrFail).toHaveBeenCalledWith(
+        AgeVerificationEntity,
+        {
+          where: { reader: { id: reader.id } },
+          relations: { reader: true },
+        },
+      );
       expect(result.data.ageVerification).toBe(mappedAgeVerification);
     });
 
     it('deve criar as redes sociais e retorná-las mapeadas quando informadas no payload', async () => {
       const socialMediaLinks = [
-        { id: 'social-media-link-id', reader, name: 'facebook', url: 'https://facebook.com/usuario' },
+        {
+          id: 'social-media-link-id',
+          reader,
+          name: 'facebook',
+          url: 'https://facebook.com/usuario',
+        },
       ];
-      const mappedSocialMediaLink = { 
-        id: 'social-media-link-id', 
+      const mappedSocialMediaLink = {
+        id: 'social-media-link-id',
         readerId: reader.id,
         name: 'facebook',
         url: 'https://facebook.com/usuario',
@@ -251,11 +344,15 @@ describe('ReaderService', () => {
         userId: reader.userId,
         uploadReaderDto: {
           ...uploadReaderDto,
-          socialMediaLinks: [{ name: 'facebook' as any, url: 'https://facebook.com/usuario' }],
+          socialMediaLinks: [
+            { name: 'facebook', url: 'https://facebook.com/usuario' },
+          ],
         },
       });
 
-      expect(insertQueryBuilder.into).toHaveBeenCalledWith(SocialMediaLinkEntity);
+      expect(insertQueryBuilder.into).toHaveBeenCalledWith(
+        SocialMediaLinkEntity,
+      );
       expect(manager.find).toHaveBeenCalledWith(SocialMediaLinkEntity, {
         where: {
           reader: { id: reader.id },
@@ -267,7 +364,9 @@ describe('ReaderService', () => {
     });
 
     it('deve encapsular erros lançados durante a atualização em uma mensagem padrão', async () => {
-      manager.findOneByOrFail.mockRejectedValue(new Error('leitor não encontrado'));
+      manager.findOneByOrFail.mockRejectedValue(
+        new Error('leitor não encontrado'),
+      );
 
       await expect(
         readerService.updateReader({
@@ -289,22 +388,29 @@ describe('ReaderService', () => {
       const processedImage = { ...file, buffer: Buffer.from('processado') };
       mediaService.processImage.mockResolvedValue(processedImage);
       storageService.uploadFile.mockResolvedValue('readers/chave-gerada');
-      storageService.getPublicUrl.mockReturnValue('https://cdn.balloon.com/readers/chave-gerada');
+      storageService.getPublicUrl.mockReturnValue(
+        'https://cdn.balloon.com/readers/chave-gerada',
+      );
       readerRepository.update.mockResolvedValue({} as any);
       readerRepository.findOneByOrFail.mockResolvedValue({
         ...reader,
         imageUrl: 'readers/chave-gerada',
-      } as ReaderEntity);
+      });
 
       const result = await readerService.uploadImageReader(reader.userId, file);
 
-      expect(storageService.uploadFile).toHaveBeenCalledWith(processedImage, 'readers');
+      expect(storageService.uploadFile).toHaveBeenCalledWith(
+        processedImage,
+        'readers',
+      );
       expect(readerRepository.update).toHaveBeenCalledWith(
         { userId: reader.userId },
         expect.objectContaining({ imageUrl: 'readers/chave-gerada' }),
       );
       expect(result.message).toBe('Imagem do leitor atualizada com sucesso');
-      expect(result.data?.imageUrl).toBe('https://cdn.balloon.com/readers/chave-gerada');
+      expect(result.data?.imageUrl).toBe(
+        'https://cdn.balloon.com/readers/chave-gerada',
+      );
     });
   });
 

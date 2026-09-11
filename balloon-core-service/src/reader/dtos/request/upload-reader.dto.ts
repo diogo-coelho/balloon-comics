@@ -1,4 +1,10 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 import { CreateAgeVerificationDto } from '../../../age-verification/dtos/request/create-age-verification.dto';
 import { CreateSocialMediaLinkDto } from '../../../social-media-link/dtos/request/create-social-media-link.dto';
 export class UploadReaderDto {

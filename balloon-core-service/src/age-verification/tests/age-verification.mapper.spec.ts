@@ -18,7 +18,7 @@ describe('AgeVerificationMapper', () => {
         dateOfBirth: new Date('2000-01-01'),
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02'),
-      } as AgeVerificationEntity;
+      };
 
       const result = mapper.toModelFromEntity(ageVerification, true);
 

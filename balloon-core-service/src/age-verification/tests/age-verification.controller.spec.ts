@@ -71,9 +71,9 @@ describe('AgeVerificationController', () => {
 
       const result = await controller.getAgeVerificationByReaderId('reader-id');
 
-      expect(service.getAgeVerificationByReaderId).toHaveBeenCalledWith(
-        { id: 'reader-id' } as ReaderEntity,
-      );
+      expect(service.getAgeVerificationByReaderId).toHaveBeenCalledWith({
+        id: 'reader-id',
+      } as ReaderEntity);
       expect(result).toBe(responseDto);
     });
   });

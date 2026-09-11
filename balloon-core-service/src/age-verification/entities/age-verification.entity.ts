@@ -1,13 +1,23 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { ReaderEntity } from '../../reader/entities/reader.entity';
 
 @Entity('age_verifications')
 export class AgeVerificationEntity {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @OneToOne(() => ReaderEntity, (reader) => reader.ageVerification, { nullable: false, onDelete: 'CASCADE' })
+  @OneToOne(() => ReaderEntity, (reader) => reader.ageVerification, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'reader_id', referencedColumnName: 'id' })
   reader!: ReaderEntity;
 

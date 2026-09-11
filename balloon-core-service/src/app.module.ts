@@ -49,7 +49,7 @@ import { SocialMediaLinkModule } from './social-media-link/social-media-link.mod
     {
       provide: APP_FILTER,
       useClass: CustomExceptionFilter,
-    }
+    },
   ],
 })
 export class AppModule {}

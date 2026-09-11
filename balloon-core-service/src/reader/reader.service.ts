@@ -39,10 +39,14 @@ export class ReaderService {
 
   async getReader(userId: string): Promise<ResponseReaderDto> {
     const reader = await this.readerRepository.findOneByOrFail({ userId });
-    const publicImageUrl = this.storageService.getPublicUrl(reader.imageUrl as string);
+    const publicImageUrl = this.storageService.getPublicUrl(
+      reader.imageUrl as string,
+    );
 
-    const ageVerification = await this.ageVerificationService.getAgeVerificationByReaderId(reader);
-    const socialMediaLinks = await this.socialMediaLinkService.getSocialMediaLinksByReaderId(reader);
+    const ageVerification =
+      await this.ageVerificationService.getAgeVerificationByReaderId(reader);
+    const socialMediaLinks =
+      await this.socialMediaLinkService.getSocialMediaLinksByReaderId(reader);
 
     return {
       message: 'Leitor recuperado com sucesso',
@@ -55,14 +59,18 @@ export class ReaderService {
         description: reader.description,
         ageVerification: ageVerification ?? undefined,
         socialMediaLinks: socialMediaLinks ?? undefined,
-      },      
+      },
     };
   }
 
-  async updateReader(updateReaderDto: { userId: string, uploadReaderDto: UploadReaderDto }): Promise<any> {
+  async updateReader(updateReaderDto: {
+    userId: string;
+    uploadReaderDto: UploadReaderDto;
+  }): Promise<any> {
     try {
       return await this.dataSource.transaction(async (manager) => {
-        const { ageVerification, socialMediaLinks, ...readerData } = updateReaderDto.uploadReaderDto;
+        const { ageVerification, socialMediaLinks, ...readerData } =
+          updateReaderDto.uploadReaderDto;
         let ageVerificationRecord;
         let socialMediaLinkRecords;
 
@@ -77,33 +85,57 @@ export class ReaderService {
         });
 
         if (ageVerification?.dateOfBirth)
-          ageVerificationRecord = await this.saveAgeVerificationInDatabase(manager, reader, ageVerification);
+          ageVerificationRecord = await this.saveAgeVerificationInDatabase(
+            manager,
+            reader,
+            ageVerification,
+          );
 
         if (socialMediaLinks?.length)
-          socialMediaLinkRecords = await this.saveSocialMediaLinkInDatabase(manager, reader, socialMediaLinks);
+          socialMediaLinkRecords = await this.saveSocialMediaLinkInDatabase(
+            manager,
+            reader,
+            socialMediaLinks,
+          );
 
         return {
           message: 'Leitor atualizado com sucesso',
           data: {
             ...reader,
             ageVerification: ageVerificationRecord
-              ? this.ageVerificationMapper.toModelFromEntity(ageVerificationRecord, false)
+              ? this.ageVerificationMapper.toModelFromEntity(
+                  ageVerificationRecord,
+                  false,
+                )
               : null,
             socialMediaLink: socialMediaLinkRecords
-              ? socialMediaLinkRecords.map((record) => this.socialMediaLinkMapper.toModelFromEntity(record, false))
+              ? socialMediaLinkRecords.map((record) =>
+                  this.socialMediaLinkMapper.toModelFromEntity(record, false),
+                )
               : null,
           },
         };
       });
     } catch (error: Error | unknown) {
-      throw new Error(`Failed to update reader: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to update reader: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
-  async uploadImageReader(userId: string, file: Express.Multer.File): Promise<ResponseReaderDto> {
+  async uploadImageReader(
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<ResponseReaderDto> {
     const objectName = 'readers';
-    const processedImage = await this.mediaService.processImage(file, ImageType.USER_AVATAR);
-    const key = await this.storageService.uploadFile(processedImage, objectName);
+    const processedImage = await this.mediaService.processImage(
+      file,
+      ImageType.USER_AVATAR,
+    );
+    const key = await this.storageService.uploadFile(
+      processedImage,
+      objectName,
+    );
 
     await this.readerRepository.update(
       { userId },
@@ -111,7 +143,9 @@ export class ReaderService {
     );
 
     const reader = await this.readerRepository.findOneByOrFail({ userId });
-    const publicImageUrl = this.storageService.getPublicUrl(reader.imageUrl as string);
+    const publicImageUrl = this.storageService.getPublicUrl(
+      reader.imageUrl as string,
+    );
 
     return {
       message: 'Imagem do leitor atualizada com sucesso',
@@ -120,7 +154,6 @@ export class ReaderService {
         imageUrl: publicImageUrl,
       },
     };
-
   }
 
   async handleUserCreated(
@@ -196,16 +229,19 @@ export class ReaderService {
   }
 
   private async saveAgeVerificationInDatabase(
-    manager: EntityManager, 
-    reader: ReaderEntity, 
-    ageVerification: CreateAgeVerificationDto
+    manager: EntityManager,
+    reader: ReaderEntity,
+    ageVerification: CreateAgeVerificationDto,
   ): Promise<AgeVerificationEntity> {
-    const result = await manager.createQueryBuilder()
+    const result = await manager
+      .createQueryBuilder()
       .insert()
       .into(AgeVerificationEntity)
       .values({
         reader: { id: reader.id },
-        hasLegalAge: this.ageVerificationService.hasLegalAge(ageVerification.dateOfBirth),
+        hasLegalAge: this.ageVerificationService.hasLegalAge(
+          ageVerification.dateOfBirth,
+        ),
         dateOfBirth: ageVerification.dateOfBirth,
       })
       .orIgnore()
@@ -225,9 +261,10 @@ export class ReaderService {
   private async saveSocialMediaLinkInDatabase(
     manager: EntityManager,
     reader: ReaderEntity,
-    socialMediaLinks: CreateSocialMediaLinkDto[]
+    socialMediaLinks: CreateSocialMediaLinkDto[],
   ): Promise<SocialMediaLinkEntity[]> {
-    const result = await manager.createQueryBuilder()
+    const result = await manager
+      .createQueryBuilder()
       .insert()
       .into(SocialMediaLinkEntity)
       .values(
@@ -251,5 +288,4 @@ export class ReaderService {
       },
     });
   }
-
 }

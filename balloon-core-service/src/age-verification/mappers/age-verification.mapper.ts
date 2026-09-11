@@ -1,9 +1,11 @@
-import { ResponseAgeVerificationDto } from "../dtos/response/response-age-verification.dto";
-import { AgeVerificationEntity } from "../entities/age-verification.entity";
+import { ResponseAgeVerificationDto } from '../dtos/response/response-age-verification.dto';
+import { AgeVerificationEntity } from '../entities/age-verification.entity';
 
-export class AgeVerificationMapper {  
-
-  toModelFromEntity(ageVerification: AgeVerificationEntity, related: boolean): ResponseAgeVerificationDto {
+export class AgeVerificationMapper {
+  toModelFromEntity(
+    ageVerification: AgeVerificationEntity,
+    related: boolean,
+  ): ResponseAgeVerificationDto {
     return {
       id: ageVerification.id,
       readerId: related ? ageVerification.reader.id : undefined,
@@ -13,5 +15,4 @@ export class AgeVerificationMapper {
       updatedAt: ageVerification.updatedAt,
     };
   }
-
 }

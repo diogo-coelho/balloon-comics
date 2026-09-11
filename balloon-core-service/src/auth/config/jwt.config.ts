@@ -4,7 +4,10 @@ import { JwtSecretError } from '../error/jwt-secret.error';
 import { JwtAudienceError } from '../error/jwt-audience.error';
 import { JwtIssuerError } from '../error/jwt-issuer.error';
 
-const readKeyFile = (path: string | undefined, variableName: string): string => {
+const readKeyFile = (
+  path: string | undefined,
+  variableName: string,
+): string => {
   if (!path) {
     throw new Error(`${variableName} não foi configurada.`);
   }
@@ -34,8 +37,8 @@ export default registerAs('jwt', () => {
     publicKey: readKeyFile(process.env.JWT_PUBLIC_KEY, 'JWT_PUBLIC_KEY'),
     verifyOptions: {
       algorithms: ['RS256' as const],
-      audience: process.env.JWT_TOKEN_AUDIENCE as string,
-      issuer: process.env.JWT_TOKEN_ISSUER as string,
+      audience: process.env.JWT_TOKEN_AUDIENCE,
+      issuer: process.env.JWT_TOKEN_ISSUER,
     },
   };
 });

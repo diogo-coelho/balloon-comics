@@ -10,11 +10,7 @@ const getParamDecoratorFactory = (decorator: any) => {
     public test(@decorator() _value: unknown) {}
   }
 
-  const args = Reflect.getMetadata(
-    ROUTE_ARGS_METADATA,
-    TestDecorator,
-    'test',
-  );
+  const args = Reflect.getMetadata(ROUTE_ARGS_METADATA, TestDecorator, 'test');
 
   return args[Object.keys(args)[0]].factory;
 };

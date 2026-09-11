@@ -46,7 +46,9 @@ describe('SocialMediaLinkController', () => {
 
   describe('getSocialMediaLinksByReaderId', () => {
     it('deve delegar a busca pela rede social a partir do id do leitor e do nome', async () => {
-      service.getSocialMediaLinkByReaderIdAndName.mockResolvedValue(responseDto);
+      service.getSocialMediaLinkByReaderIdAndName.mockResolvedValue(
+        responseDto,
+      );
 
       const result = await controller.getSocialMediaLinksByReaderId(
         'reader-id',

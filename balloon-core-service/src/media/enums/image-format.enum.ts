@@ -3,5 +3,5 @@ export enum ImageFormat {
   JPG = 'jpg',
   WEBP = 'webp',
   PNG = 'png',
-  TIFF = 'tiff'
+  TIFF = 'tiff',
 }

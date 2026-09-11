@@ -19,5 +19,4 @@ export class ImageProcessFailedException extends Error {
   getStatusCode(): number {
     return this.statusCode;
   }
-  
 }

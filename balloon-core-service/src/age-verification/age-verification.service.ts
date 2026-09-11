@@ -10,16 +10,15 @@ import { ReaderEntity } from '../reader/entities/reader.entity';
 
 @Injectable()
 export class AgeVerificationService {
-
   constructor(
     @InjectRepository(AgeVerificationEntity)
     private readonly ageVerificationRepository: Repository<AgeVerificationEntity>,
     private readonly ageVerificationMapper: AgeVerificationMapper,
-  ) {} 
+  ) {}
 
   async createAgeVerification(
     readerId: string,
-    createAgeVerificationDto: CreateAgeVerificationDto
+    createAgeVerificationDto: CreateAgeVerificationDto,
   ): Promise<ResponseAgeVerificationDto> {
     const hasLegalAge = this.hasLegalAge(createAgeVerificationDto.dateOfBirth);
 
@@ -32,22 +31,29 @@ export class AgeVerificationService {
     return this.ageVerificationMapper.toModelFromEntity(ageVerification, true);
   }
 
-  async getAgeVerificationByReaderId(reader: ReaderEntity): Promise<ResponseAgeVerificationDto | null> {
+  async getAgeVerificationByReaderId(
+    reader: ReaderEntity,
+  ): Promise<ResponseAgeVerificationDto | null> {
     const ageVerification = await this.ageVerificationRepository.findOne({
       where: { reader: { id: reader.id } },
     });
 
-    return ageVerification ? this.ageVerificationMapper.toModelFromEntity(ageVerification, false) : null;
+    return ageVerification
+      ? this.ageVerificationMapper.toModelFromEntity(ageVerification, false)
+      : null;
   }
 
   public hasLegalAge(dateOfBirth: string): boolean {
     const today = new Date();
     const age = today.getFullYear() - new Date(dateOfBirth).getFullYear();
     const monthDifference = today.getMonth() - new Date(dateOfBirth).getMonth();
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < new Date(dateOfBirth).getDate())) {
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 &&
+        today.getDate() < new Date(dateOfBirth).getDate())
+    ) {
       return age - 1 >= 18;
     }
     return age >= 18;
   }
-
 }

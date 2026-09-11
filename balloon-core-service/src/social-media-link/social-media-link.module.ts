@@ -8,12 +8,8 @@ import { SocialMediaLinkEntity } from './entities/social-media-link.entity';
 import { SocialMediaLinkService } from './social-media-link.service';
 import { SocialMediaLinkMapper } from './mappers/social-media-link.mapper';
 
-
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([SocialMediaLinkEntity]),
-    AuthModule,
-  ],
+  imports: [TypeOrmModule.forFeature([SocialMediaLinkEntity]), AuthModule],
   controllers: [SocialMediaLinkController],
   providers: [SocialMediaLinkService, SocialMediaLinkMapper],
   exports: [SocialMediaLinkService, SocialMediaLinkMapper],

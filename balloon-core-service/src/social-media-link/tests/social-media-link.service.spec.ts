@@ -24,7 +24,7 @@ describe('SocialMediaLinkService', () => {
     url: 'https://facebook.com/usuario',
     createdAt: new Date(),
     updatedAt: new Date(),
-  } as SocialMediaLinkEntity;
+  };
 
   const responseDto: ResponseSocialMediaLinkDto = {
     id: socialMediaLink.id,
@@ -42,6 +42,7 @@ describe('SocialMediaLinkService', () => {
         {
           provide: getRepositoryToken(SocialMediaLinkEntity),
           useValue: {
+            find: jest.fn(),
             findOne: jest.fn(),
             create: jest.fn(),
             save: jest.fn(),
@@ -63,6 +64,33 @@ describe('SocialMediaLinkService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('getSocialMediaLinksByReaderId', () => {
+    it('deve retornar as redes sociais mapeadas para o leitor informado', async () => {
+      repository.find.mockResolvedValue([socialMediaLink]);
+      mapper.toModelFromEntity.mockReturnValue(responseDto);
+
+      const result = await service.getSocialMediaLinksByReaderId(reader);
+
+      expect(repository.find).toHaveBeenCalledWith({
+        where: { reader: { id: reader.id } },
+      });
+      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(
+        socialMediaLink,
+        false,
+      );
+      expect(result).toEqual([responseDto]);
+    });
+
+    it('deve retornar uma lista vazia quando o leitor não possuir redes sociais', async () => {
+      repository.find.mockResolvedValue([]);
+
+      const result = await service.getSocialMediaLinksByReaderId(reader);
+
+      expect(result).toEqual([]);
+      expect(mapper.toModelFromEntity).not.toHaveBeenCalled();
+    });
   });
 
   describe('getSocialMediaLinkByReaderIdAndName', () => {
@@ -118,7 +146,10 @@ describe('SocialMediaLinkService', () => {
         url: createSocialMediaLinkDto.url,
       });
       expect(repository.save).toHaveBeenCalledWith(socialMediaLink);
-      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(socialMediaLink);
+      expect(mapper.toModelFromEntity).toHaveBeenCalledWith(
+        socialMediaLink,
+        false,
+      );
       expect(result).toBe(responseDto);
     });
   });

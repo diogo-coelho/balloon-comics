@@ -29,7 +29,9 @@ jest.mock('sharp', () => {
 
 describe('MediaService', () => {
   let service: MediaService;
-  const originalUserAvatarProfile = { ...IMAGE_PROFILES[ImageType.USER_AVATAR] };
+  const originalUserAvatarProfile = {
+    ...IMAGE_PROFILES[ImageType.USER_AVATAR],
+  };
 
   const file = {
     originalname: 'avatar.png',
@@ -73,17 +75,20 @@ describe('MediaService', () => {
       [ImageFormat.JPG, jpegMock],
       [ImageFormat.PNG, pngMock],
       [ImageFormat.TIFF, tiffMock],
-    ])('deve aplicar o encoder correto para o formato %s', async (format, encoderMock) => {
-      IMAGE_PROFILES[ImageType.USER_AVATAR] = {
-        ...originalUserAvatarProfile,
-        format,
-      };
-      toBufferMock.mockResolvedValue(Buffer.from('processed'));
+    ])(
+      'deve aplicar o encoder correto para o formato %s',
+      async (format, encoderMock) => {
+        IMAGE_PROFILES[ImageType.USER_AVATAR] = {
+          ...originalUserAvatarProfile,
+          format,
+        };
+        toBufferMock.mockResolvedValue(Buffer.from('processed'));
 
-      await service.processImage(file, ImageType.USER_AVATAR);
+        await service.processImage(file, ImageType.USER_AVATAR);
 
-      expect(encoderMock).toHaveBeenCalledWith({ quality: 80 });
-    });
+        expect(encoderMock).toHaveBeenCalledWith({ quality: 80 });
+      },
+    );
 
     it('deve lançar ImageProcessFailedException quando o formato não for suportado', async () => {
       IMAGE_PROFILES[ImageType.USER_AVATAR] = {

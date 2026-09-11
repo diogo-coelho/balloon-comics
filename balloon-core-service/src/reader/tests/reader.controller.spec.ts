@@ -28,7 +28,9 @@ describe('ReaderController', () => {
         {
           provide: ReaderService,
           useValue: {
+            getReader: jest.fn(),
             updateReader: jest.fn(),
+            uploadImageReader: jest.fn(),
           },
         },
       ],
@@ -43,6 +45,21 @@ describe('ReaderController', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('getReader', () => {
+    it('deve delegar para o ReaderService usando o id do usuário no token', async () => {
+      const response: ResponseReaderDto = {
+        message: 'Leitor recuperado com sucesso',
+        data: { id: 'reader-id' },
+      };
+      readerService.getReader.mockResolvedValue(response);
+
+      const result = await readerController.getReader(tokenPayload);
+
+      expect(readerService.getReader).toHaveBeenCalledWith(tokenPayload.sub);
+      expect(result).toBe(response);
+    });
   });
 
   describe('updateReader', () => {
@@ -67,6 +84,32 @@ describe('ReaderController', () => {
         userId: tokenPayload.sub,
         uploadReaderDto,
       });
+      expect(result).toBe(response);
+    });
+  });
+
+  describe('uploadImage', () => {
+    it('deve delegar para o ReaderService com o id do usuário e o arquivo enviado', async () => {
+      const file = {
+        originalname: 'avatar.png',
+        buffer: Buffer.from('conteudo'),
+        mimetype: 'image/png',
+      } as Express.Multer.File;
+      const response: ResponseReaderDto = {
+        message: 'Imagem do leitor atualizada com sucesso',
+        data: {
+          id: 'reader-id',
+          imageUrl: 'https://cdn.balloon.com/readers/avatar.png',
+        },
+      };
+      readerService.uploadImageReader.mockResolvedValue(response);
+
+      const result = await readerController.uploadImage(tokenPayload, file);
+
+      expect(readerService.uploadImageReader).toHaveBeenCalledWith(
+        tokenPayload.sub,
+        file,
+      );
       expect(result).toBe(response);
     });
   });

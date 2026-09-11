@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsDateString, IsNotEmpty } from "class-validator";
+import { IsDateString, IsNotEmpty } from 'class-validator';
 
 export class CreateAgeVerificationDto {
   @IsNotEmpty()

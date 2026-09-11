@@ -31,7 +31,7 @@ describe('AuthTokenGuard', () => {
       verifyAsync: jest.fn(),
     } as unknown as jest.Mocked<JwtService>;
 
-    guard = new AuthTokenGuard(jwtService, jwtConfiguration as any);
+    guard = new AuthTokenGuard(jwtService, jwtConfiguration);
   });
 
   afterEach(() => {
