@@ -233,20 +233,20 @@ export class ReaderService {
     reader: ReaderEntity,
     ageVerification: CreateAgeVerificationDto,
   ): Promise<AgeVerificationEntity> {
-    const result = await manager
-      .createQueryBuilder()
-      .insert()
-      .into(AgeVerificationEntity)
-      .values({
-        reader: { id: reader.id },
+    await manager.upsert(
+      AgeVerificationEntity,
+      {
+        reader,
         hasLegalAge: this.ageVerificationService.hasLegalAge(
           ageVerification.dateOfBirth,
         ),
         dateOfBirth: ageVerification.dateOfBirth,
-      })
-      .orIgnore()
-      .returning('*')
-      .execute();
+      },
+      {
+        conflictPaths: ['reader'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
 
     return manager.findOneOrFail(AgeVerificationEntity, {
       where: {
@@ -263,20 +263,18 @@ export class ReaderService {
     reader: ReaderEntity,
     socialMediaLinks: CreateSocialMediaLinkDto[],
   ): Promise<SocialMediaLinkEntity[]> {
-    const result = await manager
-      .createQueryBuilder()
-      .insert()
-      .into(SocialMediaLinkEntity)
-      .values(
-        socialMediaLinks.map((link) => ({
+    await manager.upsert(
+      SocialMediaLinkEntity,
+      socialMediaLinks.map((link) => ({
           reader: { id: reader.id },
           name: link.name as string,
           url: link.url,
-        })),
-      )
-      .orIgnore()
-      .returning('*')
-      .execute();
+      })),
+      {
+        conflictPaths: ['reader', 'name'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
 
     return manager.find(SocialMediaLinkEntity, {
       where: {
