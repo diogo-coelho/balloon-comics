@@ -1,11 +1,12 @@
 import { Controller, Logger } from '@nestjs/common';
+import type { ConfigService } from '@nestjs/config';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
+import type { Channel, Message } from 'amqplib';
 
 import { ROUTING_KEYS } from './constants/routing-keys.constant';
 import { ReaderService } from './reader.service';
 import { UserQueueDto } from './dtos/request/user-queue.dto';
 import type { IntegrationEvent } from '../auth/dtos/request/integration-event.dto';
-import { ConfigService } from '@nestjs/config';
 import { RabbitMqRetryProvider } from '../config/rabbitmq-retry.provider';
 
 @Controller()
@@ -52,8 +53,8 @@ export class ReaderConsumer {
     context: RmqContext,
     handler: () => Promise<void>,
   ): Promise<void> {
-    const channel = context.getChannelRef();
-    const message = context.getMessage();
+    const channel = context.getChannelRef() as Channel;
+    const message = context.getMessage() as Message;
 
     try {
       await handler();
@@ -68,8 +69,8 @@ export class ReaderConsumer {
   }
 
   private async retryMessage(
-    message: Record<string, any>,
-    channel: any,
+    message: Message,
+    channel: Channel,
   ): Promise<void> {
 
     const currentRetryCount = Number(

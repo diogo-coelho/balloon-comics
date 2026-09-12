@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('outbox_events')
+@Index('uq_outbox_events_producer', ['userId', 'aggregateVersion'], { unique: true })
 export class OutboxEventEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -34,6 +36,12 @@ export class OutboxEventEntity {
 
   @Column({ name: 'last_error', type: 'text', nullable: true })
   lastError?: string | null;
+
+  @Column({
+    name: 'aggregate_version',
+    type: 'int',
+  })
+  aggregateVersion!: number;
 
   @CreateDateColumn({
     name: 'created_at',

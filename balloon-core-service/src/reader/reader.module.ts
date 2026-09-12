@@ -11,12 +11,13 @@ import { ReaderController } from './reader.controller';
 import { ReaderService } from './reader.service';
 import { ReaderConsumer } from './reader.consumer';
 import { ReaderEntity } from './entities/reader.entity';
+import { ConsumerAggregateVersionEntity } from './entities/consumer-aggregate-version.entity';
 import { ProcessedEventEntity } from './entities/processed-event.entity';
 import { RabbitMqRetryProvider } from '../config/rabbitmq-retry.provider';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ReaderEntity, ProcessedEventEntity]),
+    TypeOrmModule.forFeature([ReaderEntity, ProcessedEventEntity, ConsumerAggregateVersionEntity]),
     AuthModule,
     StorageModule,
     MediaModule,

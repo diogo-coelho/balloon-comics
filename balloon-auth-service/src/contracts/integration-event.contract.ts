@@ -4,5 +4,6 @@ export interface IntegrationEventContract<T = Record<string, unknown>> {
   aggregateId: string;
   occurredAt: string;
   version: number;
+  aggregateVersion: number;
   data: T;
 }

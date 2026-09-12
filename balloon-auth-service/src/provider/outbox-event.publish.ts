@@ -72,6 +72,7 @@ export class OutboxEventsPublisher {
       aggregateId: event.userId,
       occurredAt: event.createdAt.toISOString(),
       version: 1,
+      aggregateVersion: event.aggregateVersion,
       data: event.payload,
     };
 

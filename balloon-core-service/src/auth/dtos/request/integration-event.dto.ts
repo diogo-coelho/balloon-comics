@@ -4,5 +4,6 @@ export interface IntegrationEvent<T> {
   aggregateId: string;
   occurredAt: string;
   version: number;
+  aggregateVersion: number;
   data: T;
 }

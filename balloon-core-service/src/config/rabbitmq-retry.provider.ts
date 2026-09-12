@@ -55,7 +55,7 @@ export class RabbitMqRetryProvider
   }
 
   async publishRetry(
-    message: Record<string, any>,
+    message: Message,
     retryCount: number,
   ): Promise<void> {
     const retryExchange = this.configService.getOrThrow<string>('RABBITMQ_RETRY_EXCHANGE');

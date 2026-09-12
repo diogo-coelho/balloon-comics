@@ -33,6 +33,13 @@ export class UserEntity {
   })
   refreshTokenHash?: string | null;
 
+  @Column({
+    name: 'event_version',
+    type: 'int',
+    default: 0,
+  })
+  eventVersion!: number;
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',

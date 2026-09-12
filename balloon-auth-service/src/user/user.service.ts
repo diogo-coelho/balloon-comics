@@ -96,6 +96,7 @@ export class UserService {
         username: createUserDto.username,
         email: createUserDto.email,
         passwordHash,
+        eventVersion: 1,
       });
 
       const savedUser = await manager.save(UserEntity, newUser);
@@ -103,6 +104,7 @@ export class UserService {
       const outboxEvent = manager.create(OutboxEventEntity, {
         eventType: AUTH_ROUTING_KEYS.USER_CREATED,
         userId: savedUser.id,
+        aggregateVersion: savedUser.eventVersion,
         payload: {
           userId: savedUser.id,
           username: savedUser.username,
@@ -124,7 +126,12 @@ export class UserService {
     tokenPayload: TokenPayloadDto,
   ): Promise<UserEntity> {
     return await this.dataSource.transaction(async (manager) => {
-      const currentUser = await manager.findOne(UserEntity, { where: { id } });
+      const currentUser = await manager.findOne(UserEntity, 
+        { where: { id }, 
+        lock: {
+          mode: 'pessimistic_write',
+        }
+      });
 
       if (!currentUser)
         throw new NotFoundException(`Usuário com ID ${id} não encontrado`);
@@ -141,6 +148,12 @@ export class UserService {
       const emailChanged =
         updateUserDto.email !== undefined &&
         updateUserDto.email !== currentUser.email;
+
+      const integrationDataChanged = usernameChanged || emailChanged;
+      if (integrationDataChanged) {
+        currentUser.eventVersion += 1;
+      }
+
       currentUser.username = usernameChanged
         ? updateUserDto.username
         : currentUser.username;
@@ -157,10 +170,11 @@ export class UserService {
 
       const updatedUser = await manager.save(UserEntity, currentUser);
 
-      if (usernameChanged || emailChanged) {
+      if (integrationDataChanged) {
         const outboxEvent = manager.create(OutboxEventEntity, {
           eventType: AUTH_ROUTING_KEYS.USER_UPDATED,
           userId: updatedUser.id,
+          aggregateVersion: updatedUser.eventVersion,
           payload: {
             userId: updatedUser.id,
             username: updatedUser.username,
@@ -182,7 +196,12 @@ export class UserService {
     tokenPayload: TokenPayloadDto,
   ): Promise<void> {
     return await this.dataSource.transaction(async (manager) => {
-      const currentUser = await manager.findOne(UserEntity, { where: { id } });
+      const currentUser = await manager.findOne(UserEntity, 
+        { where: { id }, 
+        lock: {
+          mode: 'pessimistic_write',
+        }
+      });
       if (!currentUser)
         throw new NotFoundException(`Usuário com ID ${id} não encontrado`);
 
@@ -192,11 +211,13 @@ export class UserService {
         );
       }
 
+      const deleteVersion = currentUser.eventVersion + 1;
       await manager.remove(UserEntity, currentUser);
 
       const outboxEvent = manager.create(OutboxEventEntity, {
         eventType: AUTH_ROUTING_KEYS.USER_DELETED,
         userId: id,
+        aggregateVersion: deleteVersion,
         payload: {
           userId: id,
         },

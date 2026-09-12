@@ -22,6 +22,7 @@ import { CreateSocialMediaLinkDto } from '../social-media-link/dtos/request/crea
 
 import { AgeVerificationMapper } from '../age-verification/mappers/age-verification.mapper';
 import { SocialMediaLinkMapper } from '../social-media-link/mappers/social-media-link.mapper';
+import { ConsumerAggregateVersionEntity } from './entities/consumer-aggregate-version.entity';
 
 @Injectable()
 export class ReaderService {
@@ -203,17 +204,19 @@ export class ReaderService {
   }
 
   private async processOnce<T>(
-    eventId: IntegrationEvent<T>,
+    event: IntegrationEvent<T>,
     consumer: string,
     handler: (manager: EntityManager) => Promise<void>,
   ): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
+
+      // 1. Idempotência pelo eventId
       const insertResult = await manager
         .createQueryBuilder()
         .insert()
         .into(ProcessedEventEntity)
         .values({
-          eventId: eventId.eventId,
+          eventId: event.eventId,
           consumer: consumer,
         })
         .orIgnore()
@@ -224,7 +227,56 @@ export class ReaderService {
         return;
       }
 
+      // 2. Atualiza a versão agregada do consumidor
+      await manager
+        .createQueryBuilder()
+        .insert()
+        .into(ConsumerAggregateVersionEntity)
+        .values({
+          aggregateId: event.aggregateId,
+          consumer: consumer,
+          lastAppliedVersion: 0,
+        })
+        .orIgnore()
+        .execute();
+
+      // 3. Lock do cursor
+      const aggregateState = await manager.findOneOrFail(
+        ConsumerAggregateVersionEntity,
+        { 
+          where: {
+            aggregateId: event.aggregateId,
+            consumer: consumer,
+          },
+          lock: {
+            mode: 'pessimistic_write',
+          }
+        }
+      );
+
+      // 4. Evento velho
+      if (event.aggregateVersion <= aggregateState.lastAppliedVersion) {
+        return;
+      }
+
+      const expectedVersion = aggregateState.lastAppliedVersion + 1;
+
+      // 5. Buraco na sequência de eventos
+      if (event.aggregateVersion != expectedVersion) {
+        throw new Error(
+          `Evento fora de ordem. ` +
+          `Aggregate ${event.aggregateId}. ` +
+          `Esperado ${expectedVersion}, ` +
+          `recebido ${event.aggregateVersion}.`,
+        );
+      }
+
+      // 6. Processa o evento
       await handler(manager);
+
+      // 7. Avança cursor
+      aggregateState.lastAppliedVersion = event.aggregateVersion;
+      await manager.save(ConsumerAggregateVersionEntity, aggregateState);
     });
   }
 
