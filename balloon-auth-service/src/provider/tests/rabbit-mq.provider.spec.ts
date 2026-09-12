@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import * as amqpConnectionManager from 'amqp-connection-manager';
 
-import { RabbitMQProvider } from './rabbit-mq.provider';
-import { AUTH_EXCHANGE } from '../constants/routing-keys';
+import { RabbitMQProvider } from '../rabbit-mq.provider';
+import { AUTH_EXCHANGE } from '../../constants/routing-keys';
 
 jest.mock('amqp-connection-manager', () => ({
   connect: jest.fn(),

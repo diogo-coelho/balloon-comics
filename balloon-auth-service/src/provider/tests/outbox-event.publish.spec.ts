@@ -1,9 +1,9 @@
 import { DataSource } from 'typeorm';
 
-import { OutboxEventsPublisher } from './outbox-event.publish';
-import { OutboxEventEntity } from '../user/entities/outbox-event.entity';
-import { RabbitMQProvider } from './rabbit-mq.provider';
-import { AUTH_EXCHANGE, AUTH_ROUTING_KEYS } from '../constants/routing-keys';
+import { OutboxEventsPublisher } from '../outbox-event.publish';
+import { OutboxEventEntity } from '../../user/entities/outbox-event.entity';
+import { RabbitMQProvider } from '../rabbit-mq.provider';
+import { AUTH_EXCHANGE, AUTH_ROUTING_KEYS } from '../../constants/routing-keys';
 
 describe('OutboxEventsPublisher', () => {
   let publisher: OutboxEventsPublisher;
