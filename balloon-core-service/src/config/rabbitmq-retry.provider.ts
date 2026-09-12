@@ -1,5 +1,6 @@
 import * as amqpConnectionManager from 'amqp-connection-manager';
 import type { Message } from 'amqplib';
+import { randomUUID } from 'crypto';
 import {
   Injectable,
   Logger,
@@ -15,6 +16,7 @@ export class RabbitMqRetryProvider
   private readonly logger = new Logger(RabbitMqRetryProvider.name);
   private connection!: amqpConnectionManager.AmqpConnectionManager;
   private channel!: amqpConnectionManager.ChannelWrapper;
+  private readonly unroutedCorrelationIds = new Set<string>();
 
   constructor(
     private readonly configService: ConfigService,
@@ -39,6 +41,11 @@ export class RabbitMqRetryProvider
         );
 
         channel.on('return', (message: Message) => {
+          const correlationId = message.properties?.correlationId;
+          if (correlationId) {
+            this.unroutedCorrelationIds.add(correlationId);
+          }
+
           this.logger.warn(
             `Mensagem sem rota válida na retry exchange: routingKey="${message.fields.routingKey}", messageId="${message.properties?.messageId}"`,
           );
@@ -52,6 +59,7 @@ export class RabbitMqRetryProvider
     retryCount: number,
   ): Promise<void> {
     const retryExchange = this.configService.getOrThrow<string>('RABBITMQ_RETRY_EXCHANGE');
+    const correlationId = randomUUID();
 
     await this.channel.publish(
       retryExchange,
@@ -60,6 +68,7 @@ export class RabbitMqRetryProvider
       {
         persistent: true,
         mandatory: true,
+        correlationId,
         messageId: message.properties.messageId,
         type: message.properties.type,
         contentType: message.properties.contentType,
@@ -69,6 +78,12 @@ export class RabbitMqRetryProvider
         },
       },
     );
+
+    if (this.unroutedCorrelationIds.delete(correlationId)) {
+      throw new Error(
+        `Mensagem de retry sem rota válida na exchange "${retryExchange}" (routingKey="${message.fields.routingKey}")`,
+      );
+    }
   }
 
   async onModuleDestroy(): Promise<void> {
