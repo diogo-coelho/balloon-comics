@@ -114,7 +114,7 @@ describe('AuthController', () => {
       );
       expect(mockResponse.clearCookie).toHaveBeenCalledWith(
         'refreshToken',
-        expect.objectContaining({ path: '/auth/refresh' }),
+        expect.objectContaining({ path: '/api/auth/refresh' }),
       );
     });
   });

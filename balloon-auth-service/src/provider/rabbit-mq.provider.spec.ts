@@ -109,6 +109,42 @@ describe('RabbitMQProvider', () => {
       ).rejects.toThrow('não possui rota RabbitMQ válida');
     });
 
+    it('deve registrar os listeners de conexão e executar seus callbacks sem erro', async () => {
+      await provider.onModuleInit();
+
+      const listeners: Record<string, Function> = {};
+      mockConnection.on.mock.calls.forEach(([event, cb]) => {
+        listeners[event] = cb;
+      });
+
+      expect(() => listeners['connect']()).not.toThrow();
+      expect(() => listeners['disconnect'](new Error('queda de rede'))).not.toThrow();
+      expect(() => listeners['error'](new Error('erro na conexão'))).not.toThrow();
+    });
+
+    it('deve ignorar mensagem sem messageId no listener "return"', async () => {
+      await provider.onModuleInit();
+
+      const returnHandler = mockChannel.on.mock.calls.find(
+        ([event]) => event === 'return',
+      )?.[1];
+
+      returnHandler({ properties: {} });
+
+      const event = {
+        eventId: 'evento-normal',
+        eventType: 'user.created',
+        aggregateId: 'user-id',
+        occurredAt: new Date().toISOString(),
+        version: 1,
+        data: {},
+      };
+
+      await expect(
+        provider.publish(AUTH_EXCHANGE, 'user.created', event),
+      ).resolves.toBeUndefined();
+    });
+
     it('deve logar e relançar o erro quando a conexão falhar', async () => {
       const connectionError = new Error('falha na conexão');
       (amqpConnectionManager.connect as jest.Mock).mockRejectedValue(
@@ -155,6 +191,11 @@ describe('RabbitMQProvider', () => {
 
       expect(mockChannel.close).toHaveBeenCalled();
       expect(mockConnection.close).toHaveBeenCalled();
+    });
+
+    it('não deve lançar erro se o canal e conexão forem indefinidos', async () => {
+      const uninitializedProvider = new RabbitMQProvider(configService);
+      await expect(uninitializedProvider.onModuleDestroy()).resolves.toBeUndefined();
     });
   });
 });

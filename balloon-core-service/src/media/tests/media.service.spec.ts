@@ -65,7 +65,7 @@ describe('MediaService', () => {
         ...file,
         originalname: 'avatar.webp',
         buffer: processedBuffer,
-        mimetype: 'webp',
+        mimetype: 'image/webp',
         size: processedBuffer.length,
       });
     });

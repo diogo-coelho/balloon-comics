@@ -11,3 +11,7 @@ export type UserData = {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type CreatedUserData = {
+  user: UserData;
+}

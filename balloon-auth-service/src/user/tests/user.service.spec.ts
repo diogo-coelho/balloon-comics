@@ -242,6 +242,65 @@ describe('UserService', () => {
       );
     });
 
+    it('deve persistir um evento outbox USER_UPDATED quando email for alterado', async () => {
+      manager.findOne.mockResolvedValue({ ...user, eventVersion: 1 });
+
+      await userService.updateUser(
+        user.id,
+        { email: 'novo-email@teste.com' },
+        tokenPayload,
+      );
+
+      expect(manager.create).toHaveBeenCalledWith(
+        OutboxEventEntity,
+        expect.objectContaining({
+          eventType: AUTH_ROUTING_KEYS.USER_UPDATED,
+          aggregateVersion: 2,
+          payload: expect.objectContaining({
+            email: 'novo-email@teste.com',
+          }),
+        }),
+      );
+    });
+
+    it('deve persistir um evento outbox USER_UPDATED quando username e email forem alterados simultaneamente', async () => {
+      manager.findOne.mockResolvedValue({ ...user, eventVersion: 1 });
+
+      await userService.updateUser(
+        user.id,
+        { username: 'novonome', email: 'novo-email@teste.com' },
+        tokenPayload,
+      );
+
+      expect(manager.create).toHaveBeenCalledWith(
+        OutboxEventEntity,
+        expect.objectContaining({
+          eventType: AUTH_ROUTING_KEYS.USER_UPDATED,
+          aggregateVersion: 2,
+          payload: {
+            userId: user.id,
+            username: 'novonome',
+            email: 'novo-email@teste.com',
+          },
+        }),
+      );
+    });
+
+    it('não deve persistir evento outbox quando username e email informados forem iguais aos atuais', async () => {
+      manager.findOne.mockResolvedValue({ ...user, eventVersion: 1 });
+
+      await userService.updateUser(
+        user.id,
+        { username: user.username, email: user.email },
+        tokenPayload,
+      );
+
+      expect(manager.create).not.toHaveBeenCalledWith(
+        OutboxEventEntity,
+        expect.anything(),
+      );
+    });
+
     it('não deve persistir evento outbox quando username e email não forem alterados', async () => {
       manager.findOne.mockResolvedValue({ ...user });
 

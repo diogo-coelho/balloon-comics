@@ -5,6 +5,7 @@ import { DataSource, In, Repository } from 'typeorm';
 import { ReaderService } from '../reader.service';
 import { ReaderEntity } from '../entities/reader.entity';
 import { ProcessedEventEntity } from '../entities/processed-event.entity';
+import { ConsumerAggregateVersionEntity } from '../entities/consumer-aggregate-version.entity';
 import { UploadReaderDto } from '../dtos/request/upload-reader.dto';
 import { IntegrationEvent } from '../../auth/dtos/request/integration-event.dto';
 import { UserQueueDto } from '../dtos/request/user-queue.dto';
@@ -45,6 +46,7 @@ describe('ReaderService', () => {
     findOneByOrFail: jest.Mock;
     findOneOrFail: jest.Mock;
     find: jest.Mock;
+    save: jest.Mock;
   };
 
   const reader: ReaderEntity = {
@@ -65,6 +67,7 @@ describe('ReaderService', () => {
     aggregateId: 'user-id',
     occurredAt: new Date().toISOString(),
     version: 1,
+    aggregateVersion: 1,
     data: {
       userId: 'user-id',
       username: 'usuario',
@@ -90,6 +93,7 @@ describe('ReaderService', () => {
       findOneByOrFail: jest.fn(),
       findOneOrFail: jest.fn(),
       find: jest.fn(),
+      save: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -124,7 +128,7 @@ describe('ReaderService', () => {
         {
           provide: AgeVerificationService,
           useValue: {
-            hasLegalAge: jest.fn(),
+            hasLegalAge: jest.fn().mockReturnValue(true),
             getAgeVerificationByReaderId: jest.fn(),
           },
         },
@@ -185,10 +189,10 @@ describe('ReaderService', () => {
         'https://cdn.balloon.com/readers/imagem.png',
       );
       ageVerificationService.getAgeVerificationByReaderId.mockResolvedValue(
-        mappedAgeVerification,
+        mappedAgeVerification as any,
       );
       socialMediaLinkService.getSocialMediaLinksByReaderId.mockResolvedValue(
-        mappedSocialMediaLinks,
+        mappedSocialMediaLinks as any,
       );
 
       const result = await readerService.getReader(reader.userId);
@@ -288,7 +292,7 @@ describe('ReaderService', () => {
       };
 
       manager.findOneByOrFail.mockResolvedValue(reader);
-      insertQueryBuilder.execute.mockResolvedValue({ raw: [ageVerification] });
+      manager.upsert.mockResolvedValue({} as any);
       manager.findOneOrFail.mockResolvedValue(ageVerification);
       ageVerificationMapper.toModelFromEntity.mockReturnValue(
         mappedAgeVerification,
@@ -302,8 +306,17 @@ describe('ReaderService', () => {
         },
       });
 
-      expect(insertQueryBuilder.into).toHaveBeenCalledWith(
+      expect(manager.upsert).toHaveBeenCalledWith(
         AgeVerificationEntity,
+        expect.objectContaining({
+          reader,
+          hasLegalAge: true,
+          dateOfBirth: '2000-01-01',
+        }),
+        {
+          conflictPaths: ['reader'],
+          skipUpdateIfNoValuesChanged: true,
+        },
       );
       expect(manager.findOneOrFail).toHaveBeenCalledWith(
         AgeVerificationEntity,
@@ -334,7 +347,7 @@ describe('ReaderService', () => {
       };
 
       manager.findOneByOrFail.mockResolvedValue(reader);
-      insertQueryBuilder.execute.mockResolvedValue({ raw: socialMediaLinks });
+      manager.upsert.mockResolvedValue({} as any);
       manager.find.mockResolvedValue(socialMediaLinks);
       socialMediaLinkMapper.toModelFromEntity.mockReturnValue(
         mappedSocialMediaLink,
@@ -350,8 +363,18 @@ describe('ReaderService', () => {
         },
       });
 
-      expect(insertQueryBuilder.into).toHaveBeenCalledWith(
+      expect(manager.upsert).toHaveBeenCalledWith(
         SocialMediaLinkEntity,
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: 'facebook',
+            url: 'https://facebook.com/usuario',
+          }),
+        ]),
+        {
+          conflictPaths: ['reader', 'name'],
+          skipUpdateIfNoValuesChanged: true,
+        },
       );
       expect(manager.find).toHaveBeenCalledWith(SocialMediaLinkEntity, {
         where: {
@@ -417,6 +440,13 @@ describe('ReaderService', () => {
   describe('handleUserCreated', () => {
     it('deve criar o leitor via upsert quando o evento ainda não tiver sido processado', async () => {
       insertQueryBuilder.execute.mockResolvedValue({ raw: [{ id: 'x' }] });
+      const aggregateState = {
+        aggregateId: event.aggregateId,
+        consumer: 'reader-sync',
+        lastAppliedVersion: 0,
+      };
+      manager.findOneOrFail.mockResolvedValue(aggregateState);
+      manager.save.mockResolvedValue(aggregateState);
 
       await readerService.handleUserCreated(event);
 
@@ -425,18 +455,63 @@ describe('ReaderService', () => {
         expect.objectContaining({ userId: event.data.userId }),
         ['userId'],
       );
+      expect(aggregateState.lastAppliedVersion).toBe(1);
+      expect(manager.save).toHaveBeenCalledWith(
+        ConsumerAggregateVersionEntity,
+        aggregateState,
+      );
     });
 
-    it('não deve reprocessar o evento quando ele já tiver sido processado', async () => {
+    it('não deve reprocessar o evento quando ele já tiver sido processado pelo eventId', async () => {
       insertQueryBuilder.execute.mockResolvedValue({ raw: [] });
 
       await readerService.handleUserCreated(event);
 
       expect(manager.upsert).not.toHaveBeenCalled();
+      expect(manager.findOneOrFail).not.toHaveBeenCalled();
+    });
+
+    it('não deve processar quando a versão do evento for menor ou igual à já aplicada', async () => {
+      insertQueryBuilder.execute.mockResolvedValue({ raw: [{ id: 'x' }] });
+      const aggregateState = {
+        aggregateId: event.aggregateId,
+        consumer: 'reader-sync',
+        lastAppliedVersion: 1,
+      };
+      manager.findOneOrFail.mockResolvedValue(aggregateState);
+
+      await readerService.handleUserCreated(event);
+
+      expect(manager.upsert).not.toHaveBeenCalled();
+      expect(manager.save).not.toHaveBeenCalled();
+    });
+
+    it('deve lançar erro quando o evento chegar fora de ordem (sequência com gap)', async () => {
+      insertQueryBuilder.execute.mockResolvedValue({ raw: [{ id: 'x' }] });
+      const aggregateState = {
+        aggregateId: event.aggregateId,
+        consumer: 'reader-sync',
+        lastAppliedVersion: 0,
+      };
+      manager.findOneOrFail.mockResolvedValue(aggregateState);
+
+      const outOfOrderEvent = { ...event, aggregateVersion: 3 };
+
+      await expect(
+        readerService.handleUserCreated(outOfOrderEvent),
+      ).rejects.toThrow(/Evento fora de ordem/);
+      expect(manager.upsert).not.toHaveBeenCalled();
     });
 
     it('deve registrar o evento processado com o consumidor correto', async () => {
       insertQueryBuilder.execute.mockResolvedValue({ raw: [{ id: 'x' }] });
+      const aggregateState = {
+        aggregateId: event.aggregateId,
+        consumer: 'reader-sync',
+        lastAppliedVersion: 0,
+      };
+      manager.findOneOrFail.mockResolvedValue(aggregateState);
+      manager.save.mockResolvedValue(aggregateState);
 
       await readerService.handleUserCreated(event);
 
@@ -455,6 +530,13 @@ describe('ReaderService', () => {
   describe('handleUserUpdated', () => {
     it('deve atualizar o leitor quando o evento ainda não tiver sido processado', async () => {
       insertQueryBuilder.execute.mockResolvedValue({ raw: [{ id: 'x' }] });
+      const aggregateState = {
+        aggregateId: event.aggregateId,
+        consumer: 'reader-sync',
+        lastAppliedVersion: 0,
+      };
+      manager.findOneOrFail.mockResolvedValue(aggregateState);
+      manager.save.mockResolvedValue(aggregateState);
 
       await readerService.handleUserUpdated(event);
 
@@ -465,6 +547,11 @@ describe('ReaderService', () => {
           email: event.data.email,
           username: event.data.username,
         }),
+      );
+      expect(aggregateState.lastAppliedVersion).toBe(1);
+      expect(manager.save).toHaveBeenCalledWith(
+        ConsumerAggregateVersionEntity,
+        aggregateState,
       );
     });
 
@@ -480,12 +567,24 @@ describe('ReaderService', () => {
   describe('handleUserDeleted', () => {
     it('deve remover o leitor quando o evento ainda não tiver sido processado', async () => {
       insertQueryBuilder.execute.mockResolvedValue({ raw: [{ id: 'x' }] });
+      const aggregateState = {
+        aggregateId: event.aggregateId,
+        consumer: 'reader-sync',
+        lastAppliedVersion: 0,
+      };
+      manager.findOneOrFail.mockResolvedValue(aggregateState);
+      manager.save.mockResolvedValue(aggregateState);
 
       await readerService.handleUserDeleted(event);
 
       expect(manager.delete).toHaveBeenCalledWith(ReaderEntity, {
         userId: event.data.userId,
       });
+      expect(aggregateState.lastAppliedVersion).toBe(1);
+      expect(manager.save).toHaveBeenCalledWith(
+        ConsumerAggregateVersionEntity,
+        aggregateState,
+      );
     });
 
     it('não deve reprocessar o evento quando ele já tiver sido processado', async () => {

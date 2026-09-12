@@ -151,4 +151,60 @@ describe('OutboxEventsPublisher', () => {
     resolveGetMany([]);
     await firstCall;
   });
+
+  it('deve processar múltiplos eventos com sucessos e falhas e atualizar status adequadamente', async () => {
+    const eventSuccess = buildEvent({ id: 'event-1', attempts: 0 });
+    const eventFail = buildEvent({ id: 'event-2', attempts: 2 });
+    queryBuilder.getMany.mockResolvedValue([eventSuccess, eventFail]);
+
+    rabbitMqProvider.publish.mockImplementation(async (_ex, _rk, msg) => {
+      if (msg.eventId === 'event-2') {
+        throw 'falha de conexão string';
+      }
+    });
+
+    await publisher.publishPendingEvents();
+
+    expect(outboxRepository.update).toHaveBeenCalledWith(
+      { id: expect.anything() },
+      expect.objectContaining({ status: 'published' }),
+    );
+    expect(outboxRepository.update).toHaveBeenCalledWith(
+      { id: expect.anything() },
+      expect.objectContaining({
+        status: 'pending',
+        lastError: 'falha de conexão string',
+      }),
+    );
+  });
+
+  it('deve executar a cláusula Brackets do queryBuilder ao reivindicar eventos', async () => {
+    let bracketsCallback: any;
+    queryBuilder.where.mockImplementation((bracketsInstance: any) => {
+      if (bracketsInstance?.whereFactory) {
+        bracketsCallback = bracketsInstance.whereFactory;
+      }
+      return queryBuilder;
+    });
+
+    const mockSubQuery = {
+      where: jest.fn().mockReturnThis(),
+      orWhere: jest.fn().mockReturnThis(),
+    };
+
+    queryBuilder.getMany.mockImplementation(async () => {
+      if (bracketsCallback) {
+        bracketsCallback(mockSubQuery);
+      }
+      return [];
+    });
+
+    await publisher.publishPendingEvents();
+
+    expect(mockSubQuery.where).toHaveBeenCalledWith(
+      'event.status = :pending',
+      expect.objectContaining({ pending: 'pending' }),
+    );
+    expect(mockSubQuery.orWhere).toHaveBeenCalled();
+  });
 });
