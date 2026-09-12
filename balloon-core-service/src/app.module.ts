@@ -6,7 +6,6 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core/constants';
 
 import { getJoiConfig } from './config/joi.config';
 import { PostgresConfigService } from './config/postgres.config.service';
-import { RabbitMqRetryProvider } from './config/rabbitmq-retry.provider';
 import { CustomExceptionFilter } from './filters/custom-exception.filter';
 
 import { ReaderModule } from './reader/reader.module';
@@ -51,10 +50,6 @@ import { SocialMediaLinkModule } from './social-media-link/social-media-link.mod
       provide: APP_FILTER,
       useClass: CustomExceptionFilter,
     },
-    {
-      provide: RabbitMqRetryProvider,
-      useClass: RabbitMqRetryProvider,
-    }
   ],
 })
 export class AppModule {}

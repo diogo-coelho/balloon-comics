@@ -1,6 +1,8 @@
 import * as amqpConnectionManager from 'amqp-connection-manager';
+import type { Message } from 'amqplib';
 import {
   Injectable,
+  Logger,
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
@@ -10,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 export class RabbitMqRetryProvider
   implements OnModuleInit, OnModuleDestroy
 {
+  private readonly logger = new Logger(RabbitMqRetryProvider.name);
   private connection!: amqpConnectionManager.AmqpConnectionManager;
   private channel!: amqpConnectionManager.ChannelWrapper;
 
@@ -34,6 +37,12 @@ export class RabbitMqRetryProvider
           'topic',
           { durable: true },
         );
+
+        channel.on('return', (message: Message) => {
+          this.logger.warn(
+            `Mensagem sem rota válida na retry exchange: routingKey="${message.fields.routingKey}", messageId="${message.properties?.messageId}"`,
+          );
+        });
       },
     });
   }
@@ -50,6 +59,7 @@ export class RabbitMqRetryProvider
       message.content,
       {
         persistent: true,
+        mandatory: true,
         messageId: message.properties.messageId,
         type: message.properties.type,
         contentType: message.properties.contentType,

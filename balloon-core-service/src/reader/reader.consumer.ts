@@ -5,7 +5,7 @@ import { ROUTING_KEYS } from './constants/routing-keys.constant';
 import { ReaderService } from './reader.service';
 import { UserQueueDto } from './dtos/request/user-queue.dto';
 import type { IntegrationEvent } from '../auth/dtos/request/integration-event.dto';
-import { ConfigService } from '@nestjs/config/dist/config.service';
+import { ConfigService } from '@nestjs/config';
 import { RabbitMqRetryProvider } from '../config/rabbitmq-retry.provider';
 
 @Controller()
