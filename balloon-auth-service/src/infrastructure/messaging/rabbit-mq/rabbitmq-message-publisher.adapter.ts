@@ -1,8 +1,8 @@
 import * as amqpConnectionManager from 'amqp-connection-manager';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AUTH_EXCHANGE } from '../constants/routing-keys';
-import { IntegrationEventContract } from '../infrastructure/contracts/integration-event.contract';
+import { AUTH_EXCHANGE } from '../../constants/routing-keys';
+import { IntegrationEventContract } from '../../contracts/integration-event.contract';
 
 @Injectable()
 export class RabbitMQProvider implements OnModuleInit {

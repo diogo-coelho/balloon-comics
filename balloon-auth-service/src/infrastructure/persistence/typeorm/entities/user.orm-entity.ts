@@ -1,0 +1,52 @@
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+
+@Entity('users')
+export class UserOrmEntity {
+
+  @PrimaryColumn('uuid')
+  id!: string;
+  
+  @Column({ unique: true, type: 'varchar', length: 200, nullable: false })
+  username!: string;
+  
+  @Column({ unique: true, type: 'varchar', length: 100, nullable: false })
+  email!: string;
+  
+  @Column({
+    name: 'password_hash',
+    type: 'varchar',
+    length: 255,
+    nullable: false,
+  })
+  passwordHash!: string;
+  
+  @Column({
+    name: 'refresh_token_hash',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
+  refreshTokenHash?: string | null;
+  
+  @Column({
+    name: 'event_version',
+    type: 'int',
+    default: 0,
+  })
+  eventVersion!: number;
+  
+  @CreateDateColumn({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt!: Date;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt!: Date;
+}

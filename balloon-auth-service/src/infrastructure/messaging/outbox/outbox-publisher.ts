@@ -2,11 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Interval } from '@nestjs/schedule';
 import { Brackets, DataSource, In, Repository } from 'typeorm';
-
-import { OutboxEventEntity } from '../user/entities/outbox-event.entity';
-import { RabbitMQProvider } from './rabbit-mq.provider';
-import { IntegrationEventContract } from '../infrastructure/contracts/integration-event.contract';
-import { AUTH_EXCHANGE } from '../constants/routing-keys';
+import { OutboxOrmEntity } from '../../persistence/typeorm/entities/outbox-event.orm-entity';
+import { AUTH_EXCHANGE } from '../../constants/routing-keys';
+import { IntegrationEventContract } from '../../contracts/integration-event.contract';
+import { RabbitMQProvider } from '../rabbit-mq/rabbitmq-message-publisher.adapter';
 
 @Injectable()
 export class OutboxEventsPublisher {
@@ -14,8 +13,8 @@ export class OutboxEventsPublisher {
   private isPublishing = false;
 
   constructor(
-    @InjectRepository(OutboxEventEntity)
-    private readonly outboxRepository: Repository<OutboxEventEntity>,
+    @InjectRepository(OutboxOrmEntity)
+    private readonly outboxRepository: Repository<OutboxOrmEntity>,
     private readonly dataSource: DataSource,
     private readonly rabbitMqProvider: RabbitMQProvider,
   ) {}
@@ -33,7 +32,7 @@ export class OutboxEventsPublisher {
       if (events.length === 0) return;
 
       const successfulIds: string[] = [];
-      const failedEvents: Array<{ event: OutboxEventEntity; error: any }> = [];
+      const failedEvents: Array<{ event: OutboxOrmEntity; error: any }> = [];
 
       for (const event of events) {
         try {
@@ -65,7 +64,7 @@ export class OutboxEventsPublisher {
     }
   }
 
-  private async publishEvent(event: OutboxEventEntity): Promise<void> {
+  private async publishEvent(event: OutboxOrmEntity): Promise<void> {
     const message: IntegrationEventContract = {
       eventId: event.id,
       eventType: event.eventType,
@@ -101,11 +100,11 @@ export class OutboxEventsPublisher {
     }
   }
 
-  private async claimEvents(): Promise<OutboxEventEntity[]> {
+  private async claimEvents(): Promise<OutboxOrmEntity[]> {
     const staleBefore = new Date(Date.now() - 2 * 60 * 1000);
 
     return this.dataSource.transaction(async (manager) => {
-      const repository = manager.getRepository(OutboxEventEntity);
+      const repository = manager.getRepository(OutboxOrmEntity);
 
       const events = await repository
         .createQueryBuilder('event')
