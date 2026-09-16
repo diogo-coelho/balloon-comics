@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserRepositoryPort } from "../../../../application/ports/user.repository.port";
 import { User } from "../../../../domain/user/entities/user";
@@ -22,10 +22,14 @@ export class TypeOrmUserRepository implements UserRepositoryPort {
       null;
   }
 
-  async save(user: User): Promise<void> {
-    const entity = UserOrmMapper.toPersistence(user);
+  async findById(id: string): Promise<User | null> {
+    const entity = await this.userRepository.findOneBy({
+      id
+    });
 
-    await this.userRepository.save(entity);
+    return entity ?
+      UserOrmMapper.toDomain(entity) :
+      null;
   }
 
   async findByIdForUpdate(id: string): Promise<User | null> {
@@ -39,8 +43,17 @@ export class TypeOrmUserRepository implements UserRepositoryPort {
       null;
   }
 
+  async save(user: User): Promise<void> {
+    const entity = UserOrmMapper.toPersistence(user);
+
+    await this.userRepository.save(entity);
+  }
+
   async delete(user: User): Promise<void> {
-    throw new Error("Method not implemented.");
+    const entity = await this.userRepository.findOneByOrFail({ id: user.id });
+    if (!entity) throw new ForbiddenException('Usuário não encontrado');
+
+    await this.userRepository.delete({ id: user.id });
   }
 
 }

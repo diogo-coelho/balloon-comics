@@ -1,4 +1,4 @@
-import { InvalidCredentialsError } from "../../../domain/auth/errors/invalid-credentials.error";
+import InvalidCredentialsError from "../../../domain/auth/errors/invalid-credentials.error";
 import { PasswordHasherPort } from "../../ports/password-hasher.port";
 import { TokenServicePort } from "../../ports/token-service.port";
 import { UserRepositoryPort } from "../../ports/user.repository.port";

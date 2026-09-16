@@ -2,7 +2,7 @@ import { AuthUnitOfWorkPort } from "../../ports/auth-unit-of-work.port";
 import { PasswordHasherPort } from "../../ports/password-hasher.port";
 import { UpdateUserOutput } from "../../types/outbox-event";
 import { UpdateUserInput } from "../../types/user";
-import { EmailAlreadyInUseError } from "../../../domain/user/errors/email-already-in-use.error";
+import EmailAlreadyInUseError from "../../../domain/user/errors/email-already-in-use.error";
 import { UserUpdatedEvent } from "../../../domain/user/events/user-updated.event";
 import UserNotAllowedError from "../../../domain/user/errors/user-not-allowed.error";
 import UserNotFoundError from "../../../domain/user/errors/user-not-found.error";

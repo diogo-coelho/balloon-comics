@@ -1,6 +1,6 @@
 import { CreateUserInput, CreateUserOutput } from "../../types/user";
 import { User } from "../../../domain/user/entities/user";
-import { EmailAlreadyInUseError } from "../../../domain/user/errors/email-already-in-use.error";
+import EmailAlreadyInUseError from "../../../domain/user/errors/email-already-in-use.error";
 import { UserCreatedEvent } from "../../../domain/user/events/user-created.event";
 import { AuthUnitOfWorkPort } from "../../ports/auth-unit-of-work.port";
 import { PasswordHasherPort } from "../../ports/password-hasher.port";

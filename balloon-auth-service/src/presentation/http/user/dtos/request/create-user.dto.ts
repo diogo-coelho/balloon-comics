@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validator";
 
-export class CreateuserDto {
+export class CreateUserDto {
   @IsString()
   @IsNotEmpty({ message: 'Nome de usuário não pode ser vazio' })
   @MinLength(3, { message: 'Nome de usuário deve ter no mínimo 3 caracteres' })
