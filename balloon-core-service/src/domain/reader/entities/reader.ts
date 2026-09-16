@@ -1,0 +1,32 @@
+import { randomUUID } from 'node:crypto';
+
+export class Reader {
+
+  constructor(
+    public readonly id: string,
+    public readonly userId: string,
+    public email: string,
+    public username: string,
+    public name: string,
+    public imageUrl: string | null,
+    public description: string | null,
+    public readonly createdAt: Date,
+    public updatedAt: Date
+  ) {}
+
+  static create(input: { userId: string, email: string, username: string }): Reader {
+    const now = new Date();
+
+    return new Reader(
+      randomUUID(),
+      input.userId,
+      input.email,
+      input.username,
+      null,
+      null,
+      now,
+      now,
+    );
+  }
+  
+}

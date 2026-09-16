@@ -1,0 +1,4 @@
+export const PROVIDERS_TOKENS = {
+  CORE_UNIT_OF_WORK: Symbol('CORE_UNIT_OF_WORK'),
+  READER_REPOSITORY: Symbol('READER_REPOSITORY'),
+} as const;

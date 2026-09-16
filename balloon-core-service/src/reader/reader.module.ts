@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthModule } from '../auth/auth.module';
 import { StorageModule } from '../storage/storage.module';
 import { MediaModule } from '../media/media.module';
 import { AgeVerificationModule } from '../age-verification/age-verification.module';
@@ -13,12 +12,11 @@ import { ReaderConsumer } from './reader.consumer';
 import { ReaderEntity } from './entities/reader.entity';
 import { ConsumerAggregateVersionEntity } from './entities/consumer-aggregate-version.entity';
 import { ProcessedEventEntity } from './entities/processed-event.entity';
-import { RabbitMqRetryProvider } from '../config/rabbitmq-retry.provider';
+import { RabbitMqRetryProvider } from '../infrastructure/messaging/rabbit-mq/rabbitmq-retry.provider';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ReaderEntity, ProcessedEventEntity, ConsumerAggregateVersionEntity]),
-    AuthModule,
     StorageModule,
     MediaModule,
     AgeVerificationModule,
