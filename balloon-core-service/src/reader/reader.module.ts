@@ -25,7 +25,7 @@ import { RabbitMqRetryProvider } from '../config/rabbitmq-retry.provider';
     SocialMediaLinkModule,
   ],
   controllers: [ReaderController, ReaderConsumer],
-  providers: [ReaderService, RabbitMqRetryProvider,],
+  providers: [ReaderService, RabbitMqRetryProvider],
   exports: [TypeOrmModule],
 })
 export class ReaderModule {}
