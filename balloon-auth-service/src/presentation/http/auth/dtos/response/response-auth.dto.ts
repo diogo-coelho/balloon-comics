@@ -4,5 +4,4 @@ export class ResponseAuthDto {
     id: string;
     email: string;
   };
-  next?: string;
 }

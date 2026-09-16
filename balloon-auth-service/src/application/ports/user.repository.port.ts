@@ -9,5 +9,7 @@ export interface UserRepositoryPort {
   delete(user: User): Promise<void>;
 
   findByIdForUpdate(id: string): Promise<User | null>;
+
+  findById(id: string): Promise<User | null>;
   
 }

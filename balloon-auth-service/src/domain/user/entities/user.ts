@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 export class User {
+  private refreshTokenHash?: string | null;
 
   constructor(
     public id: string,
@@ -53,4 +54,19 @@ export class User {
     this.passwordHash = passwordHash;
     this.updatedAt = new Date();
   }
+
+  setRefreshTokenHash(hash: string): void {
+    this.refreshTokenHash = hash;
+    this.updatedAt = new Date();
+  }
+
+  getRefreshTokenHash(): string | null | undefined {
+    return this.refreshTokenHash;
+  }
+
+  clearRefreshTokenHash(): void {
+    this.refreshTokenHash = null;
+    this.updatedAt = new Date();
+  }
+
 }

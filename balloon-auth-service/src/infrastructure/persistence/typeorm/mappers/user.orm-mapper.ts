@@ -12,6 +12,7 @@ export class UserOrmMapper {
     entity.username = user.username;
     entity.email = user.email;
     entity.passwordHash = user.passwordHash;
+    entity.refreshTokenHash = user.getRefreshTokenHash();
     entity.eventVersion = user.eventVersion;
     entity.createdAt = user.createdAt;
     entity.updatedAt = user.updatedAt;
@@ -22,7 +23,7 @@ export class UserOrmMapper {
   static toDomain(
     entity: UserOrmEntity,
   ): User { 
-    const { passwordHash, refreshTokenHash, ...domainEntity } = entity;
+    const { passwordHash, ...domainEntity } = entity;
     return domainEntity as unknown as User;
   }
   

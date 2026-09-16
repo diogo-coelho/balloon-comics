@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserController } from "../user/user.controller";
 import { CreateUserUseCase } from "../application/user/use-cases/create-user.use-case";
 import { PasswordHasherPort } from "../application/ports/password-hasher.port";
 import { AuthUnitOfWorkPort } from "../application/ports/auth-unit-of-work.port";
@@ -9,10 +8,11 @@ import { TypeOrmUserRepository } from "../infrastructure/persistence/typeorm/rep
 import { BcryptPasswordHasherAdapter } from "../infrastructure/security/bcrypt-password-hasher.adapter";
 import { OutboxOrmEntity } from "../infrastructure/persistence/typeorm/entities/outbox-event.orm-entity";
 import { TypeOrmAuthUnitOfWork } from "../infrastructure/persistence/typeorm/unit-of-work/typeorm-auth-unit-of-work";
-import { OutboxEventsPublisher } from "../provider/outbox-event.publish";
-import { RabbitMQProvider } from "../provider/rabbit-mq.provider";
 import { UpdateUserUseCase } from "../application/user/use-cases/update-user.use-case";
 import { DeleteUserUseCase } from "../application/user/use-cases/delete-user.use-case";
+import { UserController } from "../presentation/http/user/user.controller";
+import { OutboxEventsPublisher } from "../infrastructure/messaging/outbox/outbox-publisher";
+import { RabbitMQProvider } from "../infrastructure/messaging/rabbit-mq/rabbitmq-message-publisher.adapter";
 
 const USER_REPOSITORY = Symbol('UserRepository');
 const PASSWORD_HASHER = Symbol('PasswordHasher');

@@ -5,5 +5,4 @@ export class AuthDataDto {
     id: string;
     email: string;
   };
-  next?: string;
 }
