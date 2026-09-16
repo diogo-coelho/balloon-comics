@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { PostgresConfigService } from '../postgres.config.service';
+import { PostgresConfigService } from '../../infrastructure/config/postgres.config.service';
 
 describe('PostgresConfigService', () => {
   let service: PostgresConfigService;

@@ -11,6 +11,8 @@ import { OutboxOrmEntity } from "../infrastructure/persistence/typeorm/entities/
 import { TypeOrmAuthUnitOfWork } from "../infrastructure/persistence/typeorm/unit-of-work/typeorm-auth-unit-of-work";
 import { OutboxEventsPublisher } from "../provider/outbox-event.publish";
 import { RabbitMQProvider } from "../provider/rabbit-mq.provider";
+import { UpdateUserUseCase } from "../application/user/use-cases/update-user.use-case";
+import { DeleteUserUseCase } from "../application/user/use-cases/delete-user.use-case";
 
 const USER_REPOSITORY = Symbol('UserRepository');
 const PASSWORD_HASHER = Symbol('PasswordHasher');
@@ -52,6 +54,33 @@ const AUTH_UNIT_OF_WORK = Symbol('AuthUnitOfWork');
         new CreateUserUseCase(
           users,
           passwordHasher,
+        )
+    },
+    {
+      provide: UpdateUserUseCase,
+      inject: [
+        AUTH_UNIT_OF_WORK,
+        PASSWORD_HASHER,
+      ],
+      useFactory: (
+        users: AuthUnitOfWorkPort,
+        passwordHasher: PasswordHasherPort,
+      ) => 
+        new UpdateUserUseCase(
+          users,
+          passwordHasher,
+        )
+    },
+    {
+      provide: DeleteUserUseCase,
+      inject: [
+        AUTH_UNIT_OF_WORK,
+      ],
+      useFactory: (
+        users: AuthUnitOfWorkPort,
+      ) => 
+        new DeleteUserUseCase(
+          users,
         )
     },
     OutboxEventsPublisher,

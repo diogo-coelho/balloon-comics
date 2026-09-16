@@ -28,4 +28,19 @@ export class TypeOrmUserRepository implements UserRepositoryPort {
     await this.userRepository.save(entity);
   }
 
+  async findByIdForUpdate(id: string): Promise<User | null> {
+    const entity = await this.userRepository.findOne({
+      where: { id },
+      lock: { mode: "pessimistic_write" }
+    });
+
+    return entity ?
+      UserOrmMapper.toDomain(entity) :
+      null;
+  }
+
+  async delete(user: User): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
 }

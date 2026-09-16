@@ -7,3 +7,12 @@ export interface IntegrationEventContract<T = Record<string, unknown>> {
   aggregateVersion: number;
   data: T;
 }
+
+export interface DomainEvent<T = unknown> {
+  eventId: string;
+  eventType: string;
+  aggregateId: string;
+  aggregateVersion: number;
+  occurredAt: Date;
+  data: T;
+}

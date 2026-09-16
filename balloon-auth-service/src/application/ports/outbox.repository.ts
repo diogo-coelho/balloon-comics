@@ -1,5 +1,7 @@
-import { UserCreatedEvent } from "../../domain/user/events/user-created.event";
+import { DomainEvent } from "../../infrastructure/contracts/integration-event.contract";
 
 export interface OutboxRepositoryPort {
-  save(event: UserCreatedEvent): Promise<void>;
+  save(
+    event: DomainEvent,
+  ): Promise<void>;
 }

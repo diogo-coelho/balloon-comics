@@ -1,4 +1,4 @@
-import { getJoiConfig } from '../joi.config.service';
+import { getJoiConfig } from '../../infrastructure/config/joi.config.service';
 
 describe('getJoiConfig', () => {
   const validConfig = {
