@@ -7,9 +7,9 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core/constants';
 
 import { PostgresConfigService } from './infrastructure/config/postgres.config.service';
 import { getJoiConfig } from './infrastructure/config/joi.config.service';
-import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { CustomExceptionFilter } from './filters/custom-exception.filter';
+import { UserModule } from './modules/user.module';
+import { CustomExceptionFilter } from './presentation/http/filters/custom-exception.filter';
 
 @Module({
   imports: [
