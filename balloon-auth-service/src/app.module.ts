@@ -5,11 +5,11 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core/constants';
 
-import { PostgresConfigService } from './config/postgres.config.service';
-import { getJoiConfig } from './config/joi.config.service';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { CustomExceptionFilter } from './filters/custom-exception.filter';
+import { PostgresConfigService } from './infrastructure/config/postgres.config.service';
+import { getJoiConfig } from './infrastructure/config/joi.config.service';
+import { CustomExceptionFilter } from './presentation/http/filters/custom-exception.filter';
+import { AuthModule } from './modules/auth.module';
+import { UserModule } from './modules/user.module';
 
 @Module({
   imports: [
