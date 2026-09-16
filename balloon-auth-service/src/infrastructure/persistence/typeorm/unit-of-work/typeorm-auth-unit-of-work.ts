@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { AuthUnitOfWorkPort } from "../../../../application/ports/auth-unit-of-work.port";
 import { AuthTransactionalPort } from "../../../../application/types/auth";
@@ -6,6 +7,7 @@ import { TypeOrmOutboxRepository } from "../repositories/typeorm-outbox.reposito
 import { UserOrmEntity } from "../entities/user.orm-entity";
 import { OutboxOrmEntity } from "../entities/outbox-event.orm-entity";
 
+@Injectable()
 export class TypeOrmAuthUnitOfWork implements AuthUnitOfWorkPort {
   constructor(
     private readonly dataSource: DataSource,
@@ -29,5 +31,4 @@ export class TypeOrmAuthUnitOfWork implements AuthUnitOfWorkPort {
       }
     )
   }
-
 }

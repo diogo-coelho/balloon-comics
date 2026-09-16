@@ -15,11 +15,9 @@ import jwtConfig from "../infrastructure/security/jwt.config";
 import { AuthController } from "../presentation/http/auth/auth.controller";
 import { AuthUnitOfWorkPort } from "../application/ports/auth-unit-of-work.port";
 import { LogoutUseCase } from "../application/auth/use-cases/logout.use-case";
-
-const USER_REPOSITORY = Symbol('UserRepository');
-const PASSWORD_HASHER = Symbol('PasswordHasher');
-const TOKEN_SERVICE = Symbol('TOKEN_SERVICE');
-const AUTH_UNIT_OF_WORK = Symbol('AuthUnitOfWork');
+import { PROVIDERS_TOKENS } from "../infrastructure/constants/providers-tokens";
+import { UserModule } from "./user.module";
+import HttpCookies from "../presentation/http/cookies/http-cookies";
 
 @Module({
   imports: [
@@ -31,30 +29,32 @@ const AUTH_UNIT_OF_WORK = Symbol('AuthUnitOfWork');
     ),
     JwtModule.registerAsync(
       jwtConfig.asProvider(),
-    )
+    ),
+    UserModule,
   ],
   controllers: [
     AuthController
   ],
   providers: [
     {
-      provide: USER_REPOSITORY,
+      provide: PROVIDERS_TOKENS.USER_REPOSITORY,
       useClass: TypeOrmUserRepository
     },
     {
-      provide: PASSWORD_HASHER,
+      provide: PROVIDERS_TOKENS.PASSWORD_HASHER,
       useClass: BcryptPasswordHasherAdapter
     },
     {
-      provide: TOKEN_SERVICE,
+      provide: PROVIDERS_TOKENS.TOKEN_SERVICE,
       useClass: JwtTokenServiceAdapter
     },
+    HttpCookies,
     {
       provide: LoginUseCase,
       inject: [
-        USER_REPOSITORY,
-        PASSWORD_HASHER,
-        TOKEN_SERVICE
+        PROVIDERS_TOKENS.USER_REPOSITORY,
+        PROVIDERS_TOKENS.PASSWORD_HASHER,
+        PROVIDERS_TOKENS.TOKEN_SERVICE
       ],
       useFactory: (
         users: UserRepositoryPort,
@@ -69,9 +69,9 @@ const AUTH_UNIT_OF_WORK = Symbol('AuthUnitOfWork');
     {
       provide: RefreshTokenUseCase,
       inject: [
-        AUTH_UNIT_OF_WORK,
-        PASSWORD_HASHER,
-        TOKEN_SERVICE
+        PROVIDERS_TOKENS.AUTH_UNIT_OF_WORK,
+        PROVIDERS_TOKENS.PASSWORD_HASHER,
+        PROVIDERS_TOKENS.TOKEN_SERVICE
       ],
       useFactory: (
         unitOfWork: AuthUnitOfWorkPort,
@@ -86,7 +86,7 @@ const AUTH_UNIT_OF_WORK = Symbol('AuthUnitOfWork');
     {
       provide: LogoutUseCase,
       inject: [
-        USER_REPOSITORY
+        PROVIDERS_TOKENS.USER_REPOSITORY
       ],
       useFactory: (
         users: UserRepositoryPort

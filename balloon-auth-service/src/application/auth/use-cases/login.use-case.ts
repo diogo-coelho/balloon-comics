@@ -23,7 +23,8 @@ export class LoginUseCase {
       email: user.email,
     });
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);
-    user.setRefreshTokenHash(refreshToken);
+    const refreshTokenHash = await this.passwordHasher.hash(refreshToken);
+    user.setRefreshTokenHash(refreshTokenHash);
 
     await this.users.save(user);
 

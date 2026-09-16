@@ -5,10 +5,14 @@ export type CreateUserInput = {
 };
 
 export type CreateUserOutput = {
-  id: string;
-  username: string;
-  email: string;
-  createdAt: Date;
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    createdAt: Date;
+  }
 };
 
 export type UpdateUserInput = {

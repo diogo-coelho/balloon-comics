@@ -2,7 +2,6 @@ import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } fro
 
 @Entity('users')
 export class UserOrmEntity {
-
   @PrimaryColumn('uuid')
   id!: string;
   

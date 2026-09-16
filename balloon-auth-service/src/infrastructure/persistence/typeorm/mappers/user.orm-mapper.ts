@@ -23,8 +23,17 @@ export class UserOrmMapper {
   static toDomain(
     entity: UserOrmEntity,
   ): User { 
-    const { passwordHash, ...domainEntity } = entity;
-    return domainEntity as unknown as User;
+    const user = new User(
+      entity.id,
+      entity.username,
+      entity.email,
+      entity.passwordHash,
+      entity.eventVersion,
+      entity.createdAt,
+      entity.updatedAt
+    );
+
+    return user;
   }
   
 }

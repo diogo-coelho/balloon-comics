@@ -2,8 +2,9 @@ import { AuthUnitOfWorkPort } from "../../ports/auth-unit-of-work.port";
 import { PasswordHasherPort } from "../../ports/password-hasher.port";
 import { UpdateUserOutput } from "../../types/outbox-event";
 import { UpdateUserInput } from "../../types/user";
-import EmailAlreadyInUseError from "../../../domain/user/errors/email-already-in-use.error";
 import { UserUpdatedEvent } from "../../../domain/user/events/user-updated.event";
+import { User } from "../../../domain/user/entities/user";
+import EmailAlreadyInUseError from "../../../domain/user/errors/email-already-in-use.error";
 import UserNotAllowedError from "../../../domain/user/errors/user-not-allowed.error";
 import UserNotFoundError from "../../../domain/user/errors/user-not-found.error";
 
@@ -19,7 +20,7 @@ export class UpdateUserUseCase {
       undefined;
 
     return this.unitOfWork.execute(async (transaction) => {
-      const user = await transaction.users.findByIdForUpdate(input.id);
+      const user: User | null = await transaction.users.findByIdForUpdate(input.id);
 
       if (!user) throw new UserNotFoundError('Usuário não encontrado: ' + input.id);
 

@@ -27,7 +27,7 @@ export class User {
     );
   }
   
-  update(input: { username?: string; email?: string; }): boolean {
+  public update(input: { username?: string; email?: string; }): boolean {
     let integrationDataChanged = false;
 
     if (input.username !== undefined && input.username !== this.username) {
@@ -48,23 +48,23 @@ export class User {
     return integrationDataChanged;
   }
 
-  changePasswordHash(
+  public changePasswordHash(
     passwordHash: string,
   ): void {
     this.passwordHash = passwordHash;
     this.updatedAt = new Date();
   }
 
-  setRefreshTokenHash(hash: string): void {
+  public setRefreshTokenHash(hash: string): void {
     this.refreshTokenHash = hash;
     this.updatedAt = new Date();
   }
 
-  getRefreshTokenHash(): string | null | undefined {
+  public getRefreshTokenHash(): string | null | undefined {
     return this.refreshTokenHash;
   }
 
-  clearRefreshTokenHash(): void {
+  public clearRefreshTokenHash(): void {
     this.refreshTokenHash = null;
     this.updatedAt = new Date();
   }

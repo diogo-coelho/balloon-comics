@@ -12,7 +12,7 @@ export class TypeOrmOutboxRepository implements OutboxRepositoryPort {
     const entity = this.repository.create({
       id: event.eventId,
       eventType: event.eventType,
-      userId: event.aggregateId,
+      userId: event.userId,
       aggregateVersion: event.aggregateVersion,
       payload: event.data as Record<string, unknown>,
       status: 'pending',

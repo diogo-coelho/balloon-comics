@@ -1,14 +1,15 @@
 import { randomUUID } from "node:crypto";
+import { AUTH_ROUTING_KEYS } from "../../../infrastructure/constants/routing-keys";
 
 export class UserUpdatedEvent {
   readonly eventId: string;
-  readonly eventType = 'user.updated';
+  readonly eventType = AUTH_ROUTING_KEYS.USER_UPDATED;
   readonly occurredAt: Date;
 
   constructor(
-    readonly aggregateId: string,
+    readonly userId: string,
     readonly aggregateVersion: number,
-    readonly payload: {
+    readonly data: {
       userId: string;
       username: string;
       email: string;

@@ -35,6 +35,8 @@ export class CustomExceptionFilter implements ExceptionFilter {
   }
 
   private resolveException(exception: unknown): { status: number, message: string } {
+    console.error("exception: ", exception);
+
     if (exception instanceof InvalidCredentialsError) {
       return {
         status: HttpStatus.UNAUTHORIZED,
@@ -73,13 +75,16 @@ export class CustomExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       return {
         status: exception.getStatus(),
-        message: exception.message
+        message: typeof exception.getResponse() === 'string' ?
+                  exception.getResponse() :
+                  exception.getResponse()?.['message']
+
       }
     }
 
     return {
       status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: 'Internal Server Error'
+      message: 'Internal server error'
     }
   }
 }

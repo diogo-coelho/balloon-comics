@@ -8,6 +8,7 @@ import { TokenPayloadDto } from './dtos/request/token-payload.dto';
 import { AuthTokenGuard } from '../guards/auth-token.guard';
 import { LogoutUseCase } from '../../../application/auth/use-cases/logout.use-case';
 import { RefreshTokenUseCase } from '../../../application/auth/use-cases/refresh-token.use-case';
+import HttpCookies from '../cookies/http-cookies';
 
 @Controller('auth')
 export class AuthController {
@@ -15,7 +16,8 @@ export class AuthController {
   constructor(
     private readonly loginUseCase: LoginUseCase,
     private readonly logoutUseCase: LogoutUseCase,
-    private readonly refreshTokenUseCase: RefreshTokenUseCase
+    private readonly refreshTokenUseCase: RefreshTokenUseCase,
+    private readonly httpCookies: HttpCookies
   ) {}
 
   @Throttle({ default: { limit: 5, ttl: 60000 } })
@@ -29,8 +31,8 @@ export class AuthController {
       password: loginDto.password
     });
 
-    this.setAccessTokenCookie(response, result.accessToken as string);
-    this.setRefreshTokenCookie(response, result.refreshToken as string);
+    this.httpCookies.setAccessTokenCookie(response, result.accessToken as string);
+    this.httpCookies.setRefreshTokenCookie(response, result.refreshToken as string);
 
     return {
       message: 'Acesso concedido',
@@ -50,7 +52,7 @@ export class AuthController {
     const { sub: userId } = tokenPayload;
     await this.logoutUseCase.execute(userId);
 
-    this.clearAuthCookies(response);
+    this.httpCookies.clearAuthCookies(response);
   }
 
   @Post('/refresh')
@@ -63,8 +65,8 @@ export class AuthController {
 
     const result = await this.refreshTokenUseCase.execute({ refreshToken });
 
-    this.setAccessTokenCookie(response, result.accessToken);
-    this.setRefreshTokenCookie(response, result.refreshToken);
+    this.httpCookies.setAccessTokenCookie(response, result.accessToken);
+    this.httpCookies.setRefreshTokenCookie(response, result.refreshToken);
 
     return {
       message: 'Tokens atualizados'
@@ -79,30 +81,5 @@ export class AuthController {
       email: tokenPayload.email,
     };
   }
-
-  private setAccessTokenCookie(response: Response, accessToken: string) {
-    response.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-        path: '/',
-    });
-  }
-  
-  private setRefreshTokenCookie(response: Response, refreshToken: string) {
-    response.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/api/auth/refresh',
-    });
-  }
-  
-  private clearAuthCookies(response: Response) {
-    response.clearCookie('accessToken', { path: '/' });
-    response.clearCookie('refreshToken', { path: '/api/auth/refresh' });
-  } 
 
 }

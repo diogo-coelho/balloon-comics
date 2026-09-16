@@ -10,8 +10,8 @@ const dataSourceOptions: DataSourceOptions = {
   username: process.env.PG_DATABASE_USERNAME,
   password: process.env.PG_DATABASE_PASSWORD,
   database: process.env.PG_DATABASE_NAME,
-  entities: [join(__dirname, '../**/*.entity{.ts,.js}')],
-  migrations: [join(__dirname, 'migrations/*{.ts,.js}')],
+  entities: [join(__dirname, '../**/*.orm-entity{.ts,.js}')],
+  migrations: [join(__dirname, '../**/migrations/*{.ts,.js}')],
   logging: true,
 };
 
