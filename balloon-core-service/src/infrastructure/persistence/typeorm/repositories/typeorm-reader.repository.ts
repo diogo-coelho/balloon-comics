@@ -4,6 +4,7 @@ import { Reader } from "../../../../domain/reader/entities/reader";
 import { ReaderOrmEntity } from "../entities/reader.orm-entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable } from "@nestjs/common";
+import { ReaderOrmMapper } from "../mappers/reader.orm-mapper";
 
 @Injectable()
 export class TypeOrmReaderRepository implements ReaderRepositoryPort {
@@ -13,12 +14,28 @@ export class TypeOrmReaderRepository implements ReaderRepositoryPort {
     private readonly readerRepository: Repository<ReaderOrmEntity>
   ){}
   
-  upsert(reader: Reader): Promise<void> {
-    throw new Error("Method not implemented.");
+  async upsert(reader: Reader): Promise<void> {
+    await this.readerRepository.upsert(
+      {
+        userId: reader.userId,
+        email: reader.email,
+        username: reader.username,
+        name: reader.name,
+        updatedAt: reader.updatedAt,
+      },
+      {
+        conflictPaths: ['userId'],
+      },
+    );
   }
 
-  findByUserId(userId: string): Promise<Reader | null> {
-    throw new Error("Method not implemented.");
+  async findByUserId(userId: string): Promise<Reader | null> {
+    const entity = await this.readerRepository.findOneBy({ userId });
+    if (!entity) return null;
+
+    return entity
+    ? ReaderOrmMapper.toDomain(entity)
+    : null;
   }
 
 }

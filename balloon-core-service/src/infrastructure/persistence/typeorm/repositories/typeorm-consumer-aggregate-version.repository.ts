@@ -13,12 +13,35 @@ export class TypeOrmConsumerAggregateVersionRepository implements ConsumerAggreg
     private readonly consumerAggregateVersionRepository: Repository<ConsumerAggregateVersionOrmEntity>,
   ) {}
 
-  getOrCreateForUpdate(aggregateId: string, consumer: string): Promise<ConsumerAggregateVersion> {
-    throw new Error("Method not implemented.");
+  async getOrCreateForUpdate(aggregateId: string, consumer: string): Promise<ConsumerAggregateVersion> {
+    await this.consumerAggregateVersionRepository
+      .createQueryBuilder()
+      .insert()
+      .into(ConsumerAggregateVersionOrmEntity)
+      .values({
+        aggregateId,
+        consumer,
+        lastAppliedVersion: 0,
+      })
+      .orIgnore()
+      .execute();
+    
+    const entity = await this.consumerAggregateVersionRepository.findOneOrFail({
+      where: { aggregateId, consumer },
+      lock: { mode: 'pessimistic_write' },
+    });
+
+    return {
+      aggregateId: entity.aggregateId,
+      consumer: entity.consumer,
+      lastAppliedVersion: entity.lastAppliedVersion,
+    };
   }
 
-  updateVersion(aggregateId: string, consumer: string, version: number): Promise<void> {
-    throw new Error("Method not implemented.");
+  async updateVersion(aggregateId: string, consumer: string, version: number): Promise<void> {
+    await this.consumerAggregateVersionRepository.update({ aggregateId, consumer },
+      { lastAppliedVersion: version, updatedAt: new Date() },
+    );
   }
   
 }

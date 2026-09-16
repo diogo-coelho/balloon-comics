@@ -1,4 +1,4 @@
-import { Reader } from "../../domain/reader.repository.port.ts";
+import { Reader } from "../../domain/reader/entities/reader";
 
 export interface ReaderRepositoryPort {
 

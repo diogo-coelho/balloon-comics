@@ -12,8 +12,20 @@ export class TypeOrmProcessedEventRepository implements ProcessedEventRepository
     private readonly processedEventRepository: Repository<ProcessedEventOrmEntity>
   ) {}
   
-  tryMarkAsProcessed(eventId: string, consumer: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
+  async tryMarkAsProcessed(eventId: string, consumer: string): Promise<boolean> {
+    const result = await this.processedEventRepository
+      .createQueryBuilder()
+      .insert()
+      .into(ProcessedEventOrmEntity)
+      .values({
+        eventId,
+        consumer,
+      })
+      .orIgnore()
+      .returning('id')
+      .execute();
+
+    return result.raw.length > 0;
   }
   
 }

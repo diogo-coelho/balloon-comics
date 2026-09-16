@@ -22,6 +22,7 @@ export class Reader {
       input.userId,
       input.email,
       input.username,
+      input.username,
       null,
       null,
       now,
