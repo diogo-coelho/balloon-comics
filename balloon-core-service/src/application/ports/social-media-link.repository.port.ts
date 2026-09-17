@@ -6,6 +6,6 @@ export interface SocialmediaLinkRepositoryPort {
 
   findByReaderIdAndName(readerId: string, name: string): Promise<SocialMediaLink | null>;
 
-  updateMany(links: SocialMediaLink[]): Promise<void>;
+  saveMany(links: SocialMediaLink[]): Promise<SocialMediaLink[]>;
 
 }

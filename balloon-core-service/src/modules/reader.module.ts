@@ -5,22 +5,27 @@ import { ConfigModule } from "@nestjs/config";
 
 import { ReaderConsumer } from "../presentation/messaging/reader/reader.consume";
 import { ReaderController } from "../presentation/http/reader/reader.controller";
+import { AuthTokenGuard } from "../presentation/http/guards/auth-token.guard";
 
 import jwtConfig from "../infrastructure/security/jwt.config";
 import { PROVIDERS_TOKENS } from "../infrastructure/constants/providers-tokens";
-import { TypeOrmCoreUnitOfWork } from "../infrastructure/persistence/typeorm/unit-of-work/typeorm-core-unit-of-work";
 import { RabbitMqRetryProvider } from "../infrastructure/messaging/rabbit-mq/rabbitmq-retry.provider";
+import { SharpImageProcessorAdapter } from "../infrastructure/media/sharp-image-processor.adapter";
+import { AwsS3StorageAdapter } from "../infrastructure/storage/aws-s3-storage.adapter";
 
 import { UpdateReaderFromUserEventUseCase } from "../application/reader/use-cases/update-reader-from-user-event.use-case";
 import { DeleteReaderFromUserEventUseCase } from "../application/reader/use-cases/delete-reader-from-user-event.use-case";
 import { CreateReaderFromUserEventUseCase } from "../application/reader/use-cases/create-reader-from-user-event.use-case";
 import { GetReaderUseCase } from "../application/reader/use-cases/get-reader.use-case";
+import { UploadReaderImageUseCase } from "../application/reader/use-cases/upload-reader-image.use-case";
+import { UpdateReaderUseCase } from "../application/reader/use-cases/update-reader.use-case";
 
 import { ReaderRepositoryPort } from "../application/ports/reader.repository.port";
 import { CoreUnitOfWorkPort } from "../application/ports/core-unit-of-work.port";
 import { AgeVerificationRepositoryPort } from "../application/ports/age-verification.repository.port";
 import { SocialmediaLinkRepositoryPort } from "../application/ports/social-media-link.repository.port";
 import { StoragePort } from "../application/ports/storage.port";
+import { ImageProcessorPort } from "../application/ports/image.processor.port";
 
 import { ReaderOrmEntity } from "../infrastructure/persistence/typeorm/entities/reader.orm-entity";
 import { ProcessedEventOrmEntity } from "../infrastructure/persistence/typeorm/entities/processed-event.orm-entity";
@@ -28,16 +33,10 @@ import { ConsumerAggregateVersionOrmEntity } from "../infrastructure/persistence
 import { AgeVerificationOrmEntity } from "../infrastructure/persistence/typeorm/entities/age-verification.orm-entity";
 import { SocialMediaLinkOrmEntity } from "../infrastructure/persistence/typeorm/entities/social-media-link.orm-entity";
 
+import { TypeOrmCoreUnitOfWork } from "../infrastructure/persistence/typeorm/unit-of-work/typeorm-core-unit-of-work";
 import { TypeOrmReaderRepository } from "../infrastructure/persistence/typeorm/repositories/typeorm-reader.repository";
 import { TypeOrmAgeVerificationRepository } from "../infrastructure/persistence/typeorm/repositories/typeorm-age-verification.repository";
 import { TypeOrmSocialMediaLinkRepository } from "../infrastructure/persistence/typeorm/repositories/typeorm-social-media-link.repository";
-
-import { AwsS3StorageAdapter } from "../infrastructure/storage/aws-s3-storage.adapter";
-
-import { AuthTokenGuard } from "../presentation/http/guards/auth-token.guard";
-import { SharpImageProcessorAdapter } from "../infrastructure/media/sharp-image-processor.adapter";
-import { ImageProcessorPort } from "../application/ports/image.processor.port";
-import { UploadReaderImageUseCase } from "../application/reader/use-cases/upload-reader-image.use-case";
 
 @Module({
   imports: [
@@ -154,6 +153,21 @@ import { UploadReaderImageUseCase } from "../application/reader/use-cases/upload
           imageProcessor,
           storage,
         ),
+    },
+    {
+      provide: UpdateReaderUseCase,
+      inject: [
+        PROVIDERS_TOKENS.CORE_UNIT_OF_WORK,
+        PROVIDERS_TOKENS.STORAGE,
+      ],
+      useFactory: (
+        unitOfWork: CoreUnitOfWorkPort,
+        storage: StoragePort,
+      ) => 
+        new UpdateReaderUseCase(
+        unitOfWork,
+        storage,
+      ),
     },
     RabbitMqRetryProvider,
     AuthTokenGuard,

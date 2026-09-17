@@ -4,8 +4,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MicroserviceOptions } from '@nestjs/microservices';
+import { setupRabbitMQ } from './infrastructure/messaging/rabbit-mq/rabbitmq-topology.config';
 
-import { setupRabbitMQ } from './config/rabbitmq-topology.config';
 import { AppModule } from './app.module';
 
 async function bootstrap() {

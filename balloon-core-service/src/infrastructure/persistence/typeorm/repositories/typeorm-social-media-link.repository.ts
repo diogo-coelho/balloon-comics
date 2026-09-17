@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { SocialMediaLinkOrmEntity } from "../entities/social-media-link.orm-entity";
 import { SocialMediaLinkOrmMapper } from "../mappers/social-media-link.orm-mapper";
 import { Injectable } from "@nestjs/common";
+import { ReaderOrmEntity } from "../entities/reader.orm-entity";
 
 @Injectable()
 export class TypeOrmSocialMediaLinkRepository implements SocialmediaLinkRepositoryPort {
@@ -28,24 +29,22 @@ export class TypeOrmSocialMediaLinkRepository implements SocialmediaLinkReposito
       : null;
   }
 
-  async updateMany(links: SocialMediaLink[]): Promise<void> {
-    if (links.length === 0) return;
+  async saveMany(links: SocialMediaLink[]): Promise<SocialMediaLink[]> {
+    if (links.length === 0) return [];
 
-    await this.repository.upsert(
-      links.map((link) => ({
-        readerId: link.readerId,
-        name: link.name,
-        url: link.url,
-        updatedAt: link.updatedAt,
-      })),
-      {
-        conflictPaths: [
-          'readerId',
-          'name',
-        ],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
+    const entities = links.map((link) => {
+      const entity = new SocialMediaLinkOrmEntity();
+      entity.id = link.id;
+      entity.reader = { id: link.readerId } as ReaderOrmEntity;
+      entity.name = link.name;
+      entity.url = link.url;
+      entity.createdAt = link.createdAt;
+      entity.updatedAt = link.updatedAt;
+      return entity;
+    });
+    await this.repository.save(entities);
+
+    return links;
   }
   
 }

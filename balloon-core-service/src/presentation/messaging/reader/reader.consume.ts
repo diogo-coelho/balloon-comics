@@ -2,13 +2,13 @@ import { Channel, Message } from "amqplib";
 import { Controller, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Ctx, EventPattern, Payload, RmqContext } from "@nestjs/microservices";
-import { CreateReaderFromUserEventUseCase } from "../../../application/reader/use-cases/create-reader-from-user-event.use-case";
-import { ROUTING_KEYS } from "../../../reader/constants/routing-keys.constant";
 import type { IntegrationEvent } from "../contracts/integration-event.contract";
-import { UserCreatedEventData, UserDeletedEventData, UserUpdatedEventData } from "../../../application/types/user-sync";
+import { AUTH_ROUTING_KEYS } from "../../../infrastructure/constants/routing-keys";
 import { RabbitMqRetryProvider } from "../../../infrastructure/messaging/rabbit-mq/rabbitmq-retry.provider";
+import { UserCreatedEventData, UserDeletedEventData, UserUpdatedEventData } from "../../../application/types/user-sync";
 import { UpdateReaderFromUserEventUseCase } from "../../../application/reader/use-cases/update-reader-from-user-event.use-case";
 import { DeleteReaderFromUserEventUseCase } from "../../../application/reader/use-cases/delete-reader-from-user-event.use-case";
+import { CreateReaderFromUserEventUseCase } from "../../../application/reader/use-cases/create-reader-from-user-event.use-case";
 
 @Controller()
 export class ReaderConsumer {
@@ -23,7 +23,7 @@ export class ReaderConsumer {
     private readonly configService: ConfigService,
   ) {}
 
-  @EventPattern(ROUTING_KEYS.USER_CREATED)
+  @EventPattern(AUTH_ROUTING_KEYS.USER_CREATED)
   async userCreated(
     @Payload() event: IntegrationEvent<UserCreatedEventData>,
     @Ctx() context: RmqContext,
@@ -32,7 +32,7 @@ export class ReaderConsumer {
     await this.process(context, () => this.createReaderFromUserEvent.execute(event));
   }
 
-  @EventPattern(ROUTING_KEYS.USER_UPDATED)
+  @EventPattern(AUTH_ROUTING_KEYS.USER_UPDATED)
   async userUpdated(
     @Payload() event: IntegrationEvent<UserUpdatedEventData>,
     @Ctx() context: RmqContext,
@@ -40,7 +40,7 @@ export class ReaderConsumer {
     await this.process(context, () => this.updateReaderFromUserEvent.execute(event));
   }
 
-  @EventPattern(ROUTING_KEYS.USER_DELETED)
+  @EventPattern(AUTH_ROUTING_KEYS.USER_DELETED)
   async userDeleted(
     @Payload() event: IntegrationEvent<UserDeletedEventData>,
     @Ctx() context: RmqContext,

@@ -1,7 +1,7 @@
 import sharp from "sharp";
 import { ImageProcessorPort } from "../../application/ports/image.processor.port";
 import { FileData, ImageProfile } from "../../application/types/file";
-import { UnsupportedImageError } from "./errors/Unsupported-image.error";
+import { UnsupportedImageError } from "./errors/unsupported-image.error";
 
 export class SharpImageProcessorAdapter implements ImageProcessorPort {
   

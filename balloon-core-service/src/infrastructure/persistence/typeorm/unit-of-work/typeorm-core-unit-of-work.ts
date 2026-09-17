@@ -11,6 +11,10 @@ import { ProcessedEventOrmEntity } from "../entities/processed-event.orm-entity"
 import { TypeOrmConsumerAggregateVersionRepository } from "../repositories/typeorm-consumer-aggregate-version.repository";
 import { TypeOrmProcessedEventRepository } from "../repositories/typeorm-processed-event.repository";
 import { TypeOrmReaderRepository } from "../repositories/typeorm-reader.repository";
+import { TypeOrmAgeVerificationRepository } from '../repositories/typeorm-age-verification.repository';
+import { TypeOrmSocialMediaLinkRepository } from '../repositories/typeorm-social-media-link.repository';
+import { AgeVerificationOrmEntity } from "../entities/age-verification.orm-entity";
+import { SocialMediaLinkOrmEntity } from "../entities/social-media-link.orm-entity";
 
 @Injectable()
 export class TypeOrmCoreUnitOfWork implements CoreUnitOfWorkPort {
@@ -25,6 +29,8 @@ export class TypeOrmCoreUnitOfWork implements CoreUnitOfWorkPort {
         readers: new TypeOrmReaderRepository(manager.getRepository(ReaderOrmEntity)),
         processedEvents: new TypeOrmProcessedEventRepository(manager.getRepository(ProcessedEventOrmEntity)),
         consumerAggregateVersion: new TypeOrmConsumerAggregateVersionRepository(manager.getRepository(ConsumerAggregateVersionOrmEntity)),
+        ageVerifications: new TypeOrmAgeVerificationRepository(manager.getRepository(AgeVerificationOrmEntity)),
+        socialMediaLinks: new TypeOrmSocialMediaLinkRepository(manager.getRepository(SocialMediaLinkOrmEntity)),
       }
 
       return operation(transaction);

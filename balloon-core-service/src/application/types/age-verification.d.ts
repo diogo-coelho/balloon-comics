@@ -5,3 +5,7 @@ export type AgeVerificationOutput = {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type UpdateAgeVerificationInput = { 
+  dateOfBirth: Date 
+}

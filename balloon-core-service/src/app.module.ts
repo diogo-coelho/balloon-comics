@@ -5,11 +5,6 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core/constants';
 
 import { ReaderModule } from './modules/reader.module';
-import { AuthorModule } from './author/author.module';
-import { StorageModule } from './storage/storage.module';
-import { MediaModule } from './media/media.module';
-import { AgeVerificationModule } from './age-verification/age-verification.module';
-import { SocialMediaLinkModule } from './social-media-link/social-media-link.module';
 import { getJoiConfig } from './infrastructure/config/joi.config.service';
 import { PostgresConfigService } from './infrastructure/config/postgres.config.service';
 import { CustomExceptionFilter } from './presentation/http/filters/custom-exception.filter';
@@ -33,11 +28,6 @@ import { CustomExceptionFilter } from './presentation/http/filters/custom-except
       inject: [PostgresConfigService],
     }),
     ReaderModule,
-    AuthorModule,
-    StorageModule,
-    MediaModule,
-    AgeVerificationModule,
-    SocialMediaLinkModule,
   ],
   controllers: [],
   providers: [

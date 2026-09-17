@@ -29,5 +29,13 @@ export class Reader {
       now,
     );
   }
+
+  updateProfile(input: { name: string; description?: string; }): void {
+    this.name = input.name;
+    if (input.description !== undefined) {
+      this.description = input.description;
+    }
+    this.updatedAt = new Date();
+  }
   
 }

@@ -5,6 +5,7 @@ import { AgeVerificationRepositoryPort } from "../../../../application/ports/age
 import { AgeVerification } from "../../../../domain/age-verification/entities/age-verification";
 import { AgeVerificationOrmEntity } from "../entities/age-verification.orm-entity";
 import { AgeVerificationOrmMapper } from "../mappers/age-verification.orm-mapper";
+import { ReaderOrmEntity } from "../entities/reader.orm-entity";
 
 @Injectable()
 export class TypeOrmAgeVerificationRepository implements AgeVerificationRepositoryPort {
@@ -22,18 +23,17 @@ export class TypeOrmAgeVerificationRepository implements AgeVerificationReposito
       : null;
   }
   
-  async upsert(ageVerification: AgeVerification): Promise<void> {
-    await this.repository.upsert({ 
-        reader: { id: ageVerification.readerId },
-        dateOfBirth: ageVerification.dateOfBirth,
-        hasLegalAge: ageVerification.hasLegalAge,
-        updatedAt: ageVerification.updatedAt,
-      },
-      {
-        conflictPaths: ['readerId'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
+  async save(ageVerification: AgeVerification): Promise<AgeVerification> {
+    const entity = new AgeVerificationOrmEntity();
+    entity.id = ageVerification.id;
+    entity.reader = { id: ageVerification.readerId } as ReaderOrmEntity;
+    entity.dateOfBirth = ageVerification.dateOfBirth;
+    entity.hasLegalAge = ageVerification.hasLegalAge;
+    entity.createdAt = ageVerification.createdAt;
+    entity.updatedAt = ageVerification.updatedAt;
+    await this.repository.save(entity);
+
+    return ageVerification;
   }
   
 }

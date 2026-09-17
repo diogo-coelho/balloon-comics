@@ -4,6 +4,6 @@ export interface AgeVerificationRepositoryPort {
 
   findByReaderId(readerId: string): Promise<AgeVerification | null>;
 
-  upsert(ageVerification: AgeVerification): Promise<void>;
+  save(ageVerification: AgeVerification): Promise<AgeVerification>;
 
 }

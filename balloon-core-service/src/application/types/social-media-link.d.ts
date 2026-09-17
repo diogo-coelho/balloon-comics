@@ -5,3 +5,8 @@ export type SocialMediaLinkOutput = {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type UpdateSocialMediaLinkInput = { 
+  name: SocialMediaTypeEnum;
+  url: string;
+}

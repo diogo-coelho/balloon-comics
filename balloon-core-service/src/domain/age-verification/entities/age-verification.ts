@@ -34,6 +34,7 @@ export class AgeVerification {
   updateDateOfBirth(dateOfBirth: Date, referenceDate: Date = new Date()) {
     this.dateOfBirth = dateOfBirth;
     this.hasLegalAge = AgeVerification.calculateLegalAge(dateOfBirth, referenceDate);
+    this.updatedAt = new Date();
   }
 
   static calculateLegalAge(dateOfBirth: Date, referenceDate: Date = new Date()): boolean {

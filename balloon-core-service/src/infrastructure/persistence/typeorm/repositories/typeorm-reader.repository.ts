@@ -61,4 +61,26 @@ export class TypeOrmReaderRepository implements ReaderRepositoryPort {
     );
   }
 
+  async findByUserIdForUpdate(userId: string): Promise<Reader | null> {
+    const entity = await this.readerRepository.findOne({ 
+      where: { userId },
+      lock: { mode: 'pessimistic_write'},
+    });
+
+    return entity
+      ? ReaderOrmMapper.toDomain(entity)
+      : null;
+  }
+  
+  async updateProfile(reader: Reader): Promise<void> {
+    await this.readerRepository.update(
+      { id: reader.id },
+      {
+        name: reader.name,
+        description: reader.description as string,
+        updatedAt: reader.updatedAt,
+      },
+    );
+  }
+
 }
