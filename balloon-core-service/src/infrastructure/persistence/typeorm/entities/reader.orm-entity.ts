@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { AgeVerificationOrmEntity } from './age-verification.orm-entity';
 import { SocialMediaLinkOrmEntity } from './social-media-link.orm-entity';
+import { AuthorOrmEntity } from './author.orm-entity';
 
 @Entity('readers')
 export class ReaderOrmEntity {
@@ -48,10 +49,8 @@ export class ReaderOrmEntity {
   })
   updatedAt!: Date;
   
-  /** 
-  @OneToOne(() => AuthorEntity, (author) => author.reader)
-  author?: AuthorEntity;
-  */
+  @OneToOne(() => AuthorOrmEntity, (author) => author.reader)
+  author?: AuthorOrmEntity;
   
   @OneToOne(
     () => AgeVerificationOrmEntity,

@@ -1,6 +1,6 @@
 import ReaderNotFoundError from "../../../domain/reader/errors/reader-not-found.error";
-import { ImageTypeEnum } from "../../media/enums/image-type.enum";
-import { IMAGE_PROFILES } from "../../media/image-profile";
+import { ImageTypeEnum } from "../../../domain/media/enums/image-type.enum";
+import { IMAGE_PROFILES } from "../../../domain/media/image-profile";
 import { ImageProcessorPort } from "../../ports/image.processor.port";
 import { ReaderRepositoryPort } from "../../ports/reader.repository.port";
 import { StoragePort } from "../../ports/storage.port";
