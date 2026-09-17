@@ -1,31 +1,34 @@
 import {
+  Entity,
+  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Unique,
 } from 'typeorm';
 import { ReaderOrmEntity } from './reader.orm-entity';
+import { SocialMediaTypeEnum } from '../../../../domain/social-media-link/enums/social-media-type.enum';
 
-@Entity('age_verifications')
-export class AgeVerificationOrmEntity {
+@Entity('social_media_links')
+@Unique(['reader', 'name'])
+export class SocialMediaLinkOrmEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
   
-  @OneToOne(() => ReaderOrmEntity, (reader) => reader.ageVerification, {
+  @ManyToOne(() => ReaderOrmEntity, (reader) => reader.socialMediaLinks, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'reader_id', referencedColumnName: 'id' })
   reader!: ReaderOrmEntity;
   
-  @Column({ name: 'has_legal_age', type: 'boolean', nullable: false })
-  hasLegalAge!: boolean;
+  @Column({ type: 'enum', enum: SocialMediaTypeEnum, nullable: false })
+  name!: string;
   
-  @Column({ name: 'date_of_birth', type: 'date', nullable: false })
-  dateOfBirth!: Date;
+  @Column({ type: 'varchar', nullable: false })
+  url!: string;
   
   @CreateDateColumn({
     name: 'created_at',

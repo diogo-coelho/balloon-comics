@@ -2,9 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AgeVerificationOrmEntity } from './age-verification.orm-entity';
+import { SocialMediaLinkOrmEntity } from './social-media-link.orm-entity';
 
 @Entity('readers')
 export class ReaderOrmEntity {
@@ -47,17 +51,17 @@ export class ReaderOrmEntity {
   /** 
   @OneToOne(() => AuthorEntity, (author) => author.reader)
   author?: AuthorEntity;
+  */
   
   @OneToOne(
-    () => AgeVerificationEntity,
+    () => AgeVerificationOrmEntity,
     (ageVerification) => ageVerification.reader,
   )
-  ageVerification?: AgeVerificationEntity;
+  ageVerification?: AgeVerificationOrmEntity;
   
   @OneToMany(
-    () => SocialMediaLinkEntity,
+    () => SocialMediaLinkOrmEntity,
     (socialMediaLink) => socialMediaLink.reader,
   )
-  socialMediaLinks?: SocialMediaLinkEntity[];
-  */
+  socialMediaLinks?: SocialMediaLinkOrmEntity[];
 }

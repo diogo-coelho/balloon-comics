@@ -1,0 +1,15 @@
+export enum SocialMediaTypeEnum {
+  FACEBOOK = 'Facebook',
+  TWITTER = 'Twitter',
+  INSTAGRAM = 'Instagram',
+  YOUTUBE = 'YouTube',
+  TIKTOK = 'TikTok',
+  PATREON = 'Patreon',
+  BLUESKY = 'Bluesky',
+  DISCORD = 'Discord',
+  TWITCH = 'Twitch',
+  CATARSE = 'Catarse',
+  APOIA_SE = 'Apoia.se',
+  LINKEDIN = 'LinkedIn',
+  WEBSITE = 'Website',
+}
