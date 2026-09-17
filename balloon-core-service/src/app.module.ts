@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core/constants';
 
-import { ReaderModule } from './reader/reader.module';
+import { ReaderModule } from './modules/reader.module';
 import { AuthorModule } from './author/author.module';
 import { StorageModule } from './storage/storage.module';
 import { MediaModule } from './media/media.module';

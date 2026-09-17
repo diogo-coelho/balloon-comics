@@ -1,15 +1,19 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { Controller, FileTypeValidator, Get, MaxFileSizeValidator, ParseFilePipe, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { GetReaderUseCase } from "../../../application/reader/use-cases/get-reader.use-case";
 import { AuthTokenGuard } from "../guards/auth-token.guard";
 import { TokenPayloadDto } from "../dtos/token-payload.dto";
 import { TokenPayloadParam } from "../decorators/token-payload.decorator";
 import { ResponseReaderDto } from "./dtos/response/response-reader.dto";
+import { UploadReaderImageUseCase } from "../../../application/reader/use-cases/upload-reader-image.use-case";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { FileData } from "../../../application/types/file";
 
 @Controller('readers')
 export class ReaderController {
 
   constructor(
     private readonly getReader: GetReaderUseCase,
+    private readonly uploadReaderImage: UploadReaderImageUseCase,
   ) {}
 
   @UseGuards(AuthTokenGuard)
@@ -22,6 +26,38 @@ export class ReaderController {
 
     return {
       message: 'Leitor encontrado com sucesso',
+      data,
+    };
+  }
+
+  @UseGuards(AuthTokenGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  @Post('/me/image')
+  async uploadImage(
+    @TokenPayloadParam() tokenPayload: TokenPayloadDto,
+    @UploadedFile(new ParseFilePipe({
+      fileIsRequired: true,
+      validators: [
+        new MaxFileSizeValidator({
+          maxSize: 1024 * 1024,
+        }),
+        new FileTypeValidator({
+          fileType: /^image\/(png|jpeg|webp)$/,
+        }),
+        ],
+    })) file: Express.Multer.File,
+  ): Promise<ResponseReaderDto> {
+    const fileData: FileData = {
+      originalName:file.originalname,
+      mimeType:file.mimetype,
+      size:file.size,
+      buffer:file.buffer,
+    };
+
+    const data = await this.uploadReaderImage.execute({ userId: tokenPayload.sub, file: fileData });
+
+    return {
+      message: 'Imagem do leitor atualizada com sucesso',
       data,
     };
   }

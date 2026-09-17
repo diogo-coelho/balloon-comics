@@ -52,4 +52,13 @@ export class TypeOrmReaderRepository implements ReaderRepositoryPort {
     await this.readerRepository.delete({ userId });
   }
 
+  async updateImageUrl(userId: string, imageUrl: string): Promise<void> {
+    await this.readerRepository.update({ userId },
+      {
+        imageUrl,
+        updatedAt: new Date(),
+      },
+    );
+  }
+
 }

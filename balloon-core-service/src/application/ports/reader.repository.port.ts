@@ -14,5 +14,7 @@ export interface ReaderRepositoryPort {
   ): Promise<void>;
 
   deleteByUserId(userId: string): Promise<void>;
+
+  updateImageUrl(userId: string, imageUrl: string): Promise<void>;
   
 }

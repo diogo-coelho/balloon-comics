@@ -35,6 +35,9 @@ import { TypeOrmSocialMediaLinkRepository } from "../infrastructure/persistence/
 import { AwsS3StorageAdapter } from "../infrastructure/storage/aws-s3-storage.adapter";
 
 import { AuthTokenGuard } from "../presentation/http/guards/auth-token.guard";
+import { SharpImageProcessorAdapter } from "../infrastructure/media/sharp-image-processor.adapter";
+import { ImageProcessorPort } from "../application/ports/image.processor.port";
+import { UploadReaderImageUseCase } from "../application/reader/use-cases/upload-reader-image.use-case";
 
 @Module({
   imports: [
@@ -72,6 +75,10 @@ import { AuthTokenGuard } from "../presentation/http/guards/auth-token.guard";
     {
       provide: PROVIDERS_TOKENS.STORAGE,
       useClass: AwsS3StorageAdapter,
+    },
+    {
+      provide: PROVIDERS_TOKENS.IMAGE_PROCESSOR,
+      useClass: SharpImageProcessorAdapter,      
     },
     {
       provide: GetReaderUseCase,
@@ -129,6 +136,24 @@ import { AuthTokenGuard } from "../presentation/http/guards/auth-token.guard";
         new DeleteReaderFromUserEventUseCase(
           unitOfWork
         )
+    },
+    {
+      provide: UploadReaderImageUseCase,
+      inject: [
+        PROVIDERS_TOKENS.READER_REPOSITORY,
+        PROVIDERS_TOKENS.IMAGE_PROCESSOR,
+        PROVIDERS_TOKENS.STORAGE,
+      ],
+      useFactory: (
+        readers: ReaderRepositoryPort,
+        imageProcessor: ImageProcessorPort,
+        storage: StoragePort,
+      ) =>
+        new UploadReaderImageUseCase(
+          readers,
+          imageProcessor,
+          storage,
+        ),
     },
     RabbitMqRetryProvider,
     AuthTokenGuard,

@@ -8,3 +8,8 @@ export type GetReaderOutput = {
   ageVerification?: AgeVerificationOutput
   socialMediaLinks?: SocialMediaLinkOutput[];
 };
+
+export type UploadReaderImageOutput = {
+  id: string;
+  imageUrl: string;
+};
