@@ -14,6 +14,8 @@ import { CoreUnitOfWorkPort } from "../application/ports/core-unit-of-work.port"
 import { ReaderOrmEntity } from "../infrastructure/persistence/typeorm/entities/reader.orm-entity";
 import { ProcessedEventOrmEntity } from "../infrastructure/persistence/typeorm/entities/processed-event.orm-entity";
 import { ConsumerAggregateVersionOrmEntity } from "../infrastructure/persistence/typeorm/entities/consumer-aggregate-version.orm-entity";
+import { UpdateReaderFromUserEventUseCase } from "../application/reader/use-cases/update-reader-from-user-event.use-case";
+import { DeleteReaderFromUserEventUseCase } from "../application/reader/use-cases/delete-reader-from-user-event.use-case";
 
 @Module({
   imports: [
@@ -43,6 +45,30 @@ import { ConsumerAggregateVersionOrmEntity } from "../infrastructure/persistence
         new CreateReaderFromUserEventUseCase(
           unitOfWork
         ),
+    },
+    {
+      provide: UpdateReaderFromUserEventUseCase,
+      inject: [
+        PROVIDERS_TOKENS.CORE_UNIT_OF_WORK
+      ],
+      useFactory: (
+        unitOfWork: CoreUnitOfWorkPort
+      ) => 
+        new UpdateReaderFromUserEventUseCase(
+          unitOfWork
+        )
+    },
+    {
+      provide: DeleteReaderFromUserEventUseCase,
+      inject: [
+        PROVIDERS_TOKENS.CORE_UNIT_OF_WORK
+      ],
+      useFactory: (
+        unitOfWork: CoreUnitOfWorkPort
+      ) => 
+        new DeleteReaderFromUserEventUseCase(
+          unitOfWork
+        )
     },
     RabbitMqRetryProvider,
   ],

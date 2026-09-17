@@ -38,4 +38,18 @@ export class TypeOrmReaderRepository implements ReaderRepositoryPort {
     : null;
   }
 
+  async synchronizeUserData(input: { userId: string; username: string; email: string; }): Promise<void> {
+    await this.readerRepository.update({ userId: input.userId },
+      {
+        username: input.username,
+        email: input.email,
+        updatedAt: new Date(),
+      },
+    );
+  }
+  
+  async deleteByUserId(userId: string): Promise<void> {
+    await this.readerRepository.delete({ userId });
+  }
+
 }

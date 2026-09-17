@@ -5,8 +5,10 @@ import { Ctx, EventPattern, Payload, RmqContext } from "@nestjs/microservices";
 import { CreateReaderFromUserEventUseCase } from "../../../application/reader/use-cases/create-reader-from-user-event.use-case";
 import { ROUTING_KEYS } from "../../../reader/constants/routing-keys.constant";
 import type { IntegrationEvent } from "../contracts/integration-event.contract";
-import { UserCreatedEventData } from "../../../application/types/user-sync";
+import { UserCreatedEventData, UserDeletedEventData, UserUpdatedEventData } from "../../../application/types/user-sync";
 import { RabbitMqRetryProvider } from "../../../infrastructure/messaging/rabbit-mq/rabbitmq-retry.provider";
+import { UpdateReaderFromUserEventUseCase } from "../../../application/reader/use-cases/update-reader-from-user-event.use-case";
+import { DeleteReaderFromUserEventUseCase } from "../../../application/reader/use-cases/delete-reader-from-user-event.use-case";
 
 @Controller()
 export class ReaderConsumer {
@@ -15,6 +17,8 @@ export class ReaderConsumer {
 
   constructor(
     private readonly createReaderFromUserEvent: CreateReaderFromUserEventUseCase,
+    private readonly updateReaderFromUserEvent: UpdateReaderFromUserEventUseCase,
+    private readonly deleteReaderFromUserEvent: DeleteReaderFromUserEventUseCase,
     private readonly retryProvider: RabbitMqRetryProvider,
     private readonly configService: ConfigService,
   ) {}
@@ -26,6 +30,22 @@ export class ReaderConsumer {
   ): Promise<void> {
     
     await this.process(context, () => this.createReaderFromUserEvent.execute(event));
+  }
+
+  @EventPattern(ROUTING_KEYS.USER_UPDATED)
+  async userUpdated(
+    @Payload() event: IntegrationEvent<UserUpdatedEventData>,
+    @Ctx() context: RmqContext,
+  ) {
+    await this.process(context, () => this.updateReaderFromUserEvent.execute(event));
+  }
+
+  @EventPattern(ROUTING_KEYS.USER_DELETED)
+  async userDeleted(
+    @Payload() event: IntegrationEvent<UserDeletedEventData>,
+    @Ctx() context: RmqContext,
+  ) {
+    await this.process(context, () => this.deleteReaderFromUserEvent.execute(event));
   }
 
   private async process(
