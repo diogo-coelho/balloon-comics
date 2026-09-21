@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { AUTH_ROUTING_KEYS } from "../../../infrastructure/constants/routing-keys";
+import { UserEventType } from "./user-event-type";
 
 export class UserDeletedEvent {
   readonly eventId: string;
-  readonly eventType = AUTH_ROUTING_KEYS.USER_DELETED;
+  readonly eventType = UserEventType.DELETED;
   readonly occurredAt: Date;
   
   constructor(

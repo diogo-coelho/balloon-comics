@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import { OutboxRepositoryPort } from "../../../../application/ports/outbox.repository";
 import { OutboxOrmEntity } from "../entities/outbox-event.orm-entity";
-import { DomainEvent } from "../../../contracts/integration-event.contract";
+import { DomainEvent } from "../../../../domain/shared/events/domain-event";
 
 export class TypeOrmOutboxRepository implements OutboxRepositoryPort {
   constructor(

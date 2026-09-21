@@ -1,4 +1,4 @@
-import { DomainEvent } from "../../infrastructure/contracts/integration-event.contract";
+import { DomainEvent } from "../../domain/shared/events/domain-event";
 
 export interface OutboxRepositoryPort {
   save(
