@@ -2,13 +2,13 @@ import { Channel, Message } from "amqplib";
 import { Controller, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Ctx, EventPattern, Payload, RmqContext } from "@nestjs/microservices";
-import type { IntegrationEvent } from "../contracts/integration-event.contract";
-import { AUTH_ROUTING_KEYS } from "../../../infrastructure/constants/routing-keys";
-import { RabbitMqRetryProvider } from "../../../infrastructure/messaging/rabbit-mq/rabbitmq-retry.provider";
-import { UserCreatedEventData, UserDeletedEventData, UserUpdatedEventData } from "../../../application/types/user-sync";
-import { UpdateReaderFromUserEventUseCase } from "../../../application/reader/use-cases/update-reader-from-user-event.use-case";
-import { DeleteReaderFromUserEventUseCase } from "../../../application/reader/use-cases/delete-reader-from-user-event.use-case";
-import { CreateReaderFromUserEventUseCase } from "../../../application/reader/use-cases/create-reader-from-user-event.use-case";
+import type { IntegrationEvent } from "../../../../../application/messaging/contracts/integration-event.contract";
+import { RabbitMqRetryProvider } from "../../rabbitmq-retry.provider";
+import { UserCreatedEventData, UserDeletedEventData, UserUpdatedEventData } from "../../../../../application/types/user-sync";
+import { UpdateReaderFromUserEventUseCase } from "../../../../../application/reader/use-cases/update-reader-from-user-event.use-case";
+import { DeleteReaderFromUserEventUseCase } from "../../../../../application/reader/use-cases/delete-reader-from-user-event.use-case";
+import { CreateReaderFromUserEventUseCase } from "../../../../../application/reader/use-cases/create-reader-from-user-event.use-case";
+import { AUTH_ROUTING_KEYS } from "../../../event-routing-mapper";
 
 @Controller()
 export class ReaderConsumer {

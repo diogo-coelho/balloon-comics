@@ -1,4 +1,4 @@
-import { IntegrationEvent } from "../../../presentation/messaging/contracts/integration-event.contract";
+import { IntegrationEvent } from "../../messaging/contracts/integration-event.contract";
 import { EventMessageOutOfOrder } from "../../messaging/errors/event-message-out-of-order.error";
 import { CoreUnitOfWorkPort } from "../../ports/core-unit-of-work.port";
 import { UserUpdatedEventData } from "../../types/user-sync";

@@ -3,7 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
 
-import { ReaderConsumer } from "../presentation/messaging/reader/reader.consume";
+import { ReaderConsumer } from "../infrastructure/messaging/rabbit-mq/consumers/readers/reader.consume";
 import { ReaderController } from "../presentation/http/reader/reader.controller";
 import { AuthTokenGuard } from "../presentation/http/guards/auth-token.guard";
 

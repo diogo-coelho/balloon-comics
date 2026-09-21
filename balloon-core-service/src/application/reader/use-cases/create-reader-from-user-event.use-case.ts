@@ -1,8 +1,8 @@
 import { Reader } from "../../../domain/reader/entities/reader";
-import { IntegrationEvent } from "../../../presentation/messaging/contracts/integration-event.contract";
-import { EventMessageOutOfOrder } from "../../messaging/errors/event-message-out-of-order.error";
 import { CoreUnitOfWorkPort } from "../../ports/core-unit-of-work.port";
 import { UserCreatedEventData } from "../../types/user-sync";
+import { IntegrationEvent } from "../../messaging/contracts/integration-event.contract";
+import { EventMessageOutOfOrder } from "../../messaging/errors/event-message-out-of-order.error";
 
 export class CreateReaderFromUserEventUseCase {
 
