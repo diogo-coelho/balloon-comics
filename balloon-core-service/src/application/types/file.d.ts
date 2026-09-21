@@ -13,9 +13,4 @@ export type ImageProfile = {
   fit?: 'cover' | 'inside';
 };
 
-export type ImageFormat =
-  | 'webp'
-  | 'jpeg'
-  | 'jpg'
-  | 'png'
-  | 'tiff';
+export type ImageFormat = 'webp' | 'jpeg' | 'jpg' | 'png' | 'tiff';

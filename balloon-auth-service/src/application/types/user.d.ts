@@ -12,7 +12,7 @@ export type CreateUserOutput = {
     username: string;
     email: string;
     createdAt: Date;
-  }
+  };
 };
 
 export type UpdateUserInput = {
@@ -26,4 +26,4 @@ export type UpdateUserInput = {
 export type DeleteUserInput = {
   id: string;
   requesterId: string;
-}
+};

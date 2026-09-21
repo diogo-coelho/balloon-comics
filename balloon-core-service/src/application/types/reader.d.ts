@@ -5,7 +5,7 @@ export type GetReaderOutput = {
   name: string;
   imageUrl?: string;
   description?: string;
-  ageVerification?: AgeVerificationOutput
+  ageVerification?: AgeVerificationOutput;
   socialMediaLinks?: SocialMediaLinkOutput[];
 };
 
@@ -33,4 +33,4 @@ export type UpdateReaderOutput = {
   socialMediaLinks?: SocialMediaLinkOutput[];
   createdAt: Date;
   updateAt?: Date;
-}
+};

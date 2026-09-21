@@ -1,8 +1,17 @@
 import type { Request, Response } from 'express';
-import { Throttle } from "@nestjs/throttler";
-import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
-import { LoginUseCase } from "../../../application/auth/use-cases/login.use-case";
-import { LoginDto } from "./dtos/request/login.dto";
+import { Throttle } from '@nestjs/throttler';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
+import { LoginUseCase } from '../../../application/auth/use-cases/login.use-case';
+import { LoginDto } from './dtos/request/login.dto';
 import { TokenPayloadParam } from '../decorators/token-payload.param';
 import { TokenPayloadDto } from './dtos/request/token-payload.dto';
 import { AuthTokenGuard } from '../guards/auth-token.guard';
@@ -12,12 +21,11 @@ import HttpCookies from '../cookies/http-cookies';
 
 @Controller('auth')
 export class AuthController {
-
   constructor(
     private readonly loginUseCase: LoginUseCase,
     private readonly logoutUseCase: LogoutUseCase,
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
-    private readonly httpCookies: HttpCookies
+    private readonly httpCookies: HttpCookies,
   ) {}
 
   @Throttle({ default: { limit: 5, ttl: 60000 } })
@@ -28,18 +36,18 @@ export class AuthController {
   ) {
     const result = await this.loginUseCase.execute({
       email: loginDto.email,
-      password: loginDto.password
+      password: loginDto.password,
     });
 
-    this.httpCookies.setAccessTokenCookie(response, result.accessToken as string);
-    this.httpCookies.setRefreshTokenCookie(response, result.refreshToken as string);
+    this.httpCookies.setAccessTokenCookie(response, result.accessToken);
+    this.httpCookies.setRefreshTokenCookie(response, result.refreshToken);
 
     return {
       message: 'Acesso concedido',
       data: {
-        id: result.user?.id as string,
-        email: result.user?.email as string,
-      }
+        id: result.user?.id,
+        email: result.user?.email,
+      },
     };
   }
 
@@ -61,7 +69,8 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     const refreshToken = request.cookies?.refreshToken;
-    if (!refreshToken) throw new UnauthorizedException('Refresh token não fornecido');
+    if (!refreshToken)
+      throw new UnauthorizedException('Refresh token não fornecido');
 
     const result = await this.refreshTokenUseCase.execute({ refreshToken });
 
@@ -69,8 +78,8 @@ export class AuthController {
     this.httpCookies.setRefreshTokenCookie(response, result.refreshToken);
 
     return {
-      message: 'Tokens atualizados'
-    }
+      message: 'Tokens atualizados',
+    };
   }
 
   @UseGuards(AuthTokenGuard)
@@ -81,5 +90,4 @@ export class AuthController {
       email: tokenPayload.email,
     };
   }
-
 }

@@ -1,13 +1,13 @@
-import sharp from "sharp";
-import { SharpImageProcessorAdapter } from "../media/sharp-image-processor.adapter";
-import { UnsupportedImageError } from "../media/errors/unsupported-image.error";
+import sharp from 'sharp';
+import { SharpImageProcessorAdapter } from '../media/sharp-image-processor.adapter';
+import { UnsupportedImageError } from '../media/errors/unsupported-image.error';
 
-describe("SharpImageProcessorAdapter", () => {
-  it("deve processar imagem em formato webp com resize e retorno correto", async () => {
+describe('SharpImageProcessorAdapter', () => {
+  it('deve processar imagem em formato webp com resize e retorno correto', async () => {
     const adapter = new SharpImageProcessorAdapter();
     const file = {
-      originalName: "avatar.png",
-      mimeType: "image/png",
+      originalName: 'avatar.png',
+      mimeType: 'image/png',
       size: 30,
       buffer: await sharp({
         create: {
@@ -25,21 +25,21 @@ describe("SharpImageProcessorAdapter", () => {
       width: 150,
       height: 150,
       quality: 80,
-      format: "webp",
-      fit: "cover",
+      format: 'webp',
+      fit: 'cover',
     });
 
-    expect(result.originalName).toBe("avatar.webp");
-    expect(result.mimeType).toBe("image/webp");
+    expect(result.originalName).toBe('avatar.webp');
+    expect(result.mimeType).toBe('image/webp');
     expect(result.buffer).toBeInstanceOf(Buffer);
     expect(result.size).toBeGreaterThan(0);
   });
 
-  it("deve rejeitar suporte para formato não permitido", async () => {
+  it('deve rejeitar suporte para formato não permitido', async () => {
     const adapter = new SharpImageProcessorAdapter();
     const file = {
-      originalName: "avatar.png",
-      mimeType: "image/png",
+      originalName: 'avatar.png',
+      mimeType: 'image/png',
       size: 10,
       buffer: await sharp({
         create: {
@@ -53,6 +53,8 @@ describe("SharpImageProcessorAdapter", () => {
         .toBuffer(),
     };
 
-    await expect(adapter.process(file, { quality: 80, format: "bmp" as any })).rejects.toBeInstanceOf(UnsupportedImageError);
+    await expect(
+      adapter.process(file, { quality: 80, format: 'bmp' as any }),
+    ).rejects.toBeInstanceOf(UnsupportedImageError);
   });
 });

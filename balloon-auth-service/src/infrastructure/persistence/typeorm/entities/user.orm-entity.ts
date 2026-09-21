@@ -1,16 +1,22 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class UserOrmEntity {
   @PrimaryColumn('uuid')
   id!: string;
-  
+
   @Column({ unique: true, type: 'varchar', length: 200, nullable: false })
   username!: string;
-  
+
   @Column({ unique: true, type: 'varchar', length: 100, nullable: false })
   email!: string;
-  
+
   @Column({
     name: 'password_hash',
     type: 'varchar',
@@ -18,7 +24,7 @@ export class UserOrmEntity {
     nullable: false,
   })
   passwordHash!: string;
-  
+
   @Column({
     name: 'refresh_token_hash',
     type: 'varchar',
@@ -26,14 +32,14 @@ export class UserOrmEntity {
     nullable: true,
   })
   refreshTokenHash?: string | null;
-  
+
   @Column({
     name: 'event_version',
     type: 'int',
     default: 0,
   })
   eventVersion!: number;
-  
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',

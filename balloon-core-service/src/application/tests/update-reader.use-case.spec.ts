@@ -1,19 +1,19 @@
-import { UpdateReaderUseCase } from "../reader/use-cases/update-reader.use-case";
-import { Reader } from "../../domain/reader/entities/reader";
-import ReaderNotFoundError from "../../domain/reader/errors/reader-not-found.error";
-import { SocialMediaTypeEnum } from "../../domain/social-media-link/enums/social-media-type.enum";
+import { UpdateReaderUseCase } from '../reader/use-cases/update-reader.use-case';
+import { Reader } from '../../domain/reader/entities/reader';
+import ReaderNotFoundError from '../../domain/reader/errors/reader-not-found.error';
+import { SocialMediaTypeEnum } from '../../domain/social-media-link/enums/social-media-type.enum';
 
-describe("UpdateReaderUseCase", () => {
-  it("deve atualizar perfil, verificar idade e links sociais existentes e novos", async () => {
-    const currentDate = new Date("2026-09-17T00:00:00.000Z");
+describe('UpdateReaderUseCase', () => {
+  it('deve atualizar perfil, verificar idade e links sociais existentes e novos', async () => {
+    const currentDate = new Date('2026-09-17T00:00:00.000Z');
     const reader = new Reader(
-      "reader-id",
-      "user-id",
-      "ana@example.com",
-      "ana",
-      "Ana",
+      'reader-id',
+      'user-id',
+      'ana@example.com',
+      'ana',
+      'Ana',
       null,
-      "bio antiga",
+      'bio antiga',
       currentDate,
       currentDate,
     );
@@ -30,9 +30,9 @@ describe("UpdateReaderUseCase", () => {
       socialMediaLinks: {
         findByReaderId: jest.fn().mockResolvedValue([
           {
-            id: "link-1",
+            id: 'link-1',
             name: SocialMediaTypeEnum.INSTAGRAM,
-            url: "https://instagram.com/old",
+            url: 'https://instagram.com/old',
             createdAt: currentDate,
             updatedAt: currentDate,
             updateUrl: jest.fn(),
@@ -42,40 +42,57 @@ describe("UpdateReaderUseCase", () => {
       },
     };
 
-    const unitOfWork = { execute: jest.fn(async (operation) => operation(transaction)) };
-    const storage = { getPublicUrl: jest.fn().mockReturnValue("https://cdn.example.com/avatar.png") };
+    const unitOfWork = {
+      execute: jest.fn(async (operation) => operation(transaction)),
+    };
+    const storage = {
+      getPublicUrl: jest
+        .fn()
+        .mockReturnValue('https://cdn.example.com/avatar.png'),
+    };
 
-    const result = await new UpdateReaderUseCase(unitOfWork as any, storage as any).execute({
-      userId: "user-id",
-      name: "Ana Souza",
-      description: "Nova bio",
-      ageVerification: { dateOfBirth: "2000-05-10" },
+    const result = await new UpdateReaderUseCase(
+      unitOfWork,
+      storage as any,
+    ).execute({
+      userId: 'user-id',
+      name: 'Ana Souza',
+      description: 'Nova bio',
+      ageVerification: { dateOfBirth: '2000-05-10' },
       socialMediaLinks: [
-        { name: SocialMediaTypeEnum.INSTAGRAM, url: "https://instagram.com/new" },
-        { name: SocialMediaTypeEnum.WEBSITE, url: "https://ana.dev" },
+        {
+          name: SocialMediaTypeEnum.INSTAGRAM,
+          url: 'https://instagram.com/new',
+        },
+        { name: SocialMediaTypeEnum.WEBSITE, url: 'https://ana.dev' },
       ],
     });
 
     expect(transaction.readers.updateProfile).toHaveBeenCalled();
     expect(transaction.ageVerifications.save).toHaveBeenCalled();
     expect(transaction.socialMediaLinks.saveMany).toHaveBeenCalledTimes(1);
-    expect(result.name).toBe("Ana Souza");
-    expect(result.description).toBe("Nova bio");
+    expect(result.name).toBe('Ana Souza');
+    expect(result.description).toBe('Nova bio');
     expect(result.ageVerification).toBeDefined();
     expect(result.socialMediaLinks).toHaveLength(2);
   });
 
-  it("deve rejeitar quando o leitor não existe", async () => {
+  it('deve rejeitar quando o leitor não existe', async () => {
     const unitOfWork = {
-      execute: jest.fn(async (operation) => operation({
-        readers: { findByUserIdForUpdate: jest.fn().mockResolvedValue(null) },
-      })),
+      execute: jest.fn(async (operation) =>
+        operation({
+          readers: { findByUserIdForUpdate: jest.fn().mockResolvedValue(null) },
+        }),
+      ),
     };
 
     await expect(
-      new UpdateReaderUseCase(unitOfWork as any, { getPublicUrl: jest.fn() } as any).execute({
-        userId: "missing-user",
-        name: "Ana",
+      new UpdateReaderUseCase(
+        unitOfWork as any,
+        { getPublicUrl: jest.fn() } as any,
+      ).execute({
+        userId: 'missing-user',
+        name: 'Ana',
       }),
     ).rejects.toBeInstanceOf(ReaderNotFoundError);
   });

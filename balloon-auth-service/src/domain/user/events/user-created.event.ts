@@ -1,8 +1,7 @@
-import { randomUUID } from "node:crypto";
-import { UserEventType } from "./user-event-type";
+import { randomUUID } from 'node:crypto';
+import { UserEventType } from './user-event-type';
 
 export class UserCreatedEvent {
-
   readonly eventId: string;
   readonly eventType = UserEventType.CREATED;
   readonly occurredAt: Date;
@@ -14,7 +13,7 @@ export class UserCreatedEvent {
       userId: string;
       username: string;
       email: string;
-    }
+    },
   ) {
     this.eventId = randomUUID();
     this.occurredAt = new Date();

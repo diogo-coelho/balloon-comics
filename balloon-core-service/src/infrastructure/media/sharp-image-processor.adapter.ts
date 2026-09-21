@@ -1,19 +1,17 @@
-import sharp from "sharp";
-import { ImageProcessorPort } from "../../application/ports/image.processor.port";
-import { FileData, ImageProfile } from "../../application/types/file";
-import { UnsupportedImageError } from "./errors/unsupported-image.error";
+import sharp from 'sharp';
+import { ImageProcessorPort } from '../../application/ports/image.processor.port';
+import { FileData, ImageProfile } from '../../application/types/file';
+import { UnsupportedImageError } from './errors/unsupported-image.error';
 
 export class SharpImageProcessorAdapter implements ImageProcessorPort {
-  
   async process(file: FileData, profile: ImageProfile): Promise<FileData> {
     let image = sharp(file.buffer).rotate();
 
     if (profile.width || profile.height) {
-      image = image.resize(profile.width, profile.height, 
-        {
-          fit: profile.fit ?? 'cover',
-          withoutEnlargement: true,
-        });
+      image = image.resize(profile.width, profile.height, {
+        fit: profile.fit ?? 'cover',
+        withoutEnlargement: true,
+      });
     }
 
     switch (profile.format) {
@@ -25,7 +23,7 @@ export class SharpImageProcessorAdapter implements ImageProcessorPort {
       case 'webp':
         image = image.webp({ quality: profile.quality });
         break;
-    
+
       case 'png':
         image = image.png({ quality: profile.quality });
         break;
@@ -46,8 +44,6 @@ export class SharpImageProcessorAdapter implements ImageProcessorPort {
       mimeType: `image/${profile.format}`,
       size: processedBuffer.length,
       buffer: processedBuffer,
-    }
-
+    };
   }
-
 }

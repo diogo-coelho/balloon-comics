@@ -4,7 +4,10 @@ import { Interval } from '@nestjs/schedule';
 import { Brackets, DataSource, In, Repository } from 'typeorm';
 import { OutboxOrmEntity } from '../../persistence/typeorm/entities/outbox-event.orm-entity';
 import { RabbitMQProvider } from '../rabbit-mq/rabbitmq-message-publisher.adapter';
-import { AUTH_EXCHANGE, EventRoutingMapper } from '../rabbit-mq/event-routing-mapper';
+import {
+  AUTH_EXCHANGE,
+  EventRoutingMapper,
+} from '../rabbit-mq/event-routing-mapper';
 import { UserEventType } from '../../../domain/user/events/user-event-type';
 import { IntegrationEventContract } from '../../../application/messaging/integration-event.contract';
 
@@ -78,11 +81,7 @@ export class OutboxEventsPublisher {
 
     const routingKey = EventRoutingMapper[event.eventType as UserEventType];
 
-    await this.rabbitMqProvider.publish(
-      AUTH_EXCHANGE,
-      routingKey,
-      message,
-    );
+    await this.rabbitMqProvider.publish(AUTH_EXCHANGE, routingKey, message);
   }
 
   private async updateEventStatus(

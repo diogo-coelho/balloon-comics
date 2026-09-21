@@ -1,13 +1,11 @@
-import { Repository } from "typeorm";
-import { OutboxRepositoryPort } from "../../../../application/ports/outbox.repository";
-import { OutboxOrmEntity } from "../entities/outbox-event.orm-entity";
-import { DomainEvent } from "../../../../domain/shared/events/domain-event";
+import { Repository } from 'typeorm';
+import { OutboxRepositoryPort } from '../../../../application/ports/outbox.repository';
+import { OutboxOrmEntity } from '../entities/outbox-event.orm-entity';
+import { DomainEvent } from '../../../../domain/shared/events/domain-event';
 
 export class TypeOrmOutboxRepository implements OutboxRepositoryPort {
-  constructor(
-    private readonly repository: Repository<OutboxOrmEntity>,
-  ) {}
-    
+  constructor(private readonly repository: Repository<OutboxOrmEntity>) {}
+
   async save(event: DomainEvent): Promise<void> {
     const entity = this.repository.create({
       id: event.eventId,
@@ -19,7 +17,6 @@ export class TypeOrmOutboxRepository implements OutboxRepositoryPort {
       attempts: 0,
     });
 
-    await this.repository.save(entity);   
+    await this.repository.save(entity);
   }
-
 }

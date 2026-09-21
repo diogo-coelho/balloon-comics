@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validator";
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -9,10 +15,10 @@ export class CreateUserDto {
       'O usuário deve ter entre 3 e 20 caracteres e pode conter apenas letras, números e underscores',
   })
   readonly username!: string;
-  
+
   @IsEmail({}, { message: 'Email inválido' })
   readonly email!: string;
-  
+
   @IsString()
   @IsNotEmpty({ message: 'Senha não pode ser vazia' })
   @MinLength(8, { message: 'Senha deve ter no mínimo 8 caracteres' })

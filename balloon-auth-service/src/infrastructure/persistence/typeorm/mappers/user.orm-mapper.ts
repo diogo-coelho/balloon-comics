@@ -1,11 +1,8 @@
-import { User } from "../../../../domain/user/entities/user";
-import { UserOrmEntity } from "../entities/user.orm-entity";
+import { User } from '../../../../domain/user/entities/user';
+import { UserOrmEntity } from '../entities/user.orm-entity';
 
 export class UserOrmMapper {
-  static toPersistence(
-    user: User,
-  ): UserOrmEntity {
-    
+  static toPersistence(user: User): UserOrmEntity {
     const entity = new UserOrmEntity();
 
     entity.id = user.id;
@@ -20,12 +17,9 @@ export class UserOrmMapper {
     return entity;
   }
 
-  static toDomain(
-    entity: UserOrmEntity,
-  ): User { 
+  static toDomain(entity: UserOrmEntity): User {
     const user = User.restore(entity);
 
     return user;
   }
-  
 }

@@ -1,7 +1,5 @@
-import { DomainEvent } from "../../domain/shared/events/domain-event";
+import { DomainEvent } from '../../domain/shared/events/domain-event';
 
 export interface OutboxRepositoryPort {
-  save(
-    event: DomainEvent,
-  ): Promise<void>;
+  save(event: DomainEvent): Promise<void>;
 }

@@ -1,22 +1,17 @@
 import {
   CanActivate,
   ExecutionContext,
-  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtService } from '@nestjs/jwt';
-import type { ConfigType } from '@nestjs/config';
+import { AccessTokenVerifierPort } from '../../../application/ports/access-token-verifier.port';
 import { REQUEST_TOKEN_PAYLOAD_KEY } from '../auth/const/auth.constant';
-import jwtConfig from '../../../infrastructure/security/jwt.config';
 
 @Injectable()
 export class AuthTokenGuard implements CanActivate {
   constructor(
-    private readonly jwtService: JwtService,
-    @Inject(jwtConfig.KEY)
-    private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+    private readonly tokenVerifier: AccessTokenVerifierPort,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -27,16 +22,10 @@ export class AuthTokenGuard implements CanActivate {
       throw new UnauthorizedException('Token de autenticação não fornecido');
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        publicKey: this.jwtConfiguration.publicKey,
-        ...this.jwtConfiguration.verifyOptions,
-      });
-
-      if (payload.tokenType !== 'access') {
-        throw new UnauthorizedException('Token de autenticação inválido');
-      }
+      const payload = this.tokenVerifier.verify(token);
 
       request[REQUEST_TOKEN_PAYLOAD_KEY] = payload;
+
       return true;
     } catch (error: Error | undefined | any) {
       throw new UnauthorizedException('Token de autenticação inválido');

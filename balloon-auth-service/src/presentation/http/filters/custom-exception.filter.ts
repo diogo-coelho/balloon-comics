@@ -22,7 +22,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
-    const { status, message } = this.resolveException(exception)
+    const { status, message } = this.resolveException(exception);
 
     httpAdapter.reply(
       response,
@@ -34,57 +34,60 @@ export class CustomExceptionFilter implements ExceptionFilter {
     );
   }
 
-  private resolveException(exception: unknown): { status: number, message: string } {
-    console.error("exception: ", exception);
+  private resolveException(exception: unknown): {
+    status: number;
+    message: string;
+  } {
+    console.error('exception: ', exception);
 
     if (exception instanceof InvalidCredentialsError) {
       return {
         status: HttpStatus.UNAUTHORIZED,
-        message: exception.message
-      }
+        message: exception.message,
+      };
     }
 
     if (exception instanceof EmailAlreadyInUseError) {
       return {
         status: HttpStatus.CONFLICT,
-        message: exception.message
-      }
+        message: exception.message,
+      };
     }
 
     if (exception instanceof UserNotAllowedError) {
       return {
         status: HttpStatus.FORBIDDEN,
-        message: exception.message
-      }
+        message: exception.message,
+      };
     }
 
     if (exception instanceof UserNotFoundError) {
       return {
         status: HttpStatus.NOT_FOUND,
-        message: exception.message
-      }
+        message: exception.message,
+      };
     }
-    
+
     if (exception instanceof InvalidRefreshTokenError) {
       return {
         status: HttpStatus.UNAUTHORIZED,
-        message: exception.message
-      }
+        message: exception.message,
+      };
     }
 
     if (exception instanceof HttpException) {
       return {
         status: exception.getStatus(),
-        message: typeof exception.getResponse() === 'string' ?
-                  exception.getResponse() :
-                  exception.getResponse()?.['message']
-
-      }
+        message:
+          typeof exception.getResponse() === 'string'
+            ? exception.getResponse()
+            : exception.getResponse()?.['message'],
+      };
     }
 
     return {
       status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: 'Internal server error'
-    }
+      message: 'Internal server error',
+    };
   }
 }

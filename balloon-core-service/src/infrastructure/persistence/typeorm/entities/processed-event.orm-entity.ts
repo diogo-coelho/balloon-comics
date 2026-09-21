@@ -11,13 +11,13 @@ import {
 export class ProcessedEventOrmEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
-  
+
   @Column({ name: 'event_id', type: 'uuid' })
   eventId!: string;
-  
+
   @Column({ type: 'varchar', length: 100 })
   consumer!: string;
-  
+
   @CreateDateColumn({ name: 'processed_at', type: 'timestamp' })
   processedAt!: Date;
 }

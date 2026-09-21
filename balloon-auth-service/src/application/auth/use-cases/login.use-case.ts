@@ -1,10 +1,10 @@
-import InvalidCredentialsError from "../../../domain/auth/errors/invalid-credentials.error";
-import { PasswordHasherPort } from "../../ports/password-hasher.port";
-import { TokenServicePort } from "../../ports/token-service.port";
-import { UserRepositoryPort } from "../../ports/user.repository.port";
-import { LoginInput, LoginOutput } from "../../types/auth";
+import InvalidCredentialsError from '../../../domain/auth/errors/invalid-credentials.error';
+import { PasswordHasherPort } from '../../ports/password-hasher.port';
+import { TokenServicePort } from '../../ports/token-service.port';
+import { UserRepositoryPort } from '../../ports/user.repository.port';
+import { LoginInput, LoginOutput } from '../../types/auth';
 
-export class LoginUseCase {  
+export class LoginUseCase {
   constructor(
     private readonly users: UserRepositoryPort,
     private readonly passwordHasher: PasswordHasherPort,
@@ -14,8 +14,12 @@ export class LoginUseCase {
   async execute(input: LoginInput): Promise<LoginOutput> {
     const user = await this.users.findByEmail(input.email);
     if (!user) throw new InvalidCredentialsError('Email e/ou senha inválidos');
-    const validPassword = await this.passwordHasher.compare(input.password, user.passwordHash);
-    if (!validPassword) throw new InvalidCredentialsError('Email e/ou senha inválidos');
+    const validPassword = await this.passwordHasher.compare(
+      input.password,
+      user.passwordHash,
+    );
+    if (!validPassword)
+      throw new InvalidCredentialsError('Email e/ou senha inválidos');
 
     const accessToken = await this.tokenService.generateAccessToken({
       userId: user.id,
@@ -33,8 +37,8 @@ export class LoginUseCase {
       refreshToken,
       user: {
         id: user.id,
-        email: user.email
-      }
-    }
+        email: user.email,
+      },
+    };
   }
 }

@@ -18,7 +18,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
-    const { status, message } = this.resolveException(exception)
+    const { status, message } = this.resolveException(exception);
 
     httpAdapter.reply(
       response,
@@ -30,8 +30,11 @@ export class CustomExceptionFilter implements ExceptionFilter {
     );
   }
 
-  private resolveException(exception: unknown): { status: number, message: string } {
-    console.error("exception: ", exception);
+  private resolveException(exception: unknown): {
+    status: number;
+    message: string;
+  } {
+    console.error('exception: ', exception);
 
     if (exception instanceof ReaderNotFoundError) {
       return {
@@ -43,16 +46,16 @@ export class CustomExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       return {
         status: exception.getStatus(),
-        message: typeof exception.getResponse() === 'string' ?
-                  exception.getResponse() :
-                  exception.getResponse()?.['message']
-
-      }
+        message:
+          typeof exception.getResponse() === 'string'
+            ? exception.getResponse()
+            : exception.getResponse()?.['message'],
+      };
     }
 
     return {
       status: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: 'Internal server error'
-    }
+      message: 'Internal server error',
+    };
   }
 }

@@ -14,7 +14,7 @@ import { ReaderOrmEntity } from './reader.orm-entity';
 export class AuthorOrmEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
-  
+
   @Column({
     name: 'pen_name',
     unique: true,
@@ -23,13 +23,13 @@ export class AuthorOrmEntity {
     nullable: false,
   })
   penName!: string;
-  
+
   @Column({ name: 'biography', type: 'text', nullable: true })
   biography?: string;
-  
+
   @Column({ name: 'website', type: 'varchar', length: 255, nullable: true })
   website?: string;
-  
+
   @Column({
     name: 'status',
     type: 'enum',
@@ -37,14 +37,14 @@ export class AuthorOrmEntity {
     default: AuthorStatusEnum.ACTIVE,
   })
   status!: AuthorStatusEnum;
-  
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt!: Date;
-  
+
   @UpdateDateColumn({
     name: 'updated_at',
     type: 'timestamp',
@@ -52,7 +52,7 @@ export class AuthorOrmEntity {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt!: Date;
-  
+
   @OneToOne(() => ReaderOrmEntity, (reader) => reader.author, {
     nullable: false,
     onDelete: 'CASCADE',

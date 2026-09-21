@@ -1,5 +1,5 @@
-import { ImageProfile } from "../../application/types/file";
-import { ImageTypeEnum } from "./enums/image-type.enum";
+import { ImageProfile } from '../../application/types/file';
+import { ImageTypeEnum } from './enums/image-type.enum';
 
 export const IMAGE_PROFILES: Record<ImageTypeEnum, ImageProfile> = {
   [ImageTypeEnum.USER_AVATAR]: {

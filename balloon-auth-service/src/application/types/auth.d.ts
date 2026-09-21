@@ -20,21 +20,21 @@ export type LoginOutput = {
   user: {
     id: string;
     email: string;
-  }
-}
+  };
+};
 
 export type TokenPayload = {
   sub: string;
   tokenType: 'access' | 'refresh';
   username?: string;
   email?: string;
-}
+};
 
 export type RefreshTokenInput = {
   refreshToken: string;
-}
+};
 
 export type RefreshTokenOutput = {
   accessToken: string;
   refreshToken: string;
-}
+};

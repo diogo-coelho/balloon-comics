@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomUUID } from 'node:crypto';
 
 export class User {
   private refreshTokenHash?: string | null;
@@ -10,10 +10,14 @@ export class User {
     public passwordHash: string,
     public eventVersion: number,
     public createdAt: Date,
-    public updatedAt: Date
+    public updatedAt: Date,
   ) {}
 
-  static create(props: { username: string; email: string; passwordHash: string }): User {
+  static create(props: {
+    username: string;
+    email: string;
+    passwordHash: string;
+  }): User {
     const now = new Date();
 
     return new User(
@@ -23,29 +27,36 @@ export class User {
       props.passwordHash,
       1,
       now,
-      now
+      now,
     );
   }
 
-  static restore(props: { 
-    id: string; 
-    username: string; 
-    email: string; 
-    passwordHash: string; 
-    refreshTokenHash?: string | null; 
+  static restore(props: {
+    id: string;
+    username: string;
+    email: string;
+    passwordHash: string;
+    refreshTokenHash?: string | null;
     eventVersion: number;
-    createdAt: Date; 
-    updatedAt: Date
+    createdAt: Date;
+    updatedAt: Date;
   }): User {
-    const user = new User(props.id, props.username, props.email, props.passwordHash, props.eventVersion, props.createdAt, props.updatedAt);
+    const user = new User(
+      props.id,
+      props.username,
+      props.email,
+      props.passwordHash,
+      props.eventVersion,
+      props.createdAt,
+      props.updatedAt,
+    );
 
-    user.refreshTokenHash =
-      props.refreshTokenHash;
+    user.refreshTokenHash = props.refreshTokenHash;
 
     return user;
   }
-  
-  public update(input: { username?: string; email?: string; }): boolean {
+
+  public update(input: { username?: string; email?: string }): boolean {
     let integrationDataChanged = false;
 
     if (input.username !== undefined && input.username !== this.username) {
@@ -66,9 +77,7 @@ export class User {
     return integrationDataChanged;
   }
 
-  public changePasswordHash(
-    passwordHash: string,
-  ): void {
+  public changePasswordHash(passwordHash: string): void {
     this.passwordHash = passwordHash;
     this.updatedAt = new Date();
   }
@@ -86,5 +95,4 @@ export class User {
     this.refreshTokenHash = null;
     this.updatedAt = new Date();
   }
-
 }

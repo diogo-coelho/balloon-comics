@@ -7,7 +7,6 @@ import jwtConfig from './jwt.config';
 
 @Injectable()
 export class JwtTokenServiceAdapter implements TokenServicePort {
-
   constructor(
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
@@ -49,12 +48,9 @@ export class JwtTokenServiceAdapter implements TokenServicePort {
   }
 
   async verify(token: string): Promise<TokenPayload> {
-    return this.jwtService.verifyAsync<TokenPayload>(
-      token,
-      {
-        publicKey: this.config.publicKey,
-        ...this.config.verifyOptions,
-      }
-    );
+    return this.jwtService.verifyAsync<TokenPayload>(token, {
+      publicKey: this.config.publicKey,
+      ...this.config.verifyOptions,
+    });
   }
 }

@@ -1,8 +1,7 @@
-import { randomUUID } from "node:crypto";
-import { SocialMediaTypeEnum } from "../enums/social-media-type.enum";
+import { randomUUID } from 'node:crypto';
+import { SocialMediaTypeEnum } from '../enums/social-media-type.enum';
 
 export class SocialMediaLink {
-
   constructor(
     public readonly id: string,
     public readonly readerId: string,
@@ -12,7 +11,11 @@ export class SocialMediaLink {
     public updatedAt: Date,
   ) {}
 
-  static create(input: { readerId: string; name: SocialMediaTypeEnum; url: string }): SocialMediaLink {
+  static create(input: {
+    readerId: string;
+    name: SocialMediaTypeEnum;
+    url: string;
+  }): SocialMediaLink {
     const now = new Date();
 
     return new SocialMediaLink(
@@ -29,5 +32,4 @@ export class SocialMediaLink {
     this.url = url;
     this.updatedAt = new Date();
   }
-
 }

@@ -3,17 +3,16 @@ import type { Response } from 'express';
 
 @Injectable()
 export default class HttpCookies {
-  
   setAccessTokenCookie(response: Response, accessToken: string) {
     response.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 15 * 60 * 1000,
-        path: '/',
+      path: '/',
     });
   }
-  
+
   setRefreshTokenCookie(response: Response, refreshToken: string) {
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -23,10 +22,9 @@ export default class HttpCookies {
       path: '/api/auth/refresh',
     });
   }
-  
+
   clearAuthCookies(response: Response) {
     response.clearCookie('accessToken', { path: '/' });
     response.clearCookie('refreshToken', { path: '/api/auth/refresh' });
   }
-
 }

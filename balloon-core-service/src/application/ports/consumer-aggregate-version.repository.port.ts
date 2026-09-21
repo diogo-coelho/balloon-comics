@@ -1,9 +1,14 @@
-import { ConsumerAggregateVersion } from "../types/consumer-aggregate-version";
+import { ConsumerAggregateVersion } from '../types/consumer-aggregate-version';
 
 export interface ConsumerAggregateVersionRepositoryPort {
+  getOrCreateForUpdate(
+    aggregateId: string,
+    consumer: string,
+  ): Promise<ConsumerAggregateVersion>;
 
-  getOrCreateForUpdate(aggregateId: string, consumer: string): Promise<ConsumerAggregateVersion>;
-
-  updateVersion(aggregateId: string, consumer: string, version: number): Promise<void>;
-
+  updateVersion(
+    aggregateId: string,
+    consumer: string,
+    version: number,
+  ): Promise<void>;
 }

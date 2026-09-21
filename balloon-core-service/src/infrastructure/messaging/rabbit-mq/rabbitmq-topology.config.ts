@@ -19,9 +19,7 @@ export async function setupRabbitMQ(
   const retryExchange = configService.getOrThrow<string>(
     'RABBITMQ_RETRY_EXCHANGE',
   );
-  const retryQueue = configService.getOrThrow<string>(
-    'RABBITMQ_RETRY_QUEUE',
-  );
+  const retryQueue = configService.getOrThrow<string>('RABBITMQ_RETRY_QUEUE');
   const retryDelay = configService.getOrThrow<number>(
     'RABBITMQ_RETRY_DELAY_MS',
   );
@@ -32,15 +30,23 @@ export async function setupRabbitMQ(
 
   await channel.assertExchange(exchange, 'topic', { durable: true });
   await channel.assertExchange(deadLetterExchange, 'direct', { durable: true });
-  await channel.assertExchange(retryExchange, 'topic', { durable: true});
+  await channel.assertExchange(retryExchange, 'topic', { durable: true });
 
   await channel.assertQueue(dlq, { durable: true });
   await channel.bindQueue(dlq, deadLetterExchange, deadLetterRoutingKey);
-  
-  await channel.assertQueue(retryQueue, { durable: true, messageTtl: retryDelay, deadLetterExchange: exchange });
+
+  await channel.assertQueue(retryQueue, {
+    durable: true,
+    messageTtl: retryDelay,
+    deadLetterExchange: exchange,
+  });
   await channel.bindQueue(retryQueue, retryExchange, '#');
 
-  await channel.assertQueue(queue, { durable: true, deadLetterExchange, deadLetterRoutingKey });
+  await channel.assertQueue(queue, {
+    durable: true,
+    deadLetterExchange,
+    deadLetterRoutingKey,
+  });
   await channel.bindQueue(queue, exchange, queueKey);
 
   await channel.close();

@@ -1,7 +1,6 @@
-import { randomUUID } from "node:crypto";
+import { randomUUID } from 'node:crypto';
 
 export class AgeVerification {
-
   constructor(
     public readonly id: string,
     public readonly readerId: string,
@@ -22,30 +21,33 @@ export class AgeVerification {
       randomUUID(),
       input.readerId,
       input.dateOfBirth,
-      AgeVerification.calculateLegalAge(
-        input.dateOfBirth,
-        now,
-      ),
-      now, 
+      AgeVerification.calculateLegalAge(input.dateOfBirth, now),
       now,
-    )
+      now,
+    );
   }
 
   updateDateOfBirth(dateOfBirth: Date, referenceDate: Date = new Date()) {
     this.dateOfBirth = dateOfBirth;
-    this.hasLegalAge = AgeVerification.calculateLegalAge(dateOfBirth, referenceDate);
+    this.hasLegalAge = AgeVerification.calculateLegalAge(
+      dateOfBirth,
+      referenceDate,
+    );
     this.updatedAt = new Date();
   }
 
-  static calculateLegalAge(dateOfBirth: Date, referenceDate: Date = new Date()): boolean {
+  static calculateLegalAge(
+    dateOfBirth: Date,
+    referenceDate: Date = new Date(),
+  ): boolean {
     let age = referenceDate.getFullYear() - dateOfBirth.getFullYear();
 
     const monthDifference = referenceDate.getMonth() - dateOfBirth.getMonth();
 
-    if (monthDifference < 0 || (
-      monthDifference === 0 && 
-      referenceDate.getDate() < dateOfBirth.getDate()
-    )) {
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && referenceDate.getDate() < dateOfBirth.getDate())
+    ) {
       age--;
     }
 

@@ -1,19 +1,27 @@
 import type { Response } from 'express';
-import { Body, Controller, Delete, Param, Patch, Post, Res, UseGuards } from "@nestjs/common";
-import { CreateUserUseCase } from "../../../application/user/use-cases/create-user.use-case";
-import { ResponseUserDto } from "./dtos/response/response-user.dto";
-import { TokenPayloadParam } from "../decorators/token-payload.param";
-import { UpdateUserUseCase } from "../../../application/user/use-cases/update-user.use-case";
-import { DeleteUserUseCase } from "../../../application/user/use-cases/delete-user.use-case";
-import { UpdateUserDto } from "./dtos/request/update-user.dto";
-import { AuthTokenGuard } from "../guards/auth-token.guard";
-import { CreateUserDto } from "./dtos/request/create-user.dto";
-import { TokenPayloadDto } from "../auth/dtos/request/token-payload.dto";
-import HttpCookies from "../cookies/http-cookies";
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Patch,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { CreateUserUseCase } from '../../../application/user/use-cases/create-user.use-case';
+import { ResponseUserDto } from './dtos/response/response-user.dto';
+import { TokenPayloadParam } from '../decorators/token-payload.param';
+import { UpdateUserUseCase } from '../../../application/user/use-cases/update-user.use-case';
+import { DeleteUserUseCase } from '../../../application/user/use-cases/delete-user.use-case';
+import { UpdateUserDto } from './dtos/request/update-user.dto';
+import { AuthTokenGuard } from '../guards/auth-token.guard';
+import { CreateUserDto } from './dtos/request/create-user.dto';
+import { TokenPayloadDto } from '../auth/dtos/request/token-payload.dto';
+import HttpCookies from '../cookies/http-cookies';
 
 @Controller('users')
 export class UserController {
-
   constructor(
     private readonly createUser: CreateUserUseCase,
     private readonly updateUser: UpdateUserUseCase,
@@ -32,15 +40,15 @@ export class UserController {
       password: dto.password,
     });
 
-    this.httpCookies.setAccessTokenCookie(response, accessToken as string);
-    this.httpCookies.setRefreshTokenCookie(response, refreshToken as string);
+    this.httpCookies.setAccessTokenCookie(response, accessToken);
+    this.httpCookies.setRefreshTokenCookie(response, refreshToken);
 
     return {
       message: 'Usuário criado com sucesso',
       data: {
         user,
-      }
-    }
+      },
+    };
   }
 
   @UseGuards(AuthTokenGuard)
@@ -53,14 +61,14 @@ export class UserController {
     const user = await this.updateUser.execute({
       id,
       requesterId: tokenPayload.sub,
-      ...updateUserDto
+      ...updateUserDto,
     });
 
     return {
       message: 'Usuário atualizado com sucesso',
       data: {
         user,
-      }
+      },
     };
   }
 
@@ -76,5 +84,4 @@ export class UserController {
       message: 'Usuário deletado com sucesso',
     };
   }
-  
 }

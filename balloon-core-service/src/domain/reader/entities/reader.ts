@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 export class Reader {
-
   constructor(
     public readonly id: string,
     public readonly userId: string,
@@ -11,10 +10,14 @@ export class Reader {
     public imageUrl: string | null,
     public description: string | null,
     public readonly createdAt: Date,
-    public updatedAt: Date
+    public updatedAt: Date,
   ) {}
 
-  static create(input: { userId: string, email: string, username: string }): Reader {
+  static create(input: {
+    userId: string;
+    email: string;
+    username: string;
+  }): Reader {
     const now = new Date();
 
     return new Reader(
@@ -30,12 +33,11 @@ export class Reader {
     );
   }
 
-  updateProfile(input: { name: string; description?: string; }): void {
+  updateProfile(input: { name: string; description?: string }): void {
     this.name = input.name;
     if (input.description !== undefined) {
       this.description = input.description;
     }
     this.updatedAt = new Date();
   }
-  
 }

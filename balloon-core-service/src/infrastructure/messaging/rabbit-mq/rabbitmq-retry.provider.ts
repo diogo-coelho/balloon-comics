@@ -10,35 +10,31 @@ import {
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class RabbitMqRetryProvider
-  implements OnModuleInit, OnModuleDestroy
-{
+export class RabbitMqRetryProvider implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RabbitMqRetryProvider.name);
   private connection!: amqpConnectionManager.AmqpConnectionManager;
   private channel!: amqpConnectionManager.ChannelWrapper;
   private readonly unroutedCorrelationIds = new Set<string>();
 
-  constructor(
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly configService: ConfigService) {}
 
   async onModuleInit(): Promise<void> {
     const url = this.configService.getOrThrow<string>('RABBITMQ_URL');
-    const retryExchange = this.configService.getOrThrow<string>('RABBITMQ_RETRY_EXCHANGE');
+    const retryExchange = this.configService.getOrThrow<string>(
+      'RABBITMQ_RETRY_EXCHANGE',
+    );
 
-    this.connection =  amqpConnectionManager.connect(
-      [url], { heartbeatIntervalInSeconds: 30, reconnectTimeInSeconds: 5 });
-      
+    this.connection = amqpConnectionManager.connect([url], {
+      heartbeatIntervalInSeconds: 30,
+      reconnectTimeInSeconds: 5,
+    });
+
     this.channel = this.connection.createChannel({
       confirm: true,
       publishTimeout: 10_000,
 
       setup: async (channel) => {
-        await channel.assertExchange(
-          retryExchange,
-          'topic',
-          { durable: true },
-        );
+        await channel.assertExchange(retryExchange, 'topic', { durable: true });
 
         channel.on('return', (message: Message) => {
           const correlationId = message.properties?.correlationId;
@@ -54,11 +50,10 @@ export class RabbitMqRetryProvider
     });
   }
 
-  async publishRetry(
-    message: Message,
-    retryCount: number,
-  ): Promise<void> {
-    const retryExchange = this.configService.getOrThrow<string>('RABBITMQ_RETRY_EXCHANGE');
+  async publishRetry(message: Message, retryCount: number): Promise<void> {
+    const retryExchange = this.configService.getOrThrow<string>(
+      'RABBITMQ_RETRY_EXCHANGE',
+    );
     const correlationId = randomUUID();
 
     await this.channel.publish(
