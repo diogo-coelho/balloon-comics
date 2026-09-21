@@ -23,15 +23,7 @@ export class UserOrmMapper {
   static toDomain(
     entity: UserOrmEntity,
   ): User { 
-    const user = new User(
-      entity.id,
-      entity.username,
-      entity.email,
-      entity.passwordHash,
-      entity.eventVersion,
-      entity.createdAt,
-      entity.updatedAt
-    );
+    const user = User.restore(entity);
 
     return user;
   }

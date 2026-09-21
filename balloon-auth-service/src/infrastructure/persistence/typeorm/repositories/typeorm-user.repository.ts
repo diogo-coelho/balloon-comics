@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserRepositoryPort } from "../../../../application/ports/user.repository.port";
 import { User } from "../../../../domain/user/entities/user";
@@ -50,9 +50,6 @@ export class TypeOrmUserRepository implements UserRepositoryPort {
   }
 
   async delete(user: User): Promise<void> {
-    const entity = await this.userRepository.findOneByOrFail({ id: user.id });
-    if (!entity) throw new ForbiddenException('Usuário não encontrado');
-
     await this.userRepository.delete({ id: user.id });
   }
 

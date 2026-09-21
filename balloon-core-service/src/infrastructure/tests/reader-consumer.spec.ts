@@ -1,4 +1,4 @@
-import { ReaderConsumer } from "../../infrastructure/messaging/rabbit-mq/consumers/readers/reader.consume";
+import { ReaderConsumer } from "../messaging/rabbit-mq/consumers/readers/reader.consume";
 
 describe("ReaderConsumer", () => {
   it("deve processar uma mensagem de criação do usuário e confirmar o ACK", async () => {

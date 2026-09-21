@@ -1,4 +1,5 @@
 import InvalidRefreshTokenError from "../../../domain/auth/errors/invalid-refresh-token.error";
+import { User } from "../../../domain/user/entities/user";
 import { AuthUnitOfWorkPort } from "../../ports/auth-unit-of-work.port";
 import { PasswordHasherPort } from "../../ports/password-hasher.port";
 import { TokenServicePort } from "../../ports/token-service.port";
@@ -24,13 +25,13 @@ export class RefreshTokenUseCase {
     if (payload.tokenType !== 'refresh') throw new InvalidRefreshTokenError();
 
     const result = await this.unitOfWork.execute(async (transaction) => {
-      const user = await transaction.users.findByIdForUpdate(payload.sub);
+      const user: User = await transaction.users.findByIdForUpdate(payload.sub);
 
-      if (!user || !user.refreshTokenHash) {
-        return { valid: false as const }
-      }
+      if (!user) return { valid: false as const }
+      const userRefreshTokenHash = user.getRefreshTokenHash();
+      if (!userRefreshTokenHash) return { valid: false as const }
 
-      const tokenMatches = await this.passwordHasher.compare(input.refreshToken, user.refreshTokenHash);
+      const tokenMatches = await this.passwordHasher.compare(input.refreshToken, userRefreshTokenHash);
       if (!tokenMatches) {
         user.clearRefreshTokenHash();
         await transaction.users.save(user);

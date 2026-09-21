@@ -4,9 +4,9 @@ import { Interval } from '@nestjs/schedule';
 import { Brackets, DataSource, In, Repository } from 'typeorm';
 import { OutboxOrmEntity } from '../../persistence/typeorm/entities/outbox-event.orm-entity';
 import { RabbitMQProvider } from '../rabbit-mq/rabbitmq-message-publisher.adapter';
-import { IntegrationEventContract } from '../../../domain/shared/events/domain-event';
 import { AUTH_EXCHANGE, EventRoutingMapper } from '../rabbit-mq/event-routing-mapper';
 import { UserEventType } from '../../../domain/user/events/user-event-type';
+import { IntegrationEventContract } from '../../../application/messaging/integration-event.contract';
 
 @Injectable()
 export class OutboxEventsPublisher {

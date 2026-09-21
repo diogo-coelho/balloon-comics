@@ -26,6 +26,24 @@ export class User {
       now
     );
   }
+
+  static restore(props: { 
+    id: string; 
+    username: string; 
+    email: string; 
+    passwordHash: string; 
+    refreshTokenHash?: string | null; 
+    eventVersion: number;
+    createdAt: Date; 
+    updatedAt: Date
+  }): User {
+    const user = new User(props.id, props.username, props.email, props.passwordHash, props.eventVersion, props.createdAt, props.updatedAt);
+
+    user.refreshTokenHash =
+      props.refreshTokenHash;
+
+    return user;
+  }
   
   public update(input: { username?: string; email?: string; }): boolean {
     let integrationDataChanged = false;

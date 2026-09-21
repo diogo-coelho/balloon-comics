@@ -12,6 +12,6 @@ describe("UserOrmMapper", () => {
 
     expect(entity).toMatchObject({ id: user.id, email: user.email, refreshTokenHash: "refresh-hash" });
     expect(restored).toMatchObject({ id: user.id, username: user.username, passwordHash: user.passwordHash });
-    expect(restored.getRefreshTokenHash()).toBeUndefined();
+    expect(restored.getRefreshTokenHash()).toBe("refresh-hash");
   });
 });
