@@ -19,15 +19,18 @@ export class JwtAccessTokenVerifierAdapter implements AccessTokenVerifierPort {
   ) {}
 
   async verify(token: string): Promise<AccessTokenPayload> {
-    const payload = await this.jwtService.verifyAsync(token, {
-      publicKey: this.jwtConfiguration.publicKey,
-      ...this.jwtConfiguration.verifyOptions,
-    });
+    const payload = await this.jwtService.verifyAsync<AccessTokenPayload>(
+      token,
+      {
+        publicKey: this.jwtConfiguration.publicKey,
+        ...this.jwtConfiguration.verifyOptions,
+      },
+    );
 
     if (payload.tokenType !== 'access') {
       throw new Error('Invalid access token');
     }
 
-    return payload as AccessTokenPayload;
+    return payload;
   }
 }

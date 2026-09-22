@@ -27,6 +27,6 @@ export class TypeOrmProcessedEventRepository implements ProcessedEventRepository
       .returning('id')
       .execute();
 
-    return result.raw.length > 0;
+    return Array.isArray(result.raw) && result.raw.length > 0;
   }
 }

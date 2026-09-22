@@ -44,7 +44,7 @@ export class UpdateReaderUseCase {
         await transaction.ageVerifications.save(ageVerification);
       }
 
-      let updatedSocialMediaLinks;
+      let updatedSocialMediaLinks: SocialMediaLink[] | undefined;
       if (input.socialMediaLinks?.length) {
         const currentLinks = await transaction.socialMediaLinks.findByReaderId(
           reader.id,
@@ -88,15 +88,13 @@ export class UpdateReaderUseCase {
               updatedAt: ageVerification.updatedAt,
             }
           : undefined,
-        socialMediaLinks: updatedSocialMediaLinks?.map(
-          (link: SocialMediaLink) => ({
-            id: link.id,
-            name: link.name,
-            url: link.url,
-            createdAt: link.createdAt,
-            updatedAt: link.updatedAt,
-          }),
-        ),
+        socialMediaLinks: updatedSocialMediaLinks?.map((link) => ({
+          id: link.id,
+          name: link.name,
+          url: link.url,
+          createdAt: link.createdAt,
+          updatedAt: link.updatedAt,
+        })),
         createdAt: reader.createdAt,
         updatedAt: reader.updatedAt,
       };

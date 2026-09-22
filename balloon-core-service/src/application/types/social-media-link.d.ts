@@ -1,3 +1,5 @@
+import { SocialMediaTypeEnum } from '../../domain/social-media-link/enums/social-media-type.enum';
+
 export type SocialMediaLinkOutput = {
   id: string;
   name: string;

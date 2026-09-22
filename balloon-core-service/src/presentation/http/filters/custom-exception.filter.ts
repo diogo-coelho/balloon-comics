@@ -44,12 +44,13 @@ export class CustomExceptionFilter implements ExceptionFilter {
     }
 
     if (exception instanceof HttpException) {
+      const exceptionResponse = exception.getResponse();
       return {
         status: exception.getStatus(),
         message:
-          typeof exception.getResponse() === 'string'
-            ? exception.getResponse()
-            : exception.getResponse()?.['message'],
+          typeof exceptionResponse === 'string'
+            ? exceptionResponse
+            : this.getExceptionMessage(exceptionResponse),
       };
     }
 
@@ -57,5 +58,10 @@ export class CustomExceptionFilter implements ExceptionFilter {
       status: HttpStatus.INTERNAL_SERVER_ERROR,
       message: 'Internal server error',
     };
+  }
+
+  private getExceptionMessage(response: object): string {
+    const message = 'message' in response ? response.message : undefined;
+    return typeof message === 'string' ? message : 'Internal server error';
   }
 }

@@ -66,7 +66,7 @@ export class ReaderConsumer {
     try {
       await handler();
       channel.ack(message);
-    } catch (error: Error | any | undefined) {
+    } catch (error: unknown) {
       this.logger.error(
         'Erro ao processar mensagem RabbitMQ',
         error instanceof Error ? error.stack : undefined,
@@ -92,7 +92,7 @@ export class ReaderConsumer {
         await this.retryProvider.publishRetry(message, currentRetryCount + 1);
         channel.ack(message);
         return;
-      } catch (error: Error | any | undefined) {
+      } catch (error: unknown) {
         this.logger.error(
           'Falha ao publicar mensagem na retry queue',
           error instanceof Error ? error.stack : undefined,

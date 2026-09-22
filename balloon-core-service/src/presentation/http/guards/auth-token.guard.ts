@@ -25,7 +25,7 @@ export class AuthTokenGuard implements CanActivate {
       request[REQUEST_TOKEN_PAYLOAD_KEY] = payload;
 
       return true;
-    } catch (error: Error | undefined | any) {
+    } catch {
       throw new UnauthorizedException('Token de autenticação inválido');
     }
   }

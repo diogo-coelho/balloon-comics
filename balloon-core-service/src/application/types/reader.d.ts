@@ -1,3 +1,12 @@
+import type {
+  AgeVerificationOutput,
+  UpdateAgeVerificationInput,
+} from './age-verification';
+import type {
+  SocialMediaLinkOutput,
+  UpdateSocialMediaLinkInput,
+} from './social-media-link';
+
 export type GetReaderOutput = {
   id: string;
   email: string;

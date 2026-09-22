@@ -17,7 +17,7 @@ export class TypeOrmSocialMediaLinkRepository implements SocialmediaLinkReposito
   async findByReaderId(readerId: string): Promise<SocialMediaLink[]> {
     const entities = await this.repository.findBy({ reader: { id: readerId } });
 
-    return entities.map(SocialMediaLinkOrmMapper.toDomain);
+    return entities.map((entity) => SocialMediaLinkOrmMapper.toDomain(entity));
   }
 
   async findByReaderIdAndName(

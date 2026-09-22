@@ -1,5 +1,5 @@
 import * as amqpConnectionManager from 'amqp-connection-manager';
-import type { Message } from 'amqplib';
+import type { Channel, Message } from 'amqplib';
 import { randomUUID } from 'crypto';
 import {
   Injectable,
@@ -8,6 +8,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { getMessageHeaders, getStringMessageProperty } from './messaging';
 
 @Injectable()
 export class RabbitMqRetryProvider implements OnModuleInit, OnModuleDestroy {
@@ -18,7 +19,7 @@ export class RabbitMqRetryProvider implements OnModuleInit, OnModuleDestroy {
 
   constructor(private readonly configService: ConfigService) {}
 
-  async onModuleInit(): Promise<void> {
+  onModuleInit(): void {
     const url = this.configService.getOrThrow<string>('RABBITMQ_URL');
     const retryExchange = this.configService.getOrThrow<string>(
       'RABBITMQ_RETRY_EXCHANGE',
@@ -33,17 +34,25 @@ export class RabbitMqRetryProvider implements OnModuleInit, OnModuleDestroy {
       confirm: true,
       publishTimeout: 10_000,
 
-      setup: async (channel) => {
+      setup: async (channel: Channel) => {
         await channel.assertExchange(retryExchange, 'topic', { durable: true });
 
         channel.on('return', (message: Message) => {
-          const correlationId = message.properties?.correlationId;
+          const correlationId = getStringMessageProperty(
+            message.properties,
+            'correlationId',
+          );
           if (correlationId) {
             this.unroutedCorrelationIds.add(correlationId);
           }
 
+          const messageId = getStringMessageProperty(
+            message.properties,
+            'messageId',
+          );
+
           this.logger.warn(
-            `Mensagem sem rota válida na retry exchange: routingKey="${message.fields.routingKey}", messageId="${message.properties?.messageId}"`,
+            `Mensagem sem rota válida na retry exchange: routingKey="${message.fields.routingKey}", messageId="${messageId}"`,
           );
         });
       },
@@ -55,6 +64,12 @@ export class RabbitMqRetryProvider implements OnModuleInit, OnModuleDestroy {
       'RABBITMQ_RETRY_EXCHANGE',
     );
     const correlationId = randomUUID();
+    const messageId = getStringMessageProperty(message.properties, 'messageId');
+    const type = getStringMessageProperty(message.properties, 'type');
+    const contentType = getStringMessageProperty(
+      message.properties,
+      'contentType',
+    );
 
     await this.channel.publish(
       retryExchange,
@@ -64,11 +79,11 @@ export class RabbitMqRetryProvider implements OnModuleInit, OnModuleDestroy {
         persistent: true,
         mandatory: true,
         correlationId,
-        messageId: message.properties.messageId,
-        type: message.properties.type,
-        contentType: message.properties.contentType,
+        messageId,
+        type,
+        contentType,
         headers: {
-          ...message.properties.headers,
+          ...getMessageHeaders(message.properties),
           'x-retry-count': retryCount,
         },
       },

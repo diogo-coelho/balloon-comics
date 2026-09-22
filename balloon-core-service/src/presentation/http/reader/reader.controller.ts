@@ -49,10 +49,15 @@ export class ReaderController {
   async updateCurrentReader(
     @TokenPayloadParam() tokenPayload: TokenPayloadDto,
     @Body() dto: UpdateReaderDto,
-  ) {
+  ): Promise<ResponseReaderDto> {
     const data = await this.updateReader.execute({
       userId: tokenPayload.sub,
-      ...dto,
+      name: dto.name,
+      description: dto.description,
+      ageVerification: dto.ageVerification
+        ? { dateOfBirth: new Date(dto.ageVerification.dateOfBirth) }
+        : undefined,
+      socialMediaLinks: dto.socialMediaLinks,
     });
 
     return {

@@ -1,4 +1,10 @@
+import * as crypto from 'crypto';
 import { RabbitMqRetryProvider } from '../messaging/rabbit-mq/rabbitmq-retry.provider';
+
+jest.mock('crypto', () => ({
+  ...jest.requireActual<typeof import('crypto')>('crypto'),
+  randomUUID: jest.fn(),
+}));
 
 describe('RabbitMqRetryProvider', () => {
   it('deve publicar mensagem de retry no exchange com headers incrementados', async () => {
@@ -43,7 +49,9 @@ describe('RabbitMqRetryProvider', () => {
     } as any);
 
     (provider as any).channel = { publish };
-    (provider as any).unroutedCorrelationIds = new Set(['should-fail']);
+    (provider as any).unroutedCorrelationIds = new Set([
+      '00000000-0000-4000-8000-000000000000',
+    ]);
 
     const message = {
       fields: { routingKey: 'reader.created' },
@@ -56,13 +64,14 @@ describe('RabbitMqRetryProvider', () => {
       },
     } as any;
 
-    const originalUUID = jest.requireActual('crypto').randomUUID;
-    jest.spyOn(require('crypto'), 'randomUUID').mockReturnValue('should-fail');
+    jest
+      .mocked(crypto.randomUUID)
+      .mockReturnValue('00000000-0000-4000-8000-000000000000');
 
     await expect(provider.publishRetry(message, 2)).rejects.toThrow(
       'Mensagem de retry sem rota válida',
     );
 
-    jest.spyOn(require('crypto'), 'randomUUID').mockRestore();
+    jest.mocked(crypto.randomUUID).mockReset();
   });
 });
