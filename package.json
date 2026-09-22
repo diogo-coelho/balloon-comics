@@ -1,0 +1,29 @@
+{
+  "name": "balloon-comics",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Projeto de plataforma de leitura e autopublicação de quadrinhos digitais",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "husky",
+    "quality:auth": "npm --prefix balloon-auth-service run format:check && npm --prefix balloon-auth-service run lint:check && npm --prefix balloon-auth-service test -- --runInBand",
+    "quality:core": "npm --prefix balloon-core-service run format:check && npm --prefix balloon-core-service run lint:check && npm --prefix balloon-core-service test -- --runInBand",
+    "quality": "npm run quality:auth && npm run quality:core"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diogo-coelho/balloon-comics.git"
+  },
+  "keywords": [],
+  "author": "Diogo Coelho",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/diogo-coelho/balloon-comics/issues"
+  },
+  "homepage": "https://github.com/diogo-coelho/balloon-comics#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1"
+  }
+}
