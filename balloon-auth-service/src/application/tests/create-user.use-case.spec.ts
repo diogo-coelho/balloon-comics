@@ -1,8 +1,12 @@
 import { CreateUserUseCase } from '../user/use-cases/create-user.use-case';
 import { User } from '../../domain/user/entities/user';
 import EmailAlreadyInUseError from '../../domain/user/errors/email-already-in-use.error';
+import { AuthUnitOfWorkPort } from '../ports/auth-unit-of-work.port';
+import { AuthTransactionalPort } from '../types/auth';
 
-const transaction = (existingUser: User | null = null) => ({
+const transaction = (
+  existingUser: User | null = null,
+): AuthTransactionalPort => ({
   users: {
     findByEmail: jest.fn().mockResolvedValue(existingUser),
     save: jest.fn(),
@@ -13,8 +17,11 @@ const transaction = (existingUser: User | null = null) => ({
 describe('CreateUserUseCase', () => {
   it('deve criar usuário, evento e tokens', async () => {
     const currentTransaction = transaction();
-    const unitOfWork = {
-      execute: jest.fn((operation) => operation(currentTransaction)),
+    const unitOfWork: AuthUnitOfWorkPort = {
+      execute: jest.fn(
+        <T>(operation: (transaction: AuthTransactionalPort) => Promise<T>) =>
+          operation(currentTransaction),
+      ),
     };
     const passwordHasher = {
       hash: jest
@@ -39,8 +46,10 @@ describe('CreateUserUseCase', () => {
 
     expect(result.user.email).toBe('ana@example.com');
     expect(result.accessToken).toBe('access-token');
-    expect(currentTransaction.outbox.save).toHaveBeenCalled();
-    expect(currentTransaction.users.save).toHaveBeenCalledTimes(2);
+    const outboxSave = currentTransaction.outbox.save;
+    const userSave = currentTransaction.users.save;
+    expect(outboxSave).toHaveBeenCalled();
+    expect(userSave).toHaveBeenCalledTimes(2);
   });
 
   it('deve rejeitar criação com email existente', async () => {
@@ -51,8 +60,11 @@ describe('CreateUserUseCase', () => {
         passwordHash: 'hash',
       }),
     );
-    const unitOfWork = {
-      execute: jest.fn((operation) => operation(currentTransaction)),
+    const unitOfWork: AuthUnitOfWorkPort = {
+      execute: jest.fn(
+        <T>(operation: (transaction: AuthTransactionalPort) => Promise<T>) =>
+          operation(currentTransaction),
+      ),
     };
 
     await expect(

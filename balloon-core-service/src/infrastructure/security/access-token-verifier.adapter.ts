@@ -10,9 +10,7 @@ import {
 import jwtConfig from './jwt.config';
 
 @Injectable()
-export class JwtAccessTokenVerifierAdapter
-  implements AccessTokenVerifierPort
-{
+export class JwtAccessTokenVerifierAdapter implements AccessTokenVerifierPort {
   constructor(
     private readonly jwtService: JwtService,
 

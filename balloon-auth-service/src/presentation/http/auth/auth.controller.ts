@@ -68,8 +68,8 @@ export class AuthController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const refreshToken = request.cookies?.refreshToken;
-    if (!refreshToken)
+    const refreshToken: unknown = request.cookies?.refreshToken;
+    if (typeof refreshToken !== 'string')
       throw new UnauthorizedException('Refresh token não fornecido');
 
     const result = await this.refreshTokenUseCase.execute({ refreshToken });

@@ -76,12 +76,16 @@ export class CustomExceptionFilter implements ExceptionFilter {
     }
 
     if (exception instanceof HttpException) {
+      const exceptionResponse = exception.getResponse();
+
       return {
         status: exception.getStatus(),
         message:
-          typeof exception.getResponse() === 'string'
-            ? exception.getResponse()
-            : exception.getResponse()?.['message'],
+          typeof exceptionResponse === 'string'
+            ? exceptionResponse
+            : typeof exceptionResponse?.['message'] === 'string'
+              ? exceptionResponse['message']
+              : 'Request failed',
       };
     }
 

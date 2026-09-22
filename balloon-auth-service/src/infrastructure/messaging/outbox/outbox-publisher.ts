@@ -36,7 +36,8 @@ export class OutboxEventsPublisher {
       if (events.length === 0) return;
 
       const successfulIds: string[] = [];
-      const failedEvents: Array<{ event: OutboxOrmEntity; error: any }> = [];
+      const failedEvents: Array<{ event: OutboxOrmEntity; error: unknown }> =
+        [];
 
       for (const event of events) {
         try {

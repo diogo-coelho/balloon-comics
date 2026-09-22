@@ -10,9 +10,7 @@ import { REQUEST_TOKEN_PAYLOAD_KEY } from '../auth/const/auth.constant';
 
 @Injectable()
 export class AuthTokenGuard implements CanActivate {
-  constructor(
-    private readonly tokenVerifier: AccessTokenVerifierPort,
-  ) {}
+  constructor(private readonly tokenVerifier: AccessTokenVerifierPort) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
@@ -27,7 +25,7 @@ export class AuthTokenGuard implements CanActivate {
       request[REQUEST_TOKEN_PAYLOAD_KEY] = payload;
 
       return true;
-    } catch (error: Error | undefined | any) {
+    } catch {
       throw new UnauthorizedException('Token de autenticação inválido');
     }
   }

@@ -1,5 +1,4 @@
 import { User } from '../../domain/user/entities/user';
-import { UserOrmEntity } from '../persistence/typeorm/entities/user.orm-entity';
 import { UserOrmMapper } from '../persistence/typeorm/mappers/user.orm-mapper';
 
 describe('UserOrmMapper', () => {

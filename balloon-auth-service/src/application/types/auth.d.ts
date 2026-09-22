@@ -1,3 +1,6 @@
+import { OutboxRepositoryPort } from '../ports/outbox.repository';
+import { UserRepositoryPort } from '../ports/user.repository.port';
+
 export interface AuthTransactionalPort {
   users: UserRepositoryPort;
   outbox: OutboxRepositoryPort;

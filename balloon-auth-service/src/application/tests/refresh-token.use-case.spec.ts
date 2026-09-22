@@ -1,8 +1,10 @@
 import { RefreshTokenUseCase } from '../auth/use-cases/refresh-token.use-case';
 import { User } from '../../domain/user/entities/user';
 import InvalidRefreshTokenError from '../../domain/auth/errors/invalid-refresh-token.error';
+import { AuthUnitOfWorkPort } from '../ports/auth-unit-of-work.port';
+import { AuthTransactionalPort } from '../types/auth';
 
-const makeTransaction = (user: User | null) => ({
+const makeTransaction = (user: User | null): AuthTransactionalPort => ({
   users: {
     findByIdForUpdate: jest.fn().mockResolvedValue(user),
     save: jest.fn(),
@@ -19,8 +21,11 @@ describe('RefreshTokenUseCase', () => {
     });
     user.setRefreshTokenHash('old-hash');
     const currentTransaction = makeTransaction(user);
-    const unitOfWork = {
-      execute: jest.fn((operation) => operation(currentTransaction)),
+    const unitOfWork: AuthUnitOfWorkPort = {
+      execute: jest.fn(
+        <T>(operation: (transaction: AuthTransactionalPort) => Promise<T>) =>
+          operation(currentTransaction),
+      ),
     };
     const hasher = {
       compare: jest.fn().mockResolvedValue(true),
@@ -39,7 +44,8 @@ describe('RefreshTokenUseCase', () => {
         refreshToken: 'old',
       }),
     ).resolves.toEqual({ accessToken: 'access', refreshToken: 'refresh' });
-    expect(currentTransaction.users.save).toHaveBeenCalledWith(user);
+    const userSave = currentTransaction.users.save;
+    expect(userSave).toHaveBeenCalledWith(user);
   });
 
   it('deve rejeitar token inválido, tipo incorreto e hash divergente', async () => {
@@ -58,8 +64,11 @@ describe('RefreshTokenUseCase', () => {
     });
     user.setRefreshTokenHash('stored');
     const currentTransaction = makeTransaction(user);
-    const unitOfWork = {
-      execute: jest.fn((operation) => operation(currentTransaction)),
+    const unitOfWork: AuthUnitOfWorkPort = {
+      execute: jest.fn(
+        <T>(operation: (transaction: AuthTransactionalPort) => Promise<T>) =>
+          operation(currentTransaction),
+      ),
     };
     const tokens = {
       verify: jest
@@ -93,8 +102,11 @@ describe('RefreshTokenUseCase', () => {
         passwordHash: 'hash',
       }),
     );
-    const unitOfWork = {
-      execute: jest.fn((operation) => operation(currentTransaction)),
+    const unitOfWork: AuthUnitOfWorkPort = {
+      execute: jest.fn(
+        <T>(operation: (transaction: AuthTransactionalPort) => Promise<T>) =>
+          operation(currentTransaction),
+      ),
     };
     const tokens = {
       verify: jest.fn().mockResolvedValue({ sub: 'id', tokenType: 'refresh' }),

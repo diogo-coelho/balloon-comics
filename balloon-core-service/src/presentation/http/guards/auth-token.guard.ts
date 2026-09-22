@@ -10,9 +10,7 @@ import { AccessTokenVerifierPort } from '../../../application/ports/access-token
 
 @Injectable()
 export class AuthTokenGuard implements CanActivate {
-  constructor(
-    private readonly tokenVerifier: AccessTokenVerifierPort,
-  ) {}
+  constructor(private readonly tokenVerifier: AccessTokenVerifierPort) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
@@ -23,9 +21,9 @@ export class AuthTokenGuard implements CanActivate {
 
     try {
       const payload = await this.tokenVerifier.verify(token);
-      
+
       request[REQUEST_TOKEN_PAYLOAD_KEY] = payload;
-      
+
       return true;
     } catch (error: Error | undefined | any) {
       throw new UnauthorizedException('Token de autenticação inválido');

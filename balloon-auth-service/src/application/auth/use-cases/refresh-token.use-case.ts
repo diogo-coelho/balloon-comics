@@ -21,14 +21,16 @@ export class RefreshTokenUseCase {
 
     try {
       payload = await this.tokenService.verify(input.refreshToken);
-    } catch (error: unknown) {
+    } catch {
       throw new InvalidRefreshTokenError();
     }
 
     if (payload.tokenType !== 'refresh') throw new InvalidRefreshTokenError();
 
     const result = await this.unitOfWork.execute(async (transaction) => {
-      const user: User = await transaction.users.findByIdForUpdate(payload.sub);
+      const user: User | null = await transaction.users.findByIdForUpdate(
+        payload.sub,
+      );
 
       if (!user) return { valid: false as const };
       const userRefreshTokenHash = user.getRefreshTokenHash();

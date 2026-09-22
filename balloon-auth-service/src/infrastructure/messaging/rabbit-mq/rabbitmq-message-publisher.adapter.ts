@@ -1,4 +1,5 @@
 import * as amqpConnectionManager from 'amqp-connection-manager';
+import type { Channel, Message } from 'amqplib';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AUTH_EXCHANGE } from './event-routing-mapper';
@@ -13,27 +14,27 @@ export class RabbitMQProvider implements OnModuleInit {
 
   constructor(private readonly configService: ConfigService) {}
 
-  async onModuleInit() {
+  onModuleInit(): void {
     try {
       const connectionUrl =
         this.configService.getOrThrow<string>('RABBITMQ_URL');
 
-      this.connection = await amqpConnectionManager.connect(connectionUrl, {
+      this.connection = amqpConnectionManager.connect(connectionUrl, {
         heartbeatIntervalInSeconds: 30,
         reconnectTimeInSeconds: 5,
       });
       this.handleConnectionLogging();
 
-      this.channel = await this.connection?.createChannel({
+      this.channel = this.connection.createChannel({
         json: false,
         confirm: true,
         publishTimeout: 10_000,
-        setup: async (channel) => {
+        setup: async (channel: Channel) => {
           await channel.assertExchange(AUTH_EXCHANGE, 'topic', {
             durable: true,
           });
 
-          channel.on('return', (message) => {
+          channel.on('return', (message: Message) => {
             const messageId = message.properties.messageId;
             if (messageId) {
               this.returnedMessages.add(messageId);
@@ -41,7 +42,7 @@ export class RabbitMQProvider implements OnModuleInit {
           });
         },
       });
-    } catch (error: Error | undefined | any) {
+    } catch (error: unknown) {
       this.logger.error('Failed to connect to RabbitMQ:', error);
       throw error;
     }
