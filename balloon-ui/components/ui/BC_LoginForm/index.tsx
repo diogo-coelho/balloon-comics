@@ -2,7 +2,7 @@
 
 import "./BC_LoginForm.scss";
 import { JSX, useLayoutEffect, useState } from "react";
-import { IconEye, IconEyeOff } from '@tabler/icons-react';
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useLogin } from "@/hooks/queries/useAuth";
 import { LoginFormProps } from "./bc-login-form";
 import BC_Button from "@/components/design/BC_Button";
@@ -10,8 +10,10 @@ import BC_Input from "@/components/design/BC_Input";
 import useFieldValidation from "@/hooks/useFieldValidation";
 import BC_Spinning from "@/components/design/BC_Spinning";
 import BC_Dialog from "@/components/design/BC_Dialog/BC_Dialog";
+import { useRouter } from "next/navigation";
 
 const BCLogin = (props: LoginFormProps): JSX.Element => {
+  const router = useRouter();
   const mutation = useLogin();
   const { isPending } = mutation;
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -28,10 +30,14 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
     getPasswordValue,
   } = useFieldValidation(["email", "password"]);
 
-  const goToHomepage = (): void => window.location.assign('/');
+  const goToHomepage = (): void => {
+    router.push("/");
+  };
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();    
+  const onSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
+    e.preventDefault();
 
     if (!validateRequiredFields()) return;
 
@@ -40,23 +46,25 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
         email: email as string,
         password: password as string,
       });
-      window.location.assign("/reader");
+      router.push("/reader");
     } catch (error: Error | unknown) {
       props.setAlertActive(true);
-      props.setAlertMessage(error instanceof Error ? error.message : String(error));
+      props.setAlertMessage(
+        error instanceof Error ? error.message : String(error),
+      );
     }
-  }
+  };
 
   useLayoutEffect(() => {
     setTimeout(() => setActive(true), 300);
-  }, [])
+  }, []);
 
   return (
     <>
       <BC_Dialog
-        active={ active ? 'on' : 'off'} 
+        active={active ? "on" : "off"}
         setActive={setActive}
-        handleOnClose={() => goToHomepage() }
+        handleOnClose={() => goToHomepage()}
       >
         <div className="login-container">
           <div className="login-card">
@@ -65,12 +73,14 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
             <form onSubmit={(e) => onSubmit(e)}>
               <div className="input-area">
                 <div className="input-group">
-                  <label>E-mail<span>*</span></label>
-                  <BC_Input 
-                    id="email" 
+                  <label>
+                    E-mail<span>*</span>
+                  </label>
+                  <BC_Input
+                    id="email"
                     name="email"
-                    type="text" 
-                    placeholder="Insira seu e-mail" 
+                    type="text"
+                    placeholder="Insira seu e-mail"
                     autoComplete="off"
                     error={errorEmail}
                     handleOnChange={(event) => getEmailValue?.(event.args)}
@@ -80,46 +90,56 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
                 </div>
 
                 <div className="input-group">
-                  <label>Senha<span>*</span></label>
-                  <BC_Input 
-                    id="password" 
-                    name="password" 
-                    type={isPasswordVisible ? "text" : "password"} 
+                  <label>
+                    Senha<span>*</span>
+                  </label>
+                  <BC_Input
+                    id="password"
+                    name="password"
+                    type={isPasswordVisible ? "text" : "password"}
                     placeholder="Insira sua senha"
-                    autoComplete="off" 
+                    autoComplete="off"
                     error={errorPassword}
                     suffix={true}
                     suffixIcon={
-                      isPasswordVisible ?
-                      <IconEye className="icon" onClick={() => setIsPasswordVisible(false)} /> : 
-                      <IconEyeOff className="icon" onClick={() => setIsPasswordVisible(true)} /> 
+                      isPasswordVisible ? (
+                        <IconEye
+                          className="icon"
+                          onClick={() => setIsPasswordVisible(false)}
+                        />
+                      ) : (
+                        <IconEyeOff
+                          className="icon"
+                          onClick={() => setIsPasswordVisible(true)}
+                        />
+                      )
                     }
                     handleOnChange={(event) => getPasswordValue?.(event.args)}
-                    handleOnClick={() => onClick("password")} 
+                    handleOnClick={() => onClick("password")}
                   />
                   <span></span>
                 </div>
-              </div>   
+              </div>
 
-              <BC_Button 
-                type="submit" 
-                variant="primary"
-              >
-                { isPending && 
+              <BC_Button type="submit" variant="primary">
+                {isPending && (
                   <BC_Spinning width="14px" height="14px" borderWidth="2px" />
-                }
+                )}
                 Entrar
               </BC_Button>
             </form>
           </div>
 
           <p className="flex justify-center">
-            <span>Ainda não possui uma conta?</span><a href="/register"><strong>Cadastre-se</strong></a>
+            <span>Ainda não possui uma conta?</span>
+            <a href="/register">
+              <strong>Cadastre-se</strong>
+            </a>
           </p>
         </div>
       </BC_Dialog>
     </>
   );
-}
+};
 
 export default BCLogin;

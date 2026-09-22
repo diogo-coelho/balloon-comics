@@ -1,22 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store/auth.store';
-import { getProfile } from '@/services/auth.service';
-import { AuthUser } from '@/types/auth';
+import { useEffect } from "react";
+import { useAuthStore } from "@/store/auth.store";
+import { getProfile } from "@/services/auth.service";
+import { AuthUser } from "@/types/auth";
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const setUser = useAuthStore(
-    (state) => state.setUser
-  );
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const clearUser = useAuthStore(
-    (state) => state.clearUser
-  );
+  const clearUser = useAuthStore((state) => state.clearUser);
 
-  const setAuthReady = useAuthStore(
-    (state) => state.setAuthReady
-  );
+  const setAuthReady = useAuthStore((state) => state.setAuthReady);
 
   useEffect(() => {
     async function checkAuth() {
@@ -32,7 +26,7 @@ export function AuthInitializer({ children }: { children: React.ReactNode }) {
     }
 
     checkAuth();
-  }, [ setUser, clearUser, setAuthReady ]);
+  }, [setUser, clearUser, setAuthReady]);
 
   return <>{children}</>;
 }

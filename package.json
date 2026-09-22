@@ -8,6 +8,7 @@
     "prepare": "husky",
     "quality:auth": "npm --prefix balloon-auth-service run format:check && npm --prefix balloon-auth-service run lint:check && npm --prefix balloon-auth-service test -- --runInBand",
     "quality:core": "npm --prefix balloon-core-service run format:check && npm --prefix balloon-core-service run lint:check && npm --prefix balloon-core-service test -- --runInBand",
+    "quality:ui": "npm --prefix balloon-ui run format:check && npm --prefix balloon-ui run lint:check && npm --prefix balloon-ui test -- --runInBand",
     "quality": "npm run quality:auth && npm run quality:core"
   },
   "repository": {

@@ -4,7 +4,7 @@ import "./BC_Register.scss";
 import { useRouter } from "next/navigation";
 import { JSX } from "react/jsx-runtime";
 import { useLayoutEffect, useState } from "react";
-import { IconEye, IconEyeOff } from '@tabler/icons-react';
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useCreatedUser } from "@/hooks/queries/useUser";
 import { RegisterProps } from "./bc-register";
 import useFieldValidation from "@/hooks/useFieldValidation";
@@ -20,7 +20,8 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
 
   const [activeDialog, setActiveDialog] = useState<boolean>(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
 
   const {
     userName,
@@ -36,159 +37,201 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
     getEmailValue,
     getPasswordValue,
     getConfirmPasswordValue,
-  } = useFieldValidation(["userName", "email", "password", "confirmPassword"]); 
+  } = useFieldValidation(["userName", "email", "password", "confirmPassword"]);
 
-  const goToHomepage = (): void => window.location.assign('/');
-  
-  const helpTextUserName = () : JSX.Element => {
+  const goToHomepage = (): void => {
+    router.push("/");
+  };
+
+  const helpTextUserName = (): JSX.Element => {
     return (
       <>
-        O <strong>nome de usuário</strong> será utilizado como identificador público. <br/>
-        Deve possuir apenas <strong>letras, números</strong> e/ou <strong>underscores</strong>.<br/>
+        O <strong>nome de usuário</strong> será utilizado como identificador
+        público. <br />
+        Deve possuir apenas <strong>letras, números</strong> e/ou{" "}
+        <strong>underscores</strong>.<br />
         <strong>Exemplo:</strong> johndoe
       </>
     );
-  }
+  };
 
-  const helpTextPassword = () : JSX.Element => {
+  const helpTextPassword = (): JSX.Element => {
     return (
       <>
-        A senha deve possuir no mínimo <strong>8 caracteres</strong>.<br/>
-        A senha deve ter pelo menos:
+        A senha deve possuir no mínimo <strong>8 caracteres</strong>.<br />A
+        senha deve ter pelo menos:
         <ul>
-          <li><strong>uma letra maiúscula</strong></li>
-          <li><strong>uma letra minúscula</strong></li>
-          <li><strong>um número</strong></li>
-          <li><strong>um símbolo</strong></li>
+          <li>
+            <strong>uma letra maiúscula</strong>
+          </li>
+          <li>
+            <strong>uma letra minúscula</strong>
+          </li>
+          <li>
+            <strong>um número</strong>
+          </li>
+          <li>
+            <strong>um símbolo</strong>
+          </li>
         </ul>
         <strong>Exemplo:</strong> P@ssw0rd123
       </>
     );
-  }
+  };
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();    
-    if (!validateRequiredFields()) return
+  const onSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
+    e.preventDefault();
+    if (!validateRequiredFields()) return;
     try {
       await mutation.mutateAsync({
         username: userName as string,
         email: email as string,
-        password: password as string
-      });  
-      router.push("/reader/create");      
+        password: password as string,
+      });
+      router.push("/reader/create");
     } catch (error: Error | unknown) {
       props.setAlertActive(true);
-      props.setAlertMessage(error instanceof Error ? error.message : String(error));
+      props.setAlertMessage(
+        error instanceof Error ? error.message : String(error),
+      );
     }
   };
 
   useLayoutEffect(() => {
     setTimeout(() => setActiveDialog(true), 300);
-  }, [])
-  
+  }, []);
+
   return (
     <BC_Dialog
-      active={ activeDialog ? 'on' : 'off'} 
+      active={activeDialog ? "on" : "off"}
       setActive={setActiveDialog}
-      handleOnClose={() => goToHomepage() }
+      handleOnClose={() => goToHomepage()}
     >
-    <div className="register-container">
-      <div className="register-card">
-        <h1>Criar uma conta</h1>
+      <div className="register-container">
+        <div className="register-card">
+          <h1>Criar uma conta</h1>
 
-        <form onSubmit={(e) => onSubmit(e)}>
-          <p>
-            Faça parte da nossa comunidade de quadrinhos. <br/>
-            Preencha os campos abaixo para criar sua conta
-          </p>
+          <form onSubmit={(e) => onSubmit(e)}>
+            <p>
+              Faça parte da nossa comunidade de quadrinhos. <br />
+              Preencha os campos abaixo para criar sua conta
+            </p>
 
-          <div className="input-area">
-            <div className="input-group">
-              <label htmlFor="username">Nome de usuário<span>*</span></label>
-              <BC_Input 
-                id="username" 
-                name="username" 
-                type="text" 
-                placeholder="Insira seu nome de usuário"
-                autoComplete="off"
-                error={errorUserName}
-                helpText={helpTextUserName()}
-                handleOnChange={(event) => getUserNameValue?.(event.args)}
-                handleOnClick={() => onClick("username")}
-              />
+            <div className="input-area">
+              <div className="input-group">
+                <label htmlFor="username">
+                  Nome de usuário<span>*</span>
+                </label>
+                <BC_Input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="Insira seu nome de usuário"
+                  autoComplete="off"
+                  error={errorUserName}
+                  helpText={helpTextUserName()}
+                  handleOnChange={(event) => getUserNameValue?.(event.args)}
+                  handleOnClick={() => onClick("username")}
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="email">
+                  E-mail<span>*</span>
+                </label>
+                <BC_Input
+                  id="email"
+                  name="email"
+                  type="text"
+                  placeholder="Insira seu e-mail"
+                  autoComplete="off"
+                  error={errorEmail}
+                  handleOnChange={(event) => getEmailValue?.(event.args)}
+                  handleOnClick={() => onClick("email")}
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="password">
+                  Senha<span>*</span>
+                </label>
+                <BC_Input
+                  id="password"
+                  name="password"
+                  type={isPasswordVisible ? "text" : "password"}
+                  placeholder="Insira sua senha"
+                  autoComplete="off"
+                  error={errorPassword}
+                  helpText={helpTextPassword()}
+                  suffix={true}
+                  suffixIcon={
+                    isPasswordVisible ? (
+                      <IconEye
+                        className="icon"
+                        onClick={() => setIsPasswordVisible(false)}
+                      />
+                    ) : (
+                      <IconEyeOff
+                        className="icon"
+                        onClick={() => setIsPasswordVisible(true)}
+                      />
+                    )
+                  }
+                  handleOnChange={(event) => getPasswordValue?.(event.args)}
+                  handleOnClick={() => onClick("password")}
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="confirm-password">
+                  Confirmar senha<span>*</span>
+                </label>
+                <BC_Input
+                  id="confirm-password"
+                  name="confirm-password"
+                  type={isConfirmPasswordVisible ? "text" : "password"}
+                  placeholder="Confirme sua senha"
+                  autoComplete="off"
+                  error={errorConfirmPassword}
+                  suffix={true}
+                  suffixIcon={
+                    isConfirmPasswordVisible ? (
+                      <IconEye
+                        className="icon"
+                        onClick={() => setIsConfirmPasswordVisible(false)}
+                      />
+                    ) : (
+                      <IconEyeOff
+                        className="icon"
+                        onClick={() => setIsConfirmPasswordVisible(true)}
+                      />
+                    )
+                  }
+                  handleOnChange={(event) =>
+                    getConfirmPasswordValue?.(event.args)
+                  }
+                  handleOnClick={() => onClick("confirmPassword")}
+                />
+              </div>
             </div>
 
-            <div className="input-group">
-              <label htmlFor="email">E-mail<span>*</span></label>
-              <BC_Input 
-                id="email" 
-                name="email" 
-                type="text" 
-                placeholder="Insira seu e-mail"
-                autoComplete="off"
-                error={errorEmail}
-                handleOnChange={(event) => getEmailValue?.(event.args)}
-                handleOnClick={() => onClick("email")}
-              />
-            </div>
-
-            <div className="input-group">
-              <label htmlFor="password">Senha<span>*</span></label>
-              <BC_Input 
-                id="password" 
-                name="password" 
-                type={isPasswordVisible ? "text" : "password"} 
-                placeholder="Insira sua senha"
-                autoComplete="off" 
-                error={errorPassword}
-                helpText={helpTextPassword()}
-                suffix={true}
-                suffixIcon={
-                  isPasswordVisible ?
-                  <IconEye className="icon" onClick={() => setIsPasswordVisible(false)} /> : 
-                  <IconEyeOff className="icon" onClick={() => setIsPasswordVisible(true)} /> 
-                }
-                handleOnChange={(event) => getPasswordValue?.(event.args)}
-                handleOnClick={() => onClick("password")}
-              />
-            </div>
-
-            <div className="input-group">
-              <label htmlFor="confirm-password">Confirmar senha<span>*</span></label>
-              <BC_Input 
-                id="confirm-password" 
-                name="confirm-password" 
-                type={isConfirmPasswordVisible ? "text" : "password"} 
-                placeholder="Confirme sua senha"
-                autoComplete="off" 
-                error={errorConfirmPassword}
-                suffix={true}
-                suffixIcon={
-                  isConfirmPasswordVisible ?
-                  <IconEye className="icon" onClick={() => setIsConfirmPasswordVisible(false)} /> : 
-                  <IconEyeOff className="icon" onClick={() => setIsConfirmPasswordVisible(true)} /> 
-                }
-                handleOnChange={(event) => getConfirmPasswordValue?.(event.args)}
-                handleOnClick={() => onClick("confirmPassword")}
-              />
-            </div>
-          </div>   
-
-          <BC_Button 
-            type="submit" 
-            variant="primary" 
-            handleOnClick={(e) => onSubmit(e.event)}
-          >
-            { isPending && 
-              <BC_Spinning width="14px" height="14px" borderWidth="2px" />
-            }
-            Cadastrar
-          </BC_Button>
-        </form>
+            <BC_Button
+              type="submit"
+              variant="primary"
+              handleOnClick={(e) => onSubmit(e.event)}
+            >
+              {isPending && (
+                <BC_Spinning width="14px" height="14px" borderWidth="2px" />
+              )}
+              Cadastrar
+            </BC_Button>
+          </form>
+        </div>
       </div>
-    </div>
     </BC_Dialog>
   );
-}
+};
 
 export default BCRegister;

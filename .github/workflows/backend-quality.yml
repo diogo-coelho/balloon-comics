@@ -21,6 +21,7 @@ jobs:
         service:
           - balloon-auth-service
           - balloon-core-service
+          - balloon-ui
 
     defaults:
       run:
