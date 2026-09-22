@@ -22,6 +22,7 @@ import { JwtTokenServiceAdapter } from '../infrastructure/security/jwt-token-ser
 import HttpCookies from '../presentation/http/cookies/http-cookies';
 import { JwtAccessTokenVerifierAdapter } from '../infrastructure/security/access-token-verifier.adapter';
 import { AuthTokenGuard } from '../presentation/http/guards/auth-token.guard';
+import { AccessTokenVerifierPort } from '../application/ports/access-token-verifier.port';
 
 @Module({
   imports: [
@@ -48,7 +49,7 @@ import { AuthTokenGuard } from '../presentation/http/guards/auth-token.guard';
       useClass: JwtTokenServiceAdapter,
     },
     {
-      provide: PROVIDERS_TOKENS.ACCESS_TOKEN_VERIFIER,
+      provide: AccessTokenVerifierPort,
       useClass: JwtAccessTokenVerifierAdapter,
     },
     {

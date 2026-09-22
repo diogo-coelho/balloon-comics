@@ -1,11 +1,11 @@
 import ReaderNotFoundError from '../../../domain/reader/errors/reader-not-found.error';
 import { ImageTypeEnum } from '../../../domain/media/enums/image-type.enum';
-import { IMAGE_PROFILES } from '../../../domain/media/image-profile';
 import { ImageProcessorPort } from '../../ports/image.processor.port';
 import { ReaderRepositoryPort } from '../../ports/reader.repository.port';
 import { StoragePort } from '../../ports/storage.port';
 import { FileData } from '../../types/file';
 import { UploadReaderImageOutput } from '../../types/reader';
+import { IMAGE_PROFILES } from '../../../domain/media/image-profile';
 
 export class UploadReaderImageUseCase {
   constructor(

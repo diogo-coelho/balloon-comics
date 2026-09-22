@@ -22,7 +22,7 @@ export class AuthTokenGuard implements CanActivate {
       throw new UnauthorizedException('Token de autenticação não fornecido');
 
     try {
-      const payload = this.tokenVerifier.verify(token);
+      const payload = await this.tokenVerifier.verify(token);
 
       request[REQUEST_TOKEN_PAYLOAD_KEY] = payload;
 

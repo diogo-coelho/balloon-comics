@@ -1,7 +1,8 @@
 import sharp from 'sharp';
 import { ImageProcessorPort } from '../../application/ports/image.processor.port';
-import { FileData, ImageProfile } from '../../application/types/file';
+import { FileData } from '../../application/types/file';
 import { UnsupportedImageError } from './errors/unsupported-image.error';
+import { ImageProfile } from '../../domain/types/file';
 
 export class SharpImageProcessorAdapter implements ImageProcessorPort {
   async process(file: FileData, profile: ImageProfile): Promise<FileData> {
