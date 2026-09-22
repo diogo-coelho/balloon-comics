@@ -1,12 +1,14 @@
 jest.mock('axios', () => {
-  const mockApiInstance: any = jest.fn();
-  mockApiInstance.interceptors = { response: { use: jest.fn() } };
-  mockApiInstance.post = jest.fn();
-  mockApiInstance.get = jest.fn();
+  const mockApiInstance = Object.assign(jest.fn(), {
+    interceptors: { response: { use: jest.fn() } },
+    post: jest.fn(),
+    get: jest.fn(),
+  });
 
-  const mockRefreshInstance: any = jest.fn();
-  mockRefreshInstance.interceptors = { response: { use: jest.fn() } };
-  mockRefreshInstance.post = jest.fn();
+  const mockRefreshInstance = Object.assign(jest.fn(), {
+    interceptors: { response: { use: jest.fn() } },
+    post: jest.fn(),
+  });
 
   return {
     __esModule: true,
@@ -25,11 +27,29 @@ import * as axiosMock from 'axios';
 // Import for its side effect of registering the response interceptor under test.
 import '@/lib/api';
 
-const apiInstance = (axiosMock as unknown as { mockApiInstance: any }).mockApiInstance;
-const refreshInstance = (axiosMock as unknown as { mockRefreshInstance: any })
-  .mockRefreshInstance;
+type MockAxiosInstance = jest.Mock & {
+  interceptors: { response: { use: jest.Mock } };
+  post: jest.Mock;
+  get?: jest.Mock;
+};
 
-type ResponseErrorHandler = (error: any) => Promise<any>;
+type ApiError = {
+  message?: string;
+  response?: {
+    status: number;
+    data?: { message?: string | string[]; error?: string };
+  };
+  config: { url: string; _retry: boolean };
+};
+
+const apiInstance = (
+  axiosMock as unknown as { mockApiInstance: MockAxiosInstance }
+).mockApiInstance;
+const refreshInstance = (
+  axiosMock as unknown as { mockRefreshInstance: MockAxiosInstance }
+).mockRefreshInstance;
+
+type ResponseErrorHandler = (error: ApiError) => Promise<unknown>;
 
 const responseErrorHandler: ResponseErrorHandler =
   apiInstance.interceptors.response.use.mock.calls[0][1];
@@ -38,12 +58,12 @@ describe('api response interceptor', () => {
   afterEach(() => {
     apiInstance.mockClear();
     apiInstance.post.mockClear();
-    apiInstance.get.mockClear();
+    apiInstance.get?.mockClear();
     refreshInstance.post.mockClear();
   });
 
   it('deve rejeitar erros diferentes de 401 definindo a mensagem a partir de apiData.message', async () => {
-    const error: any = {
+    const error: ApiError = {
       response: { status: 500, data: { message: 'Erro interno' } },
       config: { url: '/reader/create', _retry: false },
     };
@@ -54,7 +74,10 @@ describe('api response interceptor', () => {
   });
 
   it('deve rejeitar erros de rede sem response mantendo o erro original', async () => {
-    const error: any = { message: 'Network Error', config: { url: '/reader/create', _retry: false } };
+    const error: ApiError = {
+      message: 'Network Error',
+      config: { url: '/reader/create', _retry: false },
+    };
 
     await expect(responseErrorHandler(error)).rejects.toBe(error);
     expect(error.message).toBe('Network Error');
@@ -62,8 +85,11 @@ describe('api response interceptor', () => {
   });
 
   it('deve concatenar mensagens quando apiData.message for uma lista', async () => {
-    const error: any = {
-      response: { status: 400, data: { message: ['Campo obrigatório', 'Formato inválido'] } },
+    const error: ApiError = {
+      response: {
+        status: 400,
+        data: { message: ['Campo obrigatório', 'Formato inválido'] },
+      },
       config: { url: '/users/me', _retry: false },
     };
 
@@ -72,7 +98,7 @@ describe('api response interceptor', () => {
   });
 
   it('deve usar apiData.error quando apiData.message não estiver presente', async () => {
-    const error: any = {
+    const error: ApiError = {
       response: { status: 403, data: { error: 'Acesso negado' } },
       config: { url: '/users/me', _retry: false },
     };
@@ -85,8 +111,14 @@ describe('api response interceptor', () => {
     refreshInstance.post.mockResolvedValue({ data: {} });
     apiInstance.mockResolvedValue('resposta-repetida');
 
-    const originalRequest: any = { url: '/reader/create', _retry: false };
-    const error: any = { response: { status: 401 }, config: originalRequest };
+    const originalRequest: ApiError['config'] = {
+      url: '/reader/create',
+      _retry: false,
+    };
+    const error: ApiError = {
+      response: { status: 401 },
+      config: originalRequest,
+    };
 
     const result = await responseErrorHandler(error);
 
@@ -97,7 +129,7 @@ describe('api response interceptor', () => {
   });
 
   it('não deve tentar renovar o token quando a requisição já for um retry', async () => {
-    const error: any = {
+    const error: ApiError = {
       response: { status: 401, data: { message: 'Não autorizado' } },
       config: { url: '/reader/create', _retry: true },
     };
@@ -107,7 +139,7 @@ describe('api response interceptor', () => {
   });
 
   it('não deve tentar renovar o token quando a requisição for para /auth/refresh', async () => {
-    const error: any = {
+    const error: ApiError = {
       response: { status: 401, data: { message: 'Refresh token inválido' } },
       config: { url: '/auth/refresh', _retry: false },
     };
@@ -120,7 +152,7 @@ describe('api response interceptor', () => {
     const refreshError = new Error('Falha ao renovar token');
     refreshInstance.post.mockRejectedValue(refreshError);
 
-    const error: any = {
+    const error: ApiError = {
       response: { status: 401 },
       config: { url: '/reader/create', _retry: false },
     };
@@ -138,11 +170,11 @@ describe('api response interceptor', () => {
     );
     apiInstance.mockResolvedValue('ok');
 
-    const error1: any = {
+    const error1: ApiError = {
       response: { status: 401 },
       config: { url: '/reader/create', _retry: false },
     };
-    const error2: any = {
+    const error2: ApiError = {
       response: { status: 401 },
       config: { url: '/users/me', _retry: false },
     };

@@ -11,5 +11,5 @@ export enum BCSocialMediaLinksEnum {
   CATARSE = 'Catarse',
   APOIA_SE = 'Apoia.se',
   LINKEDIN = 'LinkedIn',
-  WEBSITE = 'Website'
+  WEBSITE = 'Website',
 }

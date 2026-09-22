@@ -21,7 +21,10 @@
 
       appearance: none;
 
-      transition: border 0.3s ease-out, background-color 0.3s ease-out, box-shadow 0.3s ease-out;
+      transition:
+        border 0.3s ease-out,
+        background-color 0.3s ease-out,
+        box-shadow 0.3s ease-out;
 
       &:hover,
       &:focus,
@@ -31,7 +34,10 @@
         background-color: var(--bc-color-background);
         box-shadow: var(--bc-color-outline-hover);
 
-        transition: border 0.3s ease-in, background-color 0.3s ease-in, box-shadow 0.3s ease-in;
+        transition:
+          border 0.3s ease-in,
+          background-color 0.3s ease-in,
+          box-shadow 0.3s ease-in;
       }
 
       &.disabled,
@@ -72,4 +78,3 @@
     }
   }
 }
-

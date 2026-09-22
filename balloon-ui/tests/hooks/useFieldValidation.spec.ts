@@ -5,7 +5,12 @@ describe('useFieldValidation', () => {
   describe('validateRequiredFields', () => {
     it('deve retornar false e definir erros quando os campos obrigatórios estiverem vazios', () => {
       const { result } = renderHook(() =>
-        useFieldValidation(['userName', 'email', 'password', 'confirmPassword']),
+        useFieldValidation([
+          'userName',
+          'email',
+          'password',
+          'confirmPassword',
+        ]),
       );
 
       let isValid = true;
@@ -21,7 +26,12 @@ describe('useFieldValidation', () => {
 
     it('deve retornar true quando todos os campos forem válidos', () => {
       const { result } = renderHook(() =>
-        useFieldValidation(['userName', 'email', 'password', 'confirmPassword']),
+        useFieldValidation([
+          'userName',
+          'email',
+          'password',
+          'confirmPassword',
+        ]),
       );
 
       act(() => {
@@ -68,7 +78,9 @@ describe('useFieldValidation', () => {
         result.current.validateRequiredFields();
       });
 
-      expect(result.current.errorEmail).toBe('E-mail está em formato incorreto');
+      expect(result.current.errorEmail).toBe(
+        'E-mail está em formato incorreto',
+      );
     });
 
     it('deve reportar erro quando a senha não tiver o formato exigido', () => {
@@ -96,11 +108,15 @@ describe('useFieldValidation', () => {
         result.current.validateRequiredFields();
       });
 
-      expect(result.current.errorPassword).toBe('Dado incorreto. Revise e digite novamente.');
+      expect(result.current.errorPassword).toBe(
+        'Dado incorreto. Revise e digite novamente.',
+      );
     });
 
     it('deve reportar erro quando a confirmação de senha não coincidir', () => {
-      const { result } = renderHook(() => useFieldValidation(['confirmPassword']));
+      const { result } = renderHook(() =>
+        useFieldValidation(['confirmPassword']),
+      );
 
       act(() => {
         result.current.getPasswordValue('Senha@123');
@@ -149,7 +165,9 @@ describe('useFieldValidation', () => {
     });
 
     it('deve limpar o erro de confirmação de senha', () => {
-      const { result } = renderHook(() => useFieldValidation(['confirmPassword']));
+      const { result } = renderHook(() =>
+        useFieldValidation(['confirmPassword']),
+      );
 
       act(() => {
         result.current.getPasswordValue('Senha@123');
@@ -169,7 +187,9 @@ describe('useFieldValidation', () => {
     });
 
     it('deve limpar apenas o erro do campo informado', () => {
-      const { result } = renderHook(() => useFieldValidation(['email', 'password']));
+      const { result } = renderHook(() =>
+        useFieldValidation(['email', 'password']),
+      );
 
       act(() => {
         result.current.validateRequiredFields();
@@ -187,7 +207,12 @@ describe('useFieldValidation', () => {
 
     it('deve limpar todos os erros quando nenhum campo específico for informado', () => {
       const { result } = renderHook(() =>
-        useFieldValidation(['userName', 'email', 'password', 'confirmPassword']),
+        useFieldValidation([
+          'userName',
+          'email',
+          'password',
+          'confirmPassword',
+        ]),
       );
 
       act(() => {

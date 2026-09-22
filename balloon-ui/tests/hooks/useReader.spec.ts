@@ -62,7 +62,9 @@ describe('useReader', () => {
       const { result } = renderHook(() => useReader(['links']));
 
       act(() => {
-        result.current.setLinks([{ name: '', label: 'Facebook', url: 'https://facebook.com' }]);
+        result.current.setLinks([
+          { name: '', label: 'Facebook', url: 'https://facebook.com' },
+        ]);
       });
 
       let isValid = true;
@@ -71,14 +73,18 @@ describe('useReader', () => {
       });
 
       expect(isValid).toBe(false);
-      expect(result.current.errorLinks).toBe('Dado incorreto. Revise e digite novamente.');
+      expect(result.current.errorLinks).toBe(
+        'Dado incorreto. Revise e digite novamente.',
+      );
     });
 
     it('deve reportar erro quando a url do link for inválida', () => {
       const { result } = renderHook(() => useReader(['links']));
 
       act(() => {
-        result.current.setLinks([{ name: 'facebook', label: 'Facebook', url: 'não é uma url' }]);
+        result.current.setLinks([
+          { name: 'facebook', label: 'Facebook', url: 'não é uma url' },
+        ]);
       });
 
       let isValid = true;
@@ -130,7 +136,9 @@ describe('useReader', () => {
       });
 
       expect(isValid).toBe(false);
-      expect(result.current.errorDateOfBirth).toBe('Dado incorreto. Revise e digite novamente.');
+      expect(result.current.errorDateOfBirth).toBe(
+        'Dado incorreto. Revise e digite novamente.',
+      );
     });
 
     it('deve considerar válida a ausência de data de nascimento', () => {

@@ -1,47 +1,47 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 const API_GATEWAY_BASE_URL = process.env.API_GATEWAY_BASE_URL;
 
 async function proxyRequest(request: NextRequest, path: string[]) {
   if (!API_GATEWAY_BASE_URL) {
     return NextResponse.json(
-      { message: "API_GATEWAY_BASE_URL não foi configurada." },
+      { message: 'API_GATEWAY_BASE_URL não foi configurada.' },
       { status: 500 },
     );
   }
 
-  const targetUrl = new URL(`/${path.join("/")}`, API_GATEWAY_BASE_URL);
+  const targetUrl = new URL(`/${path.join('/')}`, API_GATEWAY_BASE_URL);
   targetUrl.search = request.nextUrl.search;
 
-  const accessToken = (await cookies()).get("accessToken")?.value;
-  const refreshToken = (await cookies()).get("refreshToken")?.value;
+  const accessToken = (await cookies()).get('accessToken')?.value;
+  const refreshToken = (await cookies()).get('refreshToken')?.value;
 
   const headers = new Headers();
-  const contentType = request.headers.get("content-type");
-  if (contentType) headers.set("content-type", contentType);
-  if (accessToken) headers.set("authorization", `Bearer ${accessToken}`);
+  const contentType = request.headers.get('content-type');
+  if (contentType) headers.set('content-type', contentType);
+  if (accessToken) headers.set('authorization', `Bearer ${accessToken}`);
 
-  const requestPath = path.join("/");
-  
-  if (requestPath === "auth/refresh" && refreshToken) {
-    headers.set("cookie", `refreshToken=${refreshToken}`);
+  const requestPath = path.join('/');
+
+  if (requestPath === 'auth/refresh' && refreshToken) {
+    headers.set('cookie', `refreshToken=${refreshToken}`);
   }
 
-  const hasBody = !["GET", "HEAD"].includes(request.method);
+  const hasBody = !['GET', 'HEAD'].includes(request.method);
 
   const backendResponse = await fetch(targetUrl, {
     method: request.method,
     headers,
     body: hasBody ? request.body : undefined,
-    duplex: hasBody ? "half" : undefined,
-    redirect: "manual",
+    duplex: hasBody ? 'half' : undefined,
+    redirect: 'manual',
   } as RequestInit);
 
   const responseHeaders = new Headers(backendResponse.headers);
-  responseHeaders.delete("content-encoding");
-  responseHeaders.delete("content-length");
-  responseHeaders.delete("set-cookie");
+  responseHeaders.delete('content-encoding');
+  responseHeaders.delete('content-length');
+  responseHeaders.delete('set-cookie');
 
   const response = new NextResponse(backendResponse.body, {
     status: backendResponse.status,
@@ -49,7 +49,7 @@ async function proxyRequest(request: NextRequest, path: string[]) {
   });
 
   for (const cookie of backendResponse.headers.getSetCookie()) {
-    response.headers.append("set-cookie", cookie);
+    response.headers.append('set-cookie', cookie);
   }
 
   return response;

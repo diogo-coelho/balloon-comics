@@ -67,6 +67,8 @@ describe('verifyToken', () => {
   it('deve lançar "Token inválido" quando a verificação do token falhar', async () => {
     mockedJwtVerify.mockRejectedValue(new Error('assinatura inválida'));
 
-    await expect(verifyToken('token-invalido')).rejects.toThrow('Token inválido');
+    await expect(verifyToken('token-invalido')).rejects.toThrow(
+      'Token inválido',
+    );
   });
 });

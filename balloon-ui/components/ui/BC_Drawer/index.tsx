@@ -1,15 +1,14 @@
-"use client";
+'use client';
 
-import "./BC_Drawer.scss";
-import React, { JSX } from "react";
-import { IconMenu, IconX } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/auth.store";
-import { logout } from "@/services/auth.service";
-import BC_Button from "@/components/design/BC_Button";
-import useViewport from "@/hooks/useViewport";
-import { useShallow } from "zustand/react/shallow";
-
+import './BC_Drawer.scss';
+import React, { JSX } from 'react';
+import { IconMenu, IconX } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/auth.store';
+import { logout } from '@/services/auth.service';
+import BC_Button from '@/components/design/BC_Button';
+import useViewport from '@/hooks/useViewport';
+import { useShallow } from 'zustand/react/shallow';
 
 const DCDrawer = (): JSX.Element => {
   const router = useRouter();
@@ -20,60 +19,72 @@ const DCDrawer = (): JSX.Element => {
     })),
   );
 
-  const [ isDrawerOpen, setIsDrawerOpen ] = React.useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const { isMobileView } = useViewport();
 
   const navigateToLogout = async () => {
     try {
       await logout();
       clearUser();
-      router.push("/");
+      router.push('/');
       router.refresh();
     } catch (error) {
-      console.error("Erro ao sair:", error);
+      console.error('Erro ao sair:', error);
     }
   };
 
   const navigateToLogin = () => {
-    router.push("/login");
-  }
+    router.push('/login');
+  };
 
   const navigateToPublish = () => {
-    router.push("/author");
-  }
-  
+    router.push('/author');
+  };
+
   return (
     <>
-      { isMobileView() && (
+      {isMobileView() && (
         <>
           <aside className="drawer">
-            <BC_Button 
-              variant="transparent" 
-              handleOnClick={() => { setIsDrawerOpen(true) }}
+            <BC_Button
+              variant="transparent"
+              handleOnClick={() => {
+                setIsDrawerOpen(true);
+              }}
             >
-              <IconMenu className="icon-menu"/>
+              <IconMenu className="icon-menu" />
             </BC_Button>
           </aside>
 
-          <div className={`drawer-overlay ${isDrawerOpen ? 'active' : ''}`}></div>
-          
+          <div
+            className={`drawer-overlay ${isDrawerOpen ? 'active' : ''}`}
+          ></div>
+
           <aside className={`drawer-content ${isDrawerOpen ? 'active' : ''}`}>
             <div className="drawer-header">
-              <BC_Button 
-                variant="transparent" 
+              <BC_Button
+                variant="transparent"
                 handleOnClick={() => setIsDrawerOpen(false)}
               >
-                <IconX className="icon-close"/>
+                <IconX className="icon-close" />
               </BC_Button>
             </div>
 
             <div className="drawer-body">
               <ul>
-                { !isAuthenticated && (<a href="/login"><li>Login</li></a>) }
-                { isAuthenticated && (
+                {!isAuthenticated && (
+                  <a href="/login">
+                    <li>Login</li>
+                  </a>
+                )}
+                {isAuthenticated && (
                   <>
-                    <a href="/author"><li>Publicar minhas HQs</li></a>
-                    <a onClick={navigateToLogout} href="#"><li>Sair</li></a>
+                    <a href="/author">
+                      <li>Publicar minhas HQs</li>
+                    </a>
+                    <a onClick={navigateToLogout} href="#">
+                      <li>Sair</li>
+                    </a>
                   </>
                 )}
               </ul>
@@ -84,21 +95,21 @@ const DCDrawer = (): JSX.Element => {
 
       {!isMobileView() && (
         <div className="drawer-desktop">
-          { !isAuthenticated && (
+          {!isAuthenticated && (
             <BC_Button
               type="button"
               variant="primary"
-              handleOnClick={(event) => navigateToLogin()}
+              handleOnClick={navigateToLogin}
             >
               Login
             </BC_Button>
-          )} 
-          { isAuthenticated && (
-            <div className="user-area">            
+          )}
+          {isAuthenticated && (
+            <div className="user-area">
               <BC_Button
                 type="button"
                 variant="primary"
-                handleOnClick={(event) => navigateToPublish()}
+                handleOnClick={navigateToPublish}
               >
                 Publicar
               </BC_Button>
@@ -106,16 +117,16 @@ const DCDrawer = (): JSX.Element => {
               <BC_Button
                 type="button"
                 variant="secondary"
-                handleOnClick={(event) => navigateToLogout()}
+                handleOnClick={navigateToLogout}
               >
                 Sair
               </BC_Button>
             </div>
-          )}         
+          )}
         </div>
       )}
     </>
   );
-}
+};
 
 export default DCDrawer;

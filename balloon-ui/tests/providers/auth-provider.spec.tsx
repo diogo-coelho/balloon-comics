@@ -13,7 +13,11 @@ const mockedGetProfile = getProfile as jest.Mock;
 describe('AuthInitializer', () => {
   afterEach(() => {
     jest.clearAllMocks();
-    useAuthStore.setState({ user: null, isAuthenticated: false, isAuthReady: false });
+    useAuthStore.setState({
+      user: null,
+      isAuthenticated: false,
+      isAuthReady: false,
+    });
   });
 
   it('deve definir o usuário e marcar a autenticação como pronta quando o perfil for recuperado com sucesso', async () => {

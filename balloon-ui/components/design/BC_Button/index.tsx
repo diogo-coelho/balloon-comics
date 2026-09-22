@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { JSX } from "react";
-import { ButtonProps } from "./bc_button";
-import "./BC_Button.scss";
+import React, { JSX } from 'react';
+import { ButtonProps } from './bc_button';
+import './BC_Button.scss';
 
 const BCButton: React.FC<ButtonProps> = (props: ButtonProps): JSX.Element => {
   const className = [
@@ -12,16 +12,20 @@ const BCButton: React.FC<ButtonProps> = (props: ButtonProps): JSX.Element => {
     props.outline === 'on' ? `outline` : ``,
     props.align ?? ``,
     props.className ?? ``,
-  ].toString().replaceAll(",", " ").replace(/\s+/g, " ").trim();
-  
+  ]
+    .toString()
+    .replaceAll(',', ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
   return (
-    <button 
+    <button
       className={className}
       type={props.type || 'button'}
       disabled={props.disabled || false}
-      onClick={ (event) => props.handleOnClick?.({ event }) }
+      onClick={(event) => props.handleOnClick?.({ event })}
     >
-      { props.children}
+      {props.children}
     </button>
   );
 };

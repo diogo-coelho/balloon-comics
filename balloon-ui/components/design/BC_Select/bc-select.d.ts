@@ -1,6 +1,6 @@
-import { SelectHTMLAttributes } from "react";
+import { SelectHTMLAttributes } from 'react';
 
-export interface SelectProps  extends SelectHTMLAttributes<HTMLSelectElement> {
+export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   name: string;
   multiple?: boolean;
   required?: boolean;
@@ -16,12 +16,9 @@ export interface SelectProps  extends SelectHTMLAttributes<HTMLSelectElement> {
   }[];
   currentValue?: string;
   error?: string;
-  handleOnChange?: (
-    data: { 
-      args?: string | string[], 
-      event: ChangeEvent<HTMLSelectElement>
-  }) => void,
-  handleOnClick?: (
-    event: MouseEvent<HTMLSelectElement, MouseEvent> 
-  ) => void
+  handleOnChange?: (data: {
+    args?: string | string[];
+    event: ChangeEvent<HTMLSelectElement>;
+  }) => void;
+  handleOnClick?: (event: MouseEvent<HTMLSelectElement, MouseEvent>) => void;
 }

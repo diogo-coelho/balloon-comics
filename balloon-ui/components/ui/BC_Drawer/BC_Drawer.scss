@@ -27,7 +27,7 @@
     box-shadow: var(--bc-shadow);
     padding: var(--bc-spacing-small);
 
-    transition: right .4s ease-out;
+    transition: right 0.4s ease-out;
 
     .drawer-header {
       display: flex;
@@ -47,12 +47,12 @@
           color: var(--bc-color-primary-500);
           transition: color 0.3s ease-in;
         }
-      }      
+      }
     }
 
     &.active {
       right: 0px;
-      transition: right .4s ease-in;
+      transition: right 0.4s ease-in;
     }
   }
 

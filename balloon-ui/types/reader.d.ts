@@ -1,5 +1,5 @@
-import { AgeVerificationData } from "./age-verification";
-import { SocialMediaLinksData } from "./social-media-link";
+import { AgeVerificationData } from './age-verification';
+import { SocialMediaLinksData } from './social-media-link';
 
 export type ReaderData = {
   id: string;
@@ -12,4 +12,4 @@ export type ReaderData = {
   socialMediaLinks: Partial<SocialMediaLinksData>[];
   createdAt: Date;
   updatedAt: Date;
-}
+};

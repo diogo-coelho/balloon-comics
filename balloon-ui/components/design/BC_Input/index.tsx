@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
 import './BC_Input.scss';
-import React, { JSX, useEffect, useState } from "react";
+import React, { JSX, useEffect, useState } from 'react';
 import { InputProps } from './bc_input';
 import { IconSearch } from '@tabler/icons-react';
 
@@ -17,40 +17,47 @@ const BC_Input: React.FC<InputProps> = (props: InputProps): JSX.Element => {
       props.error ? `error` : ``,
       props.align ? `align-${props.align}` : ``,
       props.disabled ? `disabled` : ``,
-    ].toString().replaceAll(",", " ").replace(/\s+/g, " ").trim();
-  }
+    ]
+      .toString()
+      .replaceAll(',', ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
 
   useEffect(() => {
     if (externalValue !== undefined) {
+      // The component keeps local input state in sync with its controlled value.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInternalValue(externalValue);
     }
   }, [externalValue]);
 
   return (
     <>
-      <div className={className('input-container')} >
+      <div className={className('input-container')}>
         <input
           className={className('input')}
-          type={ props.type || `text` } 
-          placeholder={ props.placeholder }
-          disabled={ props.disabled || false }
+          type={props.type || `text`}
+          placeholder={props.placeholder}
+          disabled={props.disabled || false}
           value={internalValue}
-          onChange={ (event) => {
+          onChange={(event) => {
             setInternalValue(event.target.value);
             props.handleOnChange?.({ args: event.target.value, event });
           }}
-          onClick={ (event) => props.handleOnClick?.(event)}
+          onClick={(event) => props.handleOnClick?.(event)}
         />
-        { props.suffix && 
-          <div className={`suffix${props.active === 'true' ? ` active` : ''}`}
-            onClick={ (event) => props.handleOnClick?.(event)}
+        {props.suffix && (
+          <div
+            className={`suffix${props.active === 'true' ? ` active` : ''}`}
+            onClick={(event) => props.handleOnClick?.(event)}
           >
-            { props.suffixIcon ?? <IconSearch className="icon-search"/> }
+            {props.suffixIcon ?? <IconSearch className="icon-search" />}
           </div>
-        }
+        )}
       </div>
-      { props.error && (<span>{ props.error }</span>)}
-      { props.helpText && (<span className="help-text">{ props.helpText }</span>)}
+      {props.error && <span>{props.error}</span>}
+      {props.helpText && <span className="help-text">{props.helpText}</span>}
     </>
   );
 };

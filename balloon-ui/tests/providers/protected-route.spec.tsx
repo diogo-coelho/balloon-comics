@@ -18,7 +18,11 @@ describe('ProtectedRoute', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-    useAuthStore.setState({ user: null, isAuthenticated: false, isAuthReady: false });
+    useAuthStore.setState({
+      user: null,
+      isAuthenticated: false,
+      isAuthReady: false,
+    });
   });
 
   it('não deve renderizar nada enquanto a autenticação não estiver pronta', () => {

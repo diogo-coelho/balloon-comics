@@ -11,9 +11,10 @@ function getPublicKey() {
     throw new Error('JWT_PUBLIC_KEY não foi configurada.');
   }
 
-  publicKeyPromise ??= readFile(resolve(process.cwd(), publicKeyPath), 'utf8').then(
-    (publicKeyPem) => importSPKI(publicKeyPem, 'RS256'),
-  );
+  publicKeyPromise ??= readFile(
+    resolve(process.cwd(), publicKeyPath),
+    'utf8',
+  ).then((publicKeyPem) => importSPKI(publicKeyPem, 'RS256'));
 
   return publicKeyPromise;
 }

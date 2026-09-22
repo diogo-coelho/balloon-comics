@@ -68,7 +68,10 @@ describe('useViewport', () => {
     const { unmount } = renderHook(() => useViewport());
     unmount();
 
-    expect(removeEventListenerSpy).toHaveBeenCalledWith('resize', expect.any(Function));
+    expect(removeEventListenerSpy).toHaveBeenCalledWith(
+      'resize',
+      expect.any(Function),
+    );
     removeEventListenerSpy.mockRestore();
   });
 });

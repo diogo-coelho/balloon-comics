@@ -16,8 +16,15 @@ describe('user.service', () => {
 
   describe('createUser', () => {
     it('deve criar um usuário e retornar os dados da resposta', async () => {
-      const payload = { username: 'usuario', email: 'usuario@teste.com', password: 'Senha@123' };
-      const responseData = { message: 'Usuário criado com sucesso', data: { id: 'user-id', username: 'usuario' } };
+      const payload = {
+        username: 'usuario',
+        email: 'usuario@teste.com',
+        password: 'Senha@123',
+      };
+      const responseData = {
+        message: 'Usuário criado com sucesso',
+        data: { id: 'user-id', username: 'usuario' },
+      };
       mockedApi.post.mockResolvedValue({ data: responseData });
 
       const result = await createUser(payload);
@@ -31,7 +38,11 @@ describe('user.service', () => {
       mockedApi.post.mockRejectedValue(error);
 
       await expect(
-        createUser({ username: 'usuario', email: 'usuario@teste.com', password: 'Senha@123' }),
+        createUser({
+          username: 'usuario',
+          email: 'usuario@teste.com',
+          password: 'Senha@123',
+        }),
       ).rejects.toThrow(error);
     });
   });

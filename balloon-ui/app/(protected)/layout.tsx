@@ -1,13 +1,9 @@
-import ProtectedRoute from "@/providers/protected-route";
+import ProtectedRoute from '@/providers/protected-route';
 
 export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <ProtectedRoute>
-      {children}
-    </ProtectedRoute>
-  );
+  return <ProtectedRoute>{children}</ProtectedRoute>;
 }

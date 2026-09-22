@@ -17,7 +17,10 @@ describe('useCreatedUser', () => {
   });
 
   it('deve criar o usuário com sucesso', async () => {
-    const response = { message: 'Usuário criado com sucesso', data: { id: 'user-id' } };
+    const response = {
+      message: 'Usuário criado com sucesso',
+      data: { id: 'user-id' },
+    };
     mockedCreateUser.mockResolvedValue(response);
     const { wrapper } = createQueryClientWrapper();
 

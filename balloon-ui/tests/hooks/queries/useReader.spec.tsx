@@ -6,8 +6,14 @@ jest.mock('@/services/reader.service', () => ({
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
 
-import { useCurrentReader, useUpdateCurrentReader } from '@/hooks/queries/useReader';
-import { getCurrentReader, updateCurrentReader } from '@/services/reader.service';
+import {
+  useCurrentReader,
+  useUpdateCurrentReader,
+} from '@/hooks/queries/useReader';
+import {
+  getCurrentReader,
+  updateCurrentReader,
+} from '@/services/reader.service';
 import { createQueryClientWrapper } from '../../utils/react-query-wrapper';
 
 const mockedGetCurrentReader = getCurrentReader as jest.Mock;
@@ -31,7 +37,9 @@ describe('useCurrentReader', () => {
   });
 
   it('deve refletir o estado de erro quando a busca falhar', async () => {
-    mockedGetCurrentReader.mockRejectedValue(new Error('Falha ao buscar leitor'));
+    mockedGetCurrentReader.mockRejectedValue(
+      new Error('Falha ao buscar leitor'),
+    );
     const { wrapper } = createQueryClientWrapper();
 
     const { result } = renderHook(() => useCurrentReader(), { wrapper });
@@ -57,6 +65,8 @@ describe('useUpdateCurrentReader', () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(mockedUpdateCurrentReader.mock.calls[0][0]).toEqual({ name: 'Novo nome' });
+    expect(mockedUpdateCurrentReader.mock.calls[0][0]).toEqual({
+      name: 'Novo nome',
+    });
   });
 });

@@ -15,13 +15,13 @@
   &:disabled {
     cursor: not-allowed;
   }
-  
+
   &.transparent {
     background-color: var(--bc-color-background);
     border: 1px solid var(--bc-color-background);
     padding: var(--bc-spacing-smallest);
 
-    transition: color .2s ease-in;
+    transition: color 0.2s ease-in;
 
     * {
       color: var(--bc-color-text-primary);
@@ -33,7 +33,7 @@
     &:focus-visible:not(:disabled),
     &:focus-within:not(:disabled) {
       color: var(--bc-color-primary-500);
-      transition: color .2s ease-out;
+      transition: color 0.2s ease-out;
 
       * {
         color: var(--bc-color-primary-500);
@@ -42,12 +42,16 @@
   }
 
   &.primary,
-  &.primary:disabled { 
+  &.primary:disabled {
     @include background.background-color-default;
     position: relative;
     color: var(--bc-color-white);
     top: 0px;
-    transition: background-color .2s ease-in, border .2s ease-in, top .1s ease-in, transform .2s ease-in;
+    transition:
+      background-color 0.2s ease-in,
+      border 0.2s ease-in,
+      top 0.1s ease-in,
+      transform 0.2s ease-in;
 
     &:hover:not(:disabled) {
       background-color: var(--bc-color-primary-500);
@@ -55,17 +59,25 @@
       transform: scale(1.005);
       top: -1px;
       box-shadow: var(--bc-shadow-medium);
-      transition: background-color .2s ease-out, border .2s ease-out, top .1s ease-out, transform .2s ease-out;
+      transition:
+        background-color 0.2s ease-out,
+        border 0.2s ease-out,
+        top 0.1s ease-out,
+        transform 0.2s ease-out;
     }
   }
 
   &.secondary,
-  &.secondary:disabled { 
+  &.secondary:disabled {
     @include background.background-color-secondary;
     position: relative;
     color: var(--bc-color-gray-600);
     top: 0px;
-    transition: background-color .2s ease-in, border .2s ease-in, top .1s ease-in, transform .2s ease-in;
+    transition:
+      background-color 0.2s ease-in,
+      border 0.2s ease-in,
+      top 0.1s ease-in,
+      transform 0.2s ease-in;
 
     &:hover:not(:disabled) {
       background-color: var(--bc-color-gray-300);
@@ -73,7 +85,11 @@
       transform: scale(1.005);
       top: -1px;
       box-shadow: var(--bc-shadow-medium);
-      transition: background-color .2s ease-out, border .2s ease-out, top .1s ease-out, transform .2s ease-out;
+      transition:
+        background-color 0.2s ease-out,
+        border 0.2s ease-out,
+        top 0.1s ease-out,
+        transform 0.2s ease-out;
     }
   }
 

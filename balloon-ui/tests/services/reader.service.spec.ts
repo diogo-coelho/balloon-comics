@@ -6,7 +6,10 @@ jest.mock('@/lib/api', () => ({
 }));
 
 import { api } from '@/lib/api';
-import { getCurrentReader, updateCurrentReader } from '@/services/reader.service';
+import {
+  getCurrentReader,
+  updateCurrentReader,
+} from '@/services/reader.service';
 
 const mockedApi = api as jest.Mocked<typeof api>;
 

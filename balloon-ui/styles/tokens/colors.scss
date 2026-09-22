@@ -1,6 +1,5 @@
 // ----------- Primitive Colors ------------- //
 :root {
-
   --bc-color-white: #ffffff;
   --bc-color-black: #000000;
 
@@ -31,16 +30,16 @@
   --bc-color-primary-dark-transparent: rgba(180, 36, 55, 0.5);
 
   --bc-analogous-primary-color-500: #e2112c;
-  --bc-analogous-primary-color-600: #E32F12;
-  --bc-analogous-primary-color-700: #E35312;
-  --bc-analogous-primary-color-800: #E312AB;
-  --bc-analogous-primary-color-900: #BD12E3;
+  --bc-analogous-primary-color-600: #e32f12;
+  --bc-analogous-primary-color-700: #e35312;
+  --bc-analogous-primary-color-800: #e312ab;
+  --bc-analogous-primary-color-900: #bd12e3;
 
-  --bc-analogous-secondary-color-500: #E9ECEF;
-  --bc-analogous-secondary-color-600: #E9EEF0;
-  --bc-analogous-secondary-color-700: #E9EAF0;
-  --bc-analogous-secondary-color-800: #E9F0EF;
-  --bc-analogous-secondary-color-900: #E9E9F0;
+  --bc-analogous-secondary-color-500: #e9ecef;
+  --bc-analogous-secondary-color-600: #e9eef0;
+  --bc-analogous-secondary-color-700: #e9eaf0;
+  --bc-analogous-secondary-color-800: #e9f0ef;
+  --bc-analogous-secondary-color-900: #e9e9f0;
 
   --bc-color-success-100: #e6f4ea;
   --bc-color-success-200: #cce9d5;
@@ -81,5 +80,4 @@
   --bc-color-info-700: #267fb0;
   --bc-color-info-800: #1f6b9d;
   --bc-color-info-900: #19557f;
-
 }
