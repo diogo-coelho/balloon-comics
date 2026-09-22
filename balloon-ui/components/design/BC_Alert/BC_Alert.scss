@@ -6,7 +6,7 @@
 
   &-container {
     position: absolute;
-    bottom : 0px;
+    bottom: 0px;
     left: -100%;
     width: 100%;
     z-index: 999;
@@ -15,7 +15,7 @@
     transition: left 0.3s ease-out;
 
     &.active {
-      left : 0;
+      left: 0;
       transition: left 0.3s ease-in;
     }
   }

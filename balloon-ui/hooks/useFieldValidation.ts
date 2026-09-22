@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   isEmail,
   isEmpty,
   hasPasswordValidFormat,
   hasValidUserNameFormat,
-} from "@/shared/utils/StringUtils";
+} from '@/shared/utils/StringUtils';
 
 const useFieldValidation = (fields: string[]) => {
   const [userName, setUserName] = useState<string | undefined>(undefined);
@@ -33,13 +33,13 @@ const useFieldValidation = (fields: string[]) => {
 
   const isUserNameValid = (): boolean => {
     if (!userName || isEmpty(userName)) {
-      setErrorUserName("Dado incorreto. Revise e digite novamente.");
+      setErrorUserName('Dado incorreto. Revise e digite novamente.');
       return false;
     }
 
     if (!!userName && !hasValidUserNameFormat(userName)) {
       setErrorUserName(
-        "O usuário deve ter entre 3 e 20 caracteres e pode conter apenas letras, números e underscores.",
+        'O usuário deve ter entre 3 e 20 caracteres e pode conter apenas letras, números e underscores.',
       );
       return false;
     }
@@ -49,12 +49,12 @@ const useFieldValidation = (fields: string[]) => {
 
   const isEmailValid = (): boolean => {
     if (!email || isEmpty(email)) {
-      setErrorEmail("Este campo não pode estar vazio.");
+      setErrorEmail('Este campo não pode estar vazio.');
       return false;
     }
 
     if (!!email && !isEmail(email)) {
-      setErrorEmail("E-mail está em formato incorreto");
+      setErrorEmail('E-mail está em formato incorreto');
       return false;
     }
 
@@ -63,13 +63,13 @@ const useFieldValidation = (fields: string[]) => {
 
   const isPasswordValid = (): boolean => {
     if (!!password && isEmpty(password)) {
-      setErrorPassword("Dado incorreto. Revise e digite novamente.");
+      setErrorPassword('Dado incorreto. Revise e digite novamente.');
       return false;
     }
 
     if (!hasPasswordValidFormat(password as string)) {
       setErrorPassword(
-        "A senha deve ter pelo menos 8 caracteres, incluindo pelo menos 1 letra minúscula, 1 letra maiúscula, 1 número e 1 caracter especial",
+        'A senha deve ter pelo menos 8 caracteres, incluindo pelo menos 1 letra minúscula, 1 letra maiúscula, 1 número e 1 caracter especial',
       );
       return false;
     }
@@ -79,9 +79,9 @@ const useFieldValidation = (fields: string[]) => {
 
   const isConfirmPasswordValid = (): boolean => {
     if (password !== confirmPassword) {
-      setErrorPassword("As senhas não coincidem. Revise e digite novamente.");
+      setErrorPassword('As senhas não coincidem. Revise e digite novamente.');
       setErrorConfirmPassword(
-        "As senhas não coincidem. Revise e digite novamente.",
+        'As senhas não coincidem. Revise e digite novamente.',
       );
       return false;
     }
@@ -108,17 +108,17 @@ const useFieldValidation = (fields: string[]) => {
 
   const onClick = (value: string) => {
     switch (value) {
-      case "userName":
-      case "username":
+      case 'userName':
+      case 'username':
         setErrorUserName(undefined);
         break;
-      case "email":
+      case 'email':
         setErrorEmail(undefined);
         break;
-      case "password":
+      case 'password':
         setErrorPassword(undefined);
         break;
-      case "confirmPassword":
+      case 'confirmPassword':
         setErrorConfirmPassword(undefined);
         break;
       default:

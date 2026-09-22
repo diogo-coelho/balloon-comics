@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import "./BC_Register.scss";
-import { useRouter } from "next/navigation";
-import { JSX } from "react/jsx-runtime";
-import { useLayoutEffect, useState } from "react";
-import { IconEye, IconEyeOff } from "@tabler/icons-react";
-import { useCreatedUser } from "@/hooks/queries/useUser";
-import { RegisterProps } from "./bc-register";
-import useFieldValidation from "@/hooks/useFieldValidation";
-import BC_Button from "@/components/design/BC_Button";
-import BC_Input from "@/components/design/BC_Input";
-import BC_Spinning from "@/components/design/BC_Spinning";
-import BC_Dialog from "@/components/design/BC_Dialog/BC_Dialog";
+import './BC_Register.scss';
+import { useRouter } from 'next/navigation';
+import { JSX } from 'react/jsx-runtime';
+import { useLayoutEffect, useState } from 'react';
+import { IconEye, IconEyeOff } from '@tabler/icons-react';
+import { useCreatedUser } from '@/hooks/queries/useUser';
+import { RegisterProps } from './bc-register';
+import useFieldValidation from '@/hooks/useFieldValidation';
+import BC_Button from '@/components/design/BC_Button';
+import BC_Input from '@/components/design/BC_Input';
+import BC_Spinning from '@/components/design/BC_Spinning';
+import BC_Dialog from '@/components/design/BC_Dialog/BC_Dialog';
 
 const BCRegister = (props: RegisterProps): JSX.Element => {
   const router = useRouter();
@@ -37,10 +37,10 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
     getEmailValue,
     getPasswordValue,
     getConfirmPasswordValue,
-  } = useFieldValidation(["userName", "email", "password", "confirmPassword"]);
+  } = useFieldValidation(['userName', 'email', 'password', 'confirmPassword']);
 
   const goToHomepage = (): void => {
-    router.push("/");
+    router.push('/');
   };
 
   const helpTextUserName = (): JSX.Element => {
@@ -48,7 +48,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
       <>
         O <strong>nome de usuário</strong> será utilizado como identificador
         público. <br />
-        Deve possuir apenas <strong>letras, números</strong> e/ou{" "}
+        Deve possuir apenas <strong>letras, números</strong> e/ou{' '}
         <strong>underscores</strong>.<br />
         <strong>Exemplo:</strong> johndoe
       </>
@@ -90,7 +90,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
         email: email as string,
         password: password as string,
       });
-      router.push("/reader/create");
+      router.push('/reader/create');
     } catch (error: Error | unknown) {
       props.setAlertActive(true);
       props.setAlertMessage(
@@ -105,7 +105,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
 
   return (
     <BC_Dialog
-      active={activeDialog ? "on" : "off"}
+      active={activeDialog ? 'on' : 'off'}
       setActive={setActiveDialog}
       handleOnClose={() => goToHomepage()}
     >
@@ -133,7 +133,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
                   error={errorUserName}
                   helpText={helpTextUserName()}
                   handleOnChange={(event) => getUserNameValue?.(event.args)}
-                  handleOnClick={() => onClick("username")}
+                  handleOnClick={() => onClick('username')}
                 />
               </div>
 
@@ -149,7 +149,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
                   autoComplete="off"
                   error={errorEmail}
                   handleOnChange={(event) => getEmailValue?.(event.args)}
-                  handleOnClick={() => onClick("email")}
+                  handleOnClick={() => onClick('email')}
                 />
               </div>
 
@@ -160,7 +160,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
                 <BC_Input
                   id="password"
                   name="password"
-                  type={isPasswordVisible ? "text" : "password"}
+                  type={isPasswordVisible ? 'text' : 'password'}
                   placeholder="Insira sua senha"
                   autoComplete="off"
                   error={errorPassword}
@@ -180,7 +180,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
                     )
                   }
                   handleOnChange={(event) => getPasswordValue?.(event.args)}
-                  handleOnClick={() => onClick("password")}
+                  handleOnClick={() => onClick('password')}
                 />
               </div>
 
@@ -191,7 +191,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
                 <BC_Input
                   id="confirm-password"
                   name="confirm-password"
-                  type={isConfirmPasswordVisible ? "text" : "password"}
+                  type={isConfirmPasswordVisible ? 'text' : 'password'}
                   placeholder="Confirme sua senha"
                   autoComplete="off"
                   error={errorConfirmPassword}
@@ -212,7 +212,7 @@ const BCRegister = (props: RegisterProps): JSX.Element => {
                   handleOnChange={(event) =>
                     getConfirmPasswordValue?.(event.args)
                   }
-                  handleOnClick={() => onClick("confirmPassword")}
+                  handleOnClick={() => onClick('confirmPassword')}
                 />
               </div>
             </div>

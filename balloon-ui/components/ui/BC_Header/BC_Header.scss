@@ -39,7 +39,7 @@
       &:hover {
         color: var(--bc-color-primary-500);
         cursor: pointer;
-        
+
         transition: color 0.3s ease-in;
       }
     }
@@ -74,7 +74,7 @@
   }
 }
 
-@media only screen and (min-width: #{bp.$bc-viewport-desktop}) { 
+@media only screen and (min-width: #{bp.$bc-viewport-desktop}) {
   .header {
     &-container {
       width: 100%;

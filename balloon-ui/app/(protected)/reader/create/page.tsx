@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useCurrentReader } from "@/hooks/queries/useReader";
-import { useUpdateCurrentReader } from "@/hooks/queries/useReader";
-import useReader from "@/hooks/useReader";
-import BC_Card from "@/components/ui/BC_Card";
-import BC_Container from "@/components/ui/BC_Container";
-import BC_CreateReader from "@/components/ui/BC_CreateReader";
-import BC_SocialMediaLinks from "@/components/ui/BC_SocialMediaLinks";
-import BC_AgeVerification from "@/components/ui/BC_AgeVerification";
-import BC_Button from "@/components/design/BC_Button";
-import BC_Spinning from "@/components/design/BC_Spinning";
-import { useState } from "react";
-import BC_Alert from "@/components/design/BC_Alert";
+import { useRouter } from 'next/navigation';
+import { useCurrentReader } from '@/hooks/queries/useReader';
+import { useUpdateCurrentReader } from '@/hooks/queries/useReader';
+import useReader from '@/hooks/useReader';
+import BC_Card from '@/components/ui/BC_Card';
+import BC_Container from '@/components/ui/BC_Container';
+import BC_CreateReader from '@/components/ui/BC_CreateReader';
+import BC_SocialMediaLinks from '@/components/ui/BC_SocialMediaLinks';
+import BC_AgeVerification from '@/components/ui/BC_AgeVerification';
+import BC_Button from '@/components/design/BC_Button';
+import BC_Spinning from '@/components/design/BC_Spinning';
+import { useState } from 'react';
+import BC_Alert from '@/components/design/BC_Alert';
 
 export default function CreateReaderPage() {
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [isActive, setIsActive] = useState<boolean>(false);
-  
+
   const router = useRouter();
-  const { 
-    fullName, 
-    biography, 
+  const {
+    fullName,
+    biography,
     links,
     dateOfBirth,
     errorFullName,
@@ -34,7 +34,7 @@ export default function CreateReaderPage() {
     setDateOfBirth,
     validateRequiredFields,
     onClick,
-  } = useReader(["fullName", "biography", "links", "dateOfBirth"]);
+  } = useReader(['fullName', 'biography', 'links', 'dateOfBirth']);
 
   const { isLoading, data } = useCurrentReader();
   const readerData = data?.data;
@@ -43,22 +43,25 @@ export default function CreateReaderPage() {
   const { isPending } = mutation;
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();    
-    if (!validateRequiredFields()) return
-    
+    e.preventDefault();
+    if (!validateRequiredFields()) return;
+
     try {
       await mutation.mutateAsync({
         name: fullName,
         description: biography.trim() ? biography : undefined,
-        socialMediaLinks: links.length > 0 ? 
-          links.map(link => ({ name: link.name, url: link.url})) : 
-          undefined,
-        ageVerification: dateOfBirth.trim() !== "" ? {
-          dateOfBirth: dateOfBirth
-        } : undefined
-      });  
-      router.push("/reader"); 
-           
+        socialMediaLinks:
+          links.length > 0
+            ? links.map((link) => ({ name: link.name, url: link.url }))
+            : undefined,
+        ageVerification:
+          dateOfBirth.trim() !== ''
+            ? {
+                dateOfBirth: dateOfBirth,
+              }
+            : undefined,
+      });
+      router.push('/reader');
     } catch (error: Error | unknown) {
       setIsActive(true);
       setErrorMessage(error instanceof Error ? error.message : String(error));
@@ -73,7 +76,7 @@ export default function CreateReaderPage() {
           subtitle="E melhore ainda mais a sua experiência na plataforma Balloon Comics."
         >
           <form onSubmit={(e) => onSubmit(e)}>
-            <BC_CreateReader 
+            <BC_CreateReader
               isLoading={isLoading}
               readerData={readerData}
               fullName={fullName}
@@ -84,14 +87,14 @@ export default function CreateReaderPage() {
               errorBiography={errorBiography}
               onClick={onClick}
             />
-            <BC_AgeVerification 
+            <BC_AgeVerification
               dateOfBirth={dateOfBirth}
               setDateOfBirth={setDateOfBirth}
               errorDateOfBirth={errorDateOfBirth}
               onClick={onClick}
             />
-            <BC_SocialMediaLinks 
-              links={links} 
+            <BC_SocialMediaLinks
+              links={links}
               setLinks={setLinks}
               errorLinks={errorLinks}
               onClick={onClick}
@@ -99,13 +102,13 @@ export default function CreateReaderPage() {
 
             <div className="flex flex-end">
               <BC_Button
-                type="submit" 
-                variant="primary" 
+                type="submit"
+                variant="primary"
                 handleOnClick={(e) => onSubmit(e.event)}
               >
-                { isPending && 
+                {isPending && (
                   <BC_Spinning width="14px" height="14px" borderWidth="2px" />
-                }
+                )}
                 Cadastrar
               </BC_Button>
             </div>

@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import "./BC_Input.scss";
-import React, { JSX, useEffect, useState } from "react";
-import { InputProps } from "./bc_input";
-import { IconSearch } from "@tabler/icons-react";
+import './BC_Input.scss';
+import React, { JSX, useEffect, useState } from 'react';
+import { InputProps } from './bc_input';
+import { IconSearch } from '@tabler/icons-react';
 
 const BC_Input: React.FC<InputProps> = (props: InputProps): JSX.Element => {
-  const externalValue = props.currentValue ?? props["current-value"];
-  const [internalValue, setInternalValue] = useState(externalValue ?? "");
+  const externalValue = props.currentValue ?? props['current-value'];
+  const [internalValue, setInternalValue] = useState(externalValue ?? '');
 
   const className = (mainClass: string): string => {
     return [
       mainClass,
-      props.variant ?? "",
-      (props.inputSize || props["input-size"]) ?? ``,
+      props.variant ?? '',
+      (props.inputSize || props['input-size']) ?? ``,
       props.error ? `error` : ``,
       props.align ? `align-${props.align}` : ``,
       props.disabled ? `disabled` : ``,
     ]
       .toString()
-      .replaceAll(",", " ")
-      .replace(/\s+/g, " ")
+      .replaceAll(',', ' ')
+      .replace(/\s+/g, ' ')
       .trim();
   };
 
@@ -34,9 +34,9 @@ const BC_Input: React.FC<InputProps> = (props: InputProps): JSX.Element => {
 
   return (
     <>
-      <div className={className("input-container")}>
+      <div className={className('input-container')}>
         <input
-          className={className("input")}
+          className={className('input')}
           type={props.type || `text`}
           placeholder={props.placeholder}
           disabled={props.disabled || false}
@@ -49,7 +49,7 @@ const BC_Input: React.FC<InputProps> = (props: InputProps): JSX.Element => {
         />
         {props.suffix && (
           <div
-            className={`suffix${props.active === "true" ? ` active` : ""}`}
+            className={`suffix${props.active === 'true' ? ` active` : ''}`}
             onClick={(event) => props.handleOnClick?.(event)}
           >
             {props.suffixIcon ?? <IconSearch className="icon-search" />}

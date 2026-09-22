@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import "./BC_Header.scss";
-import React, { JSX } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import BC_Search from "@/components/ui/BC_Search";
-import BC_Drawer from "@/components/ui/BC_Drawer";
-import useViewport from "@/hooks/useViewport";
+import './BC_Header.scss';
+import React, { JSX } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import BC_Search from '@/components/ui/BC_Search';
+import BC_Drawer from '@/components/ui/BC_Drawer';
+import useViewport from '@/hooks/useViewport';
 
 const BC_Header: React.FC = (): JSX.Element => {
   const { isMobileView } = useViewport();

@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
 
 // Same-origin: o Next.js (app/api/[...path]) repassa a chamada ao backend, injetando o token.
 export const api = axios.create({
-  baseURL: "/api",
+  baseURL: '/api',
   withCredentials: true,
 });
 
 const refreshApi = axios.create({
-  baseURL: "/api",
+  baseURL: '/api',
   withCredentials: true,
 });
 
@@ -19,20 +19,21 @@ api.interceptors.response.use(
     const apiData = error.response?.data;
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 &&
+    if (
+      error.response?.status === 401 &&
       !originalRequest._retry &&
-      originalRequest.url !== "/auth/refresh"
+      originalRequest.url !== '/auth/refresh'
     ) {
       originalRequest._retry = true;
 
       try {
         if (!refreshPromise) {
           refreshPromise = refreshApi
-            .post("/auth/refresh")
+            .post('/auth/refresh')
             .then(() => undefined)
             .finally(() => {
               refreshPromise = null;
-            })
+            });
         }
 
         await refreshPromise;
@@ -41,14 +42,14 @@ api.interceptors.response.use(
       } catch (error) {
         return Promise.reject(error);
       }
-    }  
+    }
 
     if (apiData) {
       const rawMessage = apiData.message || apiData.error;
 
       if (rawMessage) {
         const message = Array.isArray(rawMessage)
-          ? rawMessage.join(", ")
+          ? rawMessage.join(', ')
           : rawMessage;
 
         error.message = message;
@@ -56,5 +57,5 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );

@@ -2,7 +2,7 @@
 
 .bc-search {
   min-width: 24px;
-   
+
   .icon-search {
     color: var(--bc-color-text-primary);
     height: 20px;
@@ -23,7 +23,8 @@
   .bc-search {
     min-width: 320px;
 
-    .icon-search, .icon-menu {
+    .icon-search,
+    .icon-menu {
       height: 24px;
       width: 24px;
     }

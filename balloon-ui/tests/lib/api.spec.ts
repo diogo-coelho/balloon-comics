@@ -1,4 +1,4 @@
-jest.mock("axios", () => {
+jest.mock('axios', () => {
   const mockApiInstance = Object.assign(jest.fn(), {
     interceptors: { response: { use: jest.fn() } },
     post: jest.fn(),
@@ -23,9 +23,9 @@ jest.mock("axios", () => {
   };
 });
 
-import * as axiosMock from "axios";
+import * as axiosMock from 'axios';
 // Import for its side effect of registering the response interceptor under test.
-import "@/lib/api";
+import '@/lib/api';
 
 type MockAxiosInstance = jest.Mock & {
   interceptors: { response: { use: jest.Mock } };
@@ -54,7 +54,7 @@ type ResponseErrorHandler = (error: ApiError) => Promise<unknown>;
 const responseErrorHandler: ResponseErrorHandler =
   apiInstance.interceptors.response.use.mock.calls[0][1];
 
-describe("api response interceptor", () => {
+describe('api response interceptor', () => {
   afterEach(() => {
     apiInstance.mockClear();
     apiInstance.post.mockClear();
@@ -62,57 +62,57 @@ describe("api response interceptor", () => {
     refreshInstance.post.mockClear();
   });
 
-  it("deve rejeitar erros diferentes de 401 definindo a mensagem a partir de apiData.message", async () => {
+  it('deve rejeitar erros diferentes de 401 definindo a mensagem a partir de apiData.message', async () => {
     const error: ApiError = {
-      response: { status: 500, data: { message: "Erro interno" } },
-      config: { url: "/reader/create", _retry: false },
+      response: { status: 500, data: { message: 'Erro interno' } },
+      config: { url: '/reader/create', _retry: false },
     };
 
     await expect(responseErrorHandler(error)).rejects.toBe(error);
-    expect(error.message).toBe("Erro interno");
+    expect(error.message).toBe('Erro interno');
     expect(refreshInstance.post).not.toHaveBeenCalled();
   });
 
-  it("deve rejeitar erros de rede sem response mantendo o erro original", async () => {
+  it('deve rejeitar erros de rede sem response mantendo o erro original', async () => {
     const error: ApiError = {
-      message: "Network Error",
-      config: { url: "/reader/create", _retry: false },
+      message: 'Network Error',
+      config: { url: '/reader/create', _retry: false },
     };
 
     await expect(responseErrorHandler(error)).rejects.toBe(error);
-    expect(error.message).toBe("Network Error");
+    expect(error.message).toBe('Network Error');
     expect(refreshInstance.post).not.toHaveBeenCalled();
   });
 
-  it("deve concatenar mensagens quando apiData.message for uma lista", async () => {
+  it('deve concatenar mensagens quando apiData.message for uma lista', async () => {
     const error: ApiError = {
       response: {
         status: 400,
-        data: { message: ["Campo obrigatório", "Formato inválido"] },
+        data: { message: ['Campo obrigatório', 'Formato inválido'] },
       },
-      config: { url: "/users/me", _retry: false },
+      config: { url: '/users/me', _retry: false },
     };
 
     await expect(responseErrorHandler(error)).rejects.toBe(error);
-    expect(error.message).toBe("Campo obrigatório, Formato inválido");
+    expect(error.message).toBe('Campo obrigatório, Formato inválido');
   });
 
-  it("deve usar apiData.error quando apiData.message não estiver presente", async () => {
+  it('deve usar apiData.error quando apiData.message não estiver presente', async () => {
     const error: ApiError = {
-      response: { status: 403, data: { error: "Acesso negado" } },
-      config: { url: "/users/me", _retry: false },
+      response: { status: 403, data: { error: 'Acesso negado' } },
+      config: { url: '/users/me', _retry: false },
     };
 
     await expect(responseErrorHandler(error)).rejects.toBe(error);
-    expect(error.message).toBe("Acesso negado");
+    expect(error.message).toBe('Acesso negado');
   });
 
-  it("deve renovar o token e repetir a requisição original quando receber 401", async () => {
+  it('deve renovar o token e repetir a requisição original quando receber 401', async () => {
     refreshInstance.post.mockResolvedValue({ data: {} });
-    apiInstance.mockResolvedValue("resposta-repetida");
+    apiInstance.mockResolvedValue('resposta-repetida');
 
-    const originalRequest: ApiError["config"] = {
-      url: "/reader/create",
+    const originalRequest: ApiError['config'] = {
+      url: '/reader/create',
       _retry: false,
     };
     const error: ApiError = {
@@ -122,61 +122,61 @@ describe("api response interceptor", () => {
 
     const result = await responseErrorHandler(error);
 
-    expect(refreshInstance.post).toHaveBeenCalledWith("/auth/refresh");
+    expect(refreshInstance.post).toHaveBeenCalledWith('/auth/refresh');
     expect(originalRequest._retry).toBe(true);
     expect(apiInstance).toHaveBeenCalledWith(originalRequest);
-    expect(result).toBe("resposta-repetida");
+    expect(result).toBe('resposta-repetida');
   });
 
-  it("não deve tentar renovar o token quando a requisição já for um retry", async () => {
+  it('não deve tentar renovar o token quando a requisição já for um retry', async () => {
     const error: ApiError = {
-      response: { status: 401, data: { message: "Não autorizado" } },
-      config: { url: "/reader/create", _retry: true },
+      response: { status: 401, data: { message: 'Não autorizado' } },
+      config: { url: '/reader/create', _retry: true },
     };
 
     await expect(responseErrorHandler(error)).rejects.toBe(error);
     expect(refreshInstance.post).not.toHaveBeenCalled();
   });
 
-  it("não deve tentar renovar o token quando a requisição for para /auth/refresh", async () => {
+  it('não deve tentar renovar o token quando a requisição for para /auth/refresh', async () => {
     const error: ApiError = {
-      response: { status: 401, data: { message: "Refresh token inválido" } },
-      config: { url: "/auth/refresh", _retry: false },
+      response: { status: 401, data: { message: 'Refresh token inválido' } },
+      config: { url: '/auth/refresh', _retry: false },
     };
 
     await expect(responseErrorHandler(error)).rejects.toBe(error);
     expect(refreshInstance.post).not.toHaveBeenCalled();
   });
 
-  it("deve rejeitar quando a renovação do token falhar", async () => {
-    const refreshError = new Error("Falha ao renovar token");
+  it('deve rejeitar quando a renovação do token falhar', async () => {
+    const refreshError = new Error('Falha ao renovar token');
     refreshInstance.post.mockRejectedValue(refreshError);
 
     const error: ApiError = {
       response: { status: 401 },
-      config: { url: "/reader/create", _retry: false },
+      config: { url: '/reader/create', _retry: false },
     };
 
     await expect(responseErrorHandler(error)).rejects.toBe(refreshError);
     expect(apiInstance).not.toHaveBeenCalled();
   });
 
-  it("deve compartilhar a mesma renovação de token entre requisições 401 concorrentes", async () => {
+  it('deve compartilhar a mesma renovação de token entre requisições 401 concorrentes', async () => {
     let resolveRefresh: (value?: unknown) => void = () => {};
     refreshInstance.post.mockReturnValue(
       new Promise((resolve) => {
         resolveRefresh = resolve;
       }),
     );
-    apiInstance.mockResolvedValue("ok");
+    apiInstance.mockResolvedValue('ok');
 
     const error1: ApiError = {
       response: { status: 401 },
-      config: { url: "/reader/create", _retry: false },
+      config: { url: '/reader/create', _retry: false },
     };
     const error2: ApiError = {
       response: { status: 401 },
-      config: { url: "/users/me", _retry: false },
+      config: { url: '/users/me', _retry: false },
     };
 
     const promise1 = responseErrorHandler(error1);

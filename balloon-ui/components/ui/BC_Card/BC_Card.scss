@@ -20,7 +20,8 @@
     gap: var(--bc-spacing-medium);
   }
 
-  .wrapper, form {
+  .wrapper,
+  form {
     width: 100%;
     flex-direction: column;
     display: flex;
@@ -29,15 +30,15 @@
 }
 
 @media only screen and (min-width: 960px) {
-  .card {    
+  .card {
     .wrapper.row {
       display: flex;
-      flex-direction: row; 
+      flex-direction: row;
     }
 
     .wrapper.col {
       display: flex;
-      flex-direction: row; 
+      flex-direction: row;
     }
   }
 }

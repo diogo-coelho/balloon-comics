@@ -17,10 +17,16 @@ describe('auth.service', () => {
 
   describe('login', () => {
     it('deve chamar a API de login e retornar os dados da resposta', async () => {
-      const responseData = { message: 'Acesso concedido', data: { id: 'user-id', email: 'usuario@teste.com' } };
+      const responseData = {
+        message: 'Acesso concedido',
+        data: { id: 'user-id', email: 'usuario@teste.com' },
+      };
       mockedApi.post.mockResolvedValue({ data: responseData });
 
-      const result = await login({ email: 'usuario@teste.com', password: 'Senha@123' });
+      const result = await login({
+        email: 'usuario@teste.com',
+        password: 'Senha@123',
+      });
 
       expect(mockedApi.post).toHaveBeenCalledWith('/auth/login', {
         email: 'usuario@teste.com',
@@ -58,7 +64,9 @@ describe('auth.service', () => {
 
   describe('getProfile', () => {
     it('deve retornar os dados do perfil do usuário autenticado', async () => {
-      const responseData = { data: { id: 'user-id', email: 'usuario@teste.com' } };
+      const responseData = {
+        data: { id: 'user-id', email: 'usuario@teste.com' },
+      };
       mockedApi.get.mockResolvedValue({ data: responseData });
 
       const result = await getProfile();

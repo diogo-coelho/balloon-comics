@@ -5,4 +5,4 @@ export type AgeVerificationData = {
   dateOfBirth: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};

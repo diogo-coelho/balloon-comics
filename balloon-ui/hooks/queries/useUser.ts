@@ -1,14 +1,12 @@
-"use client";
+'use client';
 
-import { useMutation } from "@tanstack/react-query";
-import { createUser } from "@/services/user.service";
-import { useAuthStore } from "@/store/auth.store";
+import { useMutation } from '@tanstack/react-query';
+import { createUser } from '@/services/user.service';
+import { useAuthStore } from '@/store/auth.store';
 
 export const useCreatedUser = () => {
-  const setUser = useAuthStore(
-    (state) => state.setUser
-  );
-  
+  const setUser = useAuthStore((state) => state.setUser);
+
   return useMutation({
     mutationFn: createUser,
 
@@ -19,6 +17,6 @@ export const useCreatedUser = () => {
         id: user.id,
         email: user.email,
       });
-    }
+    },
   });
-}
+};

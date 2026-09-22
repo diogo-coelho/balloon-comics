@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import "./BC_Drawer.scss";
-import React, { JSX } from "react";
-import { IconMenu, IconX } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/auth.store";
-import { logout } from "@/services/auth.service";
-import BC_Button from "@/components/design/BC_Button";
-import useViewport from "@/hooks/useViewport";
-import { useShallow } from "zustand/react/shallow";
+import './BC_Drawer.scss';
+import React, { JSX } from 'react';
+import { IconMenu, IconX } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/auth.store';
+import { logout } from '@/services/auth.service';
+import BC_Button from '@/components/design/BC_Button';
+import useViewport from '@/hooks/useViewport';
+import { useShallow } from 'zustand/react/shallow';
 
 const DCDrawer = (): JSX.Element => {
   const router = useRouter();
@@ -26,19 +26,19 @@ const DCDrawer = (): JSX.Element => {
     try {
       await logout();
       clearUser();
-      router.push("/");
+      router.push('/');
       router.refresh();
     } catch (error) {
-      console.error("Erro ao sair:", error);
+      console.error('Erro ao sair:', error);
     }
   };
 
   const navigateToLogin = () => {
-    router.push("/login");
+    router.push('/login');
   };
 
   const navigateToPublish = () => {
-    router.push("/author");
+    router.push('/author');
   };
 
   return (
@@ -57,10 +57,10 @@ const DCDrawer = (): JSX.Element => {
           </aside>
 
           <div
-            className={`drawer-overlay ${isDrawerOpen ? "active" : ""}`}
+            className={`drawer-overlay ${isDrawerOpen ? 'active' : ''}`}
           ></div>
 
-          <aside className={`drawer-content ${isDrawerOpen ? "active" : ""}`}>
+          <aside className={`drawer-content ${isDrawerOpen ? 'active' : ''}`}>
             <div className="drawer-header">
               <BC_Button
                 variant="transparent"

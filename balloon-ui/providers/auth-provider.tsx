@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useAuthStore } from "@/store/auth.store";
-import { getProfile } from "@/services/auth.service";
-import { AuthUser } from "@/types/auth";
+import { useEffect } from 'react';
+import { useAuthStore } from '@/store/auth.store';
+import { getProfile } from '@/services/auth.service';
+import { AuthUser } from '@/types/auth';
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
   const setUser = useAuthStore((state) => state.setUser);

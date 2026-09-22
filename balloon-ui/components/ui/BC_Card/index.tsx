@@ -1,12 +1,17 @@
-import "./BC_Card.scss";
-import { CardProps } from "./bc-card";
+import './BC_Card.scss';
+import { CardProps } from './bc-card';
 
 const BCCard = (props: CardProps) => {
-  const className = (mainClass: string): string => [
-    mainClass,
-    props.flexDirection === 'row' ? `row` : ``,
-    props.flexDirection === 'col' ? `col` : ``
-  ].toString().replaceAll(",", " ").replace(/\s+/g, " ").trim();
+  const className = (mainClass: string): string =>
+    [
+      mainClass,
+      props.flexDirection === 'row' ? `row` : ``,
+      props.flexDirection === 'col' ? `col` : ``,
+    ]
+      .toString()
+      .replaceAll(',', ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
 
   return (
     <div className={className('card')}>
@@ -15,11 +20,9 @@ const BCCard = (props: CardProps) => {
         {props.subtitle && <p>{props.subtitle}</p>}
       </div>
 
-      <div className={className('wrapper')}>
-        {props.children}
-      </div>
+      <div className={className('wrapper')}>{props.children}</div>
     </div>
-  )
-}
+  );
+};
 
 export default BCCard;

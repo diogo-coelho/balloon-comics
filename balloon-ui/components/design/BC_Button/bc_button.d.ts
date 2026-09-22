@@ -1,39 +1,34 @@
-import { ReactNode, ButtonHTMLAttributes } from "react"
+import { ReactNode, ButtonHTMLAttributes } from 'react';
 
-type Variant = 
-  'primary' |
-  'secondary' |
-  'success' |
-  'warning' |
-  'danger' |
-  'black' | 
-  'transparent';
+type Variant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'black'
+  | 'transparent';
 
-type Size = 
-  'small' |
-  'medium' |
-  'large';
+type Size = 'small' | 'medium' | 'large';
 
-type Outline = 'on' | 'off'
+type Outline = 'on' | 'off';
 
-type ButtonTypeAttribute = 
-  'reset' |
-  'button' |
-  'submit';
+type ButtonTypeAttribute = 'reset' | 'button' | 'submit';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode,
-  variant?: Variant,
-  size?: Size,
-  type?: ButtonTypeAttribute,
-  disabled?: boolean,
-  outline?: Outline,
-  transparent?: Outline,
-  align?: 'left' | 'center' | 'right',
-  className?: string,
-  handleOnClick?: (
-    data: { 
-      args?: T | T[], 
-      event: MouseEvent<HTMLButtonElement, MouseEvent> | KeyboardEvent<HTMLButtonElement, KeyboardEvent>
-  }) => T,
+  children: ReactNode;
+  variant?: Variant;
+  size?: Size;
+  type?: ButtonTypeAttribute;
+  disabled?: boolean;
+  outline?: Outline;
+  transparent?: Outline;
+  align?: 'left' | 'center' | 'right';
+  className?: string;
+  handleOnClick?: (data: {
+    args?: T | T[];
+    event:
+      | MouseEvent<HTMLButtonElement, MouseEvent>
+      | KeyboardEvent<HTMLButtonElement, KeyboardEvent>;
+  }) => T;
 }

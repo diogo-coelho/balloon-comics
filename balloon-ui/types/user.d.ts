@@ -2,7 +2,7 @@ export type CreateUserData = {
   username: string;
   email: string;
   password: string;
-}
+};
 
 export type UserData = {
   id: string;
@@ -10,8 +10,8 @@ export type UserData = {
   email: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export type CreatedUserData = {
   user: UserData;
-}
+};

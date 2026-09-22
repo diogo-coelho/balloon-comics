@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import BC_Container from "@/components/ui/BC_Container";
+import BC_Container from '@/components/ui/BC_Container';
 
 export default function AuthorPage() {
   return (
@@ -9,5 +9,5 @@ export default function AuthorPage() {
         <p>Template de autor</p>
       </BC_Container>
     </>
-  )
+  );
 }

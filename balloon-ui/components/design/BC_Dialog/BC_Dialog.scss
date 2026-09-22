@@ -7,7 +7,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   background-color: rgba(0, 0, 0, 0.5);
-    
+
   &-container {
     position: relative;
     display: flex;
@@ -23,9 +23,10 @@
     opacity: 0;
     top: -20px;
     margin-bottom: 120px;
-    transition: visibility 0.3s ease-in, 
-                opacity 0.3s ease-in,
-                top 0.3s ease-in;
+    transition:
+      visibility 0.3s ease-in,
+      opacity 0.3s ease-in,
+      top 0.3s ease-in;
 
     .close-button {
       position: absolute;
@@ -37,14 +38,15 @@
       visibility: visible;
       opacity: 1;
       top: 20px;
-      transition: visibility 0.3s ease-out, 
-                opacity 0.3s ease-out,
-                top 0.3s ease-out;
+      transition:
+        visibility 0.3s ease-out,
+        opacity 0.3s ease-out,
+        top 0.3s ease-out;
     }
   }
 }
 
-@media only screen and (min-width:720px) {
+@media only screen and (min-width: 720px) {
   .dialog {
     &-container {
       width: 520px;
@@ -52,7 +54,7 @@
   }
 }
 
-@media only screen and (min-width:1120px) {
+@media only screen and (min-width: 1120px) {
   .dialog {
     &-container {
       width: 792px;

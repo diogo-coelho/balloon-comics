@@ -1,14 +1,17 @@
-"use client";
+'use client';
 
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { getCurrentReader, updateCurrentReader } from "@/services/reader.service";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  getCurrentReader,
+  updateCurrentReader,
+} from '@/services/reader.service';
 
 export const useCurrentReader = () => {
   return useQuery({
     queryKey: ['readers', 'me'],
     queryFn: getCurrentReader,
   });
-}
+};
 
 export const useUpdateCurrentReader = () => {
   return useMutation({
@@ -16,6 +19,6 @@ export const useUpdateCurrentReader = () => {
 
     onSuccess: (data) => {
       return data;
-    }
+    },
   });
 };

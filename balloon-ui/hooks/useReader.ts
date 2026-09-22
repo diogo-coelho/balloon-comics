@@ -2,16 +2,16 @@ import {
   isEmpty,
   hasValidUrlFormat,
   hasDateOfBirthValidFormat,
-} from "@/shared/utils/StringUtils";
-import { useState } from "react";
+} from '@/shared/utils/StringUtils';
+import { useState } from 'react';
 
 const useReader = (fields: string[]) => {
-  const [fullName, setFullName] = useState("");
-  const [biography, setBiography] = useState("");
+  const [fullName, setFullName] = useState('');
+  const [biography, setBiography] = useState('');
   const [links, setLinks] = useState<
     { name: string; label: string; url: string }[]
   >([]);
-  const [dateOfBirth, setDateOfBirth] = useState<string>("");
+  const [dateOfBirth, setDateOfBirth] = useState<string>('');
 
   const [errorFullName, setErrorFullName] = useState<string | undefined>(
     undefined,
@@ -26,7 +26,7 @@ const useReader = (fields: string[]) => {
 
   const isFullNameValid = (): boolean => {
     if (!fullName || isEmpty(fullName)) {
-      setErrorFullName("Dado incorreto. Revise e digite novamente.");
+      setErrorFullName('Dado incorreto. Revise e digite novamente.');
       return false;
     }
 
@@ -35,7 +35,7 @@ const useReader = (fields: string[]) => {
 
   const isBiographyValid = (): boolean => {
     if (!!biography && isEmpty(biography.trim())) {
-      setErrorBiography("Dado incorreto. Revise e digite novamente.");
+      setErrorBiography('Dado incorreto. Revise e digite novamente.');
       return false;
     }
 
@@ -47,7 +47,7 @@ const useReader = (fields: string[]) => {
       links.length > 0 &&
       links.some((link) => isEmpty(link.name) || isEmpty(link.url))
     ) {
-      setErrorLinks("Dado incorreto. Revise e digite novamente.");
+      setErrorLinks('Dado incorreto. Revise e digite novamente.');
       return false;
     }
 
@@ -56,7 +56,7 @@ const useReader = (fields: string[]) => {
       links.some((link) => !hasValidUrlFormat(link.url))
     ) {
       setErrorLinks(
-        "Uma ou mais URLs estão em formato inválido. Revise e digite novamente.",
+        'Uma ou mais URLs estão em formato inválido. Revise e digite novamente.',
       );
       return false;
     }
@@ -65,16 +65,16 @@ const useReader = (fields: string[]) => {
   };
 
   const isDateOfBirthValid = (): boolean => {
-    console.log("dateOfBirth", dateOfBirth);
+    console.log('dateOfBirth', dateOfBirth);
     if (dateOfBirth && isEmpty(dateOfBirth.trim())) {
-      setErrorDateOfBirth("Dado incorreto. Revise e digite novamente.");
+      setErrorDateOfBirth('Dado incorreto. Revise e digite novamente.');
       return false;
     }
 
     if (dateOfBirth && !hasDateOfBirthValidFormat(dateOfBirth)) {
-      console.log("entrou aqui no erro de data");
+      console.log('entrou aqui no erro de data');
       setErrorDateOfBirth(
-        "A data de nascimento informada é inválida. Revise e digite novamente.",
+        'A data de nascimento informada é inválida. Revise e digite novamente.',
       );
       return false;
     }
@@ -95,16 +95,16 @@ const useReader = (fields: string[]) => {
 
   const onClick = (value: string) => {
     switch (value) {
-      case "fullName":
+      case 'fullName':
         setErrorFullName(undefined);
         break;
-      case "biography":
+      case 'biography':
         setErrorBiography(undefined);
         break;
-      case "links":
+      case 'links':
         setErrorLinks(undefined);
         break;
-      case "dateOfBirth":
+      case 'dateOfBirth':
         setErrorDateOfBirth(undefined);
         break;
       default:

@@ -1,11 +1,11 @@
-import "../styles/app.scss";
-import { QueryProvider } from "@/providers/query-provider";
-import { AuthInitializer } from "@/providers/auth-provider";
-import BC_Header from "@/components/ui/BC_Header";
+import '../styles/app.scss';
+import { QueryProvider } from '@/providers/query-provider';
+import { AuthInitializer } from '@/providers/auth-provider';
+import BC_Header from '@/components/ui/BC_Header';
 
 export const metadata = {
-  title: "Balloon Comics",
-  description: "Quadrinhos para todos",
+  title: 'Balloon Comics',
+  description: 'Quadrinhos para todos',
 };
 
 export default function RootLayout({

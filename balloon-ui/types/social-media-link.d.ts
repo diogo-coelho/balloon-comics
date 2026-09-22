@@ -5,4 +5,4 @@ export type SocialMediaLinksData = {
   url: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};

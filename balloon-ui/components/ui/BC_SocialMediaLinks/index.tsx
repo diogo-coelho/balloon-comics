@@ -1,29 +1,29 @@
-import "./BC_SocialMediaLinks.scss";
-import React from "react";
-import options from "./BC_SocialMediaLinks.const";
-import { SocialMediaLinksProps } from "./bc-social-media-links";
-import { IconTrash } from "@tabler/icons-react";
-import BC_Select from "@/components/design/BC_Select";
-import BC_Input from "@/components/design/BC_Input";
-import BC_Button from "@/components/design/BC_Button";
+import './BC_SocialMediaLinks.scss';
+import React from 'react';
+import options from './BC_SocialMediaLinks.const';
+import { SocialMediaLinksProps } from './bc-social-media-links';
+import { IconTrash } from '@tabler/icons-react';
+import BC_Select from '@/components/design/BC_Select';
+import BC_Input from '@/components/design/BC_Input';
+import BC_Button from '@/components/design/BC_Button';
 
 const BCSocialMediaLinks = (props: SocialMediaLinksProps) => {
   const [selectedOption, setSelectedOption] = React.useState({
-    name: "",
-    label: "Selecione uma opção",
+    name: '',
+    label: 'Selecione uma opção',
   });
-  const [url, setUrl] = React.useState("");
+  const [url, setUrl] = React.useState('');
 
   const handleOptionChange = (event: { args?: string | string[] }) => {
-    const selectedValue = typeof event.args === "string" ? event.args : "";
+    const selectedValue = typeof event.args === 'string' ? event.args : '';
     const selectedLabel =
       options.find((option) => option.name === selectedValue)?.label ||
-      "Selecione uma opção";
+      'Selecione uma opção';
     setSelectedOption({ name: selectedValue, label: selectedLabel });
   };
 
   const handleUrlChange = (event: { args?: string | string[] }) => {
-    setUrl(typeof event.args === "string" ? event.args : "");
+    setUrl(typeof event.args === 'string' ? event.args : '');
   };
 
   const handleAddLink = () => {
@@ -32,8 +32,8 @@ const BCSocialMediaLinks = (props: SocialMediaLinksProps) => {
         ...props.links,
         { name: selectedOption.name, label: selectedOption.label, url },
       ]);
-      setSelectedOption({ name: "", label: "Selecione uma opção" });
-      setUrl("");
+      setSelectedOption({ name: '', label: 'Selecione uma opção' });
+      setUrl('');
     }
   };
 
@@ -60,7 +60,7 @@ const BCSocialMediaLinks = (props: SocialMediaLinksProps) => {
                     }}
                     error={props.errorLinks}
                     handleOnChange={(e) => handleOptionChange(e)}
-                    handleOnClick={() => props.onClick("links")}
+                    handleOnClick={() => props.onClick('links')}
                   />
                 </div>
               </div>
@@ -75,7 +75,7 @@ const BCSocialMediaLinks = (props: SocialMediaLinksProps) => {
                     currentValue={url}
                     error={props.errorLinks}
                     handleOnChange={(e) => handleUrlChange(e)}
-                    handleOnClick={() => props.onClick("links")}
+                    handleOnClick={() => props.onClick('links')}
                   />
                 </div>
               </div>

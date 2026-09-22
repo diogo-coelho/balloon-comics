@@ -1,6 +1,6 @@
-import { DialogHTMLAttributes, MouseEvent, ReactNode } from "react";
+import { DialogHTMLAttributes, MouseEvent, ReactNode } from 'react';
 
-type Active = "on" | "off";
+type Active = 'on' | 'off';
 
 export interface DialogProps extends DialogHTMLAttributes<HTMLDialogElement> {
   children: ReactNode;

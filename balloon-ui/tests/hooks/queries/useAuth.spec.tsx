@@ -15,7 +15,11 @@ const mockedLogin = login as jest.Mock;
 describe('useLogin', () => {
   afterEach(() => {
     jest.clearAllMocks();
-    useAuthStore.setState({ user: null, isAuthenticated: false, isAuthReady: false });
+    useAuthStore.setState({
+      user: null,
+      isAuthenticated: false,
+      isAuthReady: false,
+    });
   });
 
   it('deve autenticar o usuário e atualizar o auth store em caso de sucesso', async () => {
@@ -29,7 +33,10 @@ describe('useLogin', () => {
     const { result } = renderHook(() => useLogin(), { wrapper });
 
     await act(async () => {
-      await result.current.mutateAsync({ email: 'usuario@teste.com', password: 'Senha@123' });
+      await result.current.mutateAsync({
+        email: 'usuario@teste.com',
+        password: 'Senha@123',
+      });
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -46,7 +53,10 @@ describe('useLogin', () => {
 
     await act(async () => {
       await expect(
-        result.current.mutateAsync({ email: 'usuario@teste.com', password: 'errada' }),
+        result.current.mutateAsync({
+          email: 'usuario@teste.com',
+          password: 'errada',
+        }),
       ).rejects.toThrow(error);
     });
 

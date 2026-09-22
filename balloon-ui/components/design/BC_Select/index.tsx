@@ -1,11 +1,11 @@
-import "./BC_Select.scss";
-import React, { JSX, useEffect, useState } from "react";
-import { SelectProps } from "./bc-select";
-import { IconCaretDownFilled } from "@tabler/icons-react";
+import './BC_Select.scss';
+import React, { JSX, useEffect, useState } from 'react';
+import { SelectProps } from './bc-select';
+import { IconCaretDownFilled } from '@tabler/icons-react';
 
 const BCSelect: React.FC<SelectProps> = (props: SelectProps): JSX.Element => {
   const externalValue = props.selected?.value;
-  const [internalValue, setInternalValue] = useState(externalValue ?? "");
+  const [internalValue, setInternalValue] = useState(externalValue ?? '');
 
   const className = (mainClass: string): string => {
     return [
@@ -14,8 +14,8 @@ const BCSelect: React.FC<SelectProps> = (props: SelectProps): JSX.Element => {
       props.error ? `error` : ``,
     ]
       .toString()
-      .replaceAll(",", " ")
-      .replace(/\s+/g, " ")
+      .replaceAll(',', ' ')
+      .replace(/\s+/g, ' ')
       .trim();
   };
 
@@ -29,9 +29,9 @@ const BCSelect: React.FC<SelectProps> = (props: SelectProps): JSX.Element => {
 
   return (
     <>
-      <div className={className("select-container")}>
+      <div className={className('select-container')}>
         <select
-          className={className("select")}
+          className={className('select')}
           name={props.name}
           multiple={props.multiple}
           required={props.required}

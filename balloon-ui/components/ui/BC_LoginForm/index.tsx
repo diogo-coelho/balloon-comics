@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import "./BC_LoginForm.scss";
-import { JSX, useLayoutEffect, useState } from "react";
-import { IconEye, IconEyeOff } from "@tabler/icons-react";
-import { useLogin } from "@/hooks/queries/useAuth";
-import { LoginFormProps } from "./bc-login-form";
-import BC_Button from "@/components/design/BC_Button";
-import BC_Input from "@/components/design/BC_Input";
-import useFieldValidation from "@/hooks/useFieldValidation";
-import BC_Spinning from "@/components/design/BC_Spinning";
-import BC_Dialog from "@/components/design/BC_Dialog/BC_Dialog";
-import { useRouter } from "next/navigation";
+import './BC_LoginForm.scss';
+import { JSX, useLayoutEffect, useState } from 'react';
+import { IconEye, IconEyeOff } from '@tabler/icons-react';
+import { useLogin } from '@/hooks/queries/useAuth';
+import { LoginFormProps } from './bc-login-form';
+import BC_Button from '@/components/design/BC_Button';
+import BC_Input from '@/components/design/BC_Input';
+import useFieldValidation from '@/hooks/useFieldValidation';
+import BC_Spinning from '@/components/design/BC_Spinning';
+import BC_Dialog from '@/components/design/BC_Dialog/BC_Dialog';
+import { useRouter } from 'next/navigation';
 
 const BCLogin = (props: LoginFormProps): JSX.Element => {
   const router = useRouter();
@@ -28,10 +28,10 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
     validateRequiredFields,
     getEmailValue,
     getPasswordValue,
-  } = useFieldValidation(["email", "password"]);
+  } = useFieldValidation(['email', 'password']);
 
   const goToHomepage = (): void => {
-    router.push("/");
+    router.push('/');
   };
 
   const onSubmit = async (
@@ -46,7 +46,7 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
         email: email as string,
         password: password as string,
       });
-      router.push("/reader");
+      router.push('/reader');
     } catch (error: Error | unknown) {
       props.setAlertActive(true);
       props.setAlertMessage(
@@ -62,7 +62,7 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
   return (
     <>
       <BC_Dialog
-        active={active ? "on" : "off"}
+        active={active ? 'on' : 'off'}
         setActive={setActive}
         handleOnClose={() => goToHomepage()}
       >
@@ -84,7 +84,7 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
                     autoComplete="off"
                     error={errorEmail}
                     handleOnChange={(event) => getEmailValue?.(event.args)}
-                    handleOnClick={() => onClick("email")}
+                    handleOnClick={() => onClick('email')}
                   />
                   <span></span>
                 </div>
@@ -96,7 +96,7 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
                   <BC_Input
                     id="password"
                     name="password"
-                    type={isPasswordVisible ? "text" : "password"}
+                    type={isPasswordVisible ? 'text' : 'password'}
                     placeholder="Insira sua senha"
                     autoComplete="off"
                     error={errorPassword}
@@ -115,7 +115,7 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
                       )
                     }
                     handleOnChange={(event) => getPasswordValue?.(event.args)}
-                    handleOnClick={() => onClick("password")}
+                    handleOnClick={() => onClick('password')}
                   />
                   <span></span>
                 </div>
