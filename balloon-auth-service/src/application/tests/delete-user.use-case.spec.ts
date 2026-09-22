@@ -24,16 +24,16 @@ describe('DeleteUserUseCase', () => {
           operation(currentTransaction),
       ),
     };
+    const deleteUser = jest.spyOn(currentTransaction.users, 'delete');
+    const saveOutbox = jest.spyOn(currentTransaction.outbox, 'save');
 
     await new DeleteUserUseCase(unitOfWork).execute({
       id: user.id,
       requesterId: user.id,
     });
 
-    const userDelete = currentTransaction.users.delete;
-    const outboxSave = currentTransaction.outbox.save;
-    expect(userDelete).toHaveBeenCalledWith(user);
-    expect(outboxSave).toHaveBeenCalled();
+    expect(deleteUser).toHaveBeenCalledWith(user);
+    expect(saveOutbox).toHaveBeenCalled();
   });
 
   it('deve rejeitar exclusão de usuário inexistente', async () => {

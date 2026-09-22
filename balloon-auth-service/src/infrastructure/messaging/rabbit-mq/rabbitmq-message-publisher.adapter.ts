@@ -35,8 +35,8 @@ export class RabbitMQProvider implements OnModuleInit {
           });
 
           channel.on('return', (message: Message) => {
-            const messageId = message.properties.messageId;
-            if (messageId) {
+            const messageId: unknown = message.properties.messageId;
+            if (typeof messageId === 'string') {
               this.returnedMessages.add(messageId);
             }
           });

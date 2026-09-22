@@ -34,6 +34,7 @@ describe('UpdateUserUseCase', () => {
           operation(currentTransaction),
       ),
     };
+    const saveOutbox = jest.spyOn(currentTransaction.outbox, 'save');
 
     const result = await new UpdateUserUseCase(unitOfWork, {
       hash: jest.fn().mockResolvedValue('new-hash'),
@@ -46,8 +47,7 @@ describe('UpdateUserUseCase', () => {
 
     expect(result.username).toBe('bia');
     expect(user.passwordHash).toBe('new-hash');
-    const outboxSave = currentTransaction.outbox.save;
-    expect(outboxSave).toHaveBeenCalled();
+    expect(saveOutbox).toHaveBeenCalled();
   });
 
   it('deve atualizar somente a senha sem publicar evento de integração', async () => {
@@ -59,13 +59,13 @@ describe('UpdateUserUseCase', () => {
           operation(currentTransaction),
       ),
     };
+    const saveOutbox = jest.spyOn(currentTransaction.outbox, 'save');
 
     await new UpdateUserUseCase(unitOfWork, {
       hash: jest.fn().mockResolvedValue('new-hash'),
     }).execute({ id: user.id, requesterId: user.id, password: 'new' });
 
-    const outboxSave = currentTransaction.outbox.save;
-    expect(outboxSave).not.toHaveBeenCalled();
+    expect(saveOutbox).not.toHaveBeenCalled();
   });
 
   it('deve rejeitar usuário inexistente ou não autorizado', async () => {

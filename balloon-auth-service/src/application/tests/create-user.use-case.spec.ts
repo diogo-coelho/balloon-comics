@@ -4,9 +4,19 @@ import EmailAlreadyInUseError from '../../domain/user/errors/email-already-in-us
 import { AuthUnitOfWorkPort } from '../ports/auth-unit-of-work.port';
 import { AuthTransactionalPort } from '../types/auth';
 
-const transaction = (
-  existingUser: User | null = null,
-): AuthTransactionalPort => ({
+type MockedTransaction = {
+  users: {
+    findByEmail: jest.MockedFunction<
+      AuthTransactionalPort['users']['findByEmail']
+    >;
+    save: jest.MockedFunction<AuthTransactionalPort['users']['save']>;
+  };
+  outbox: {
+    save: jest.MockedFunction<AuthTransactionalPort['outbox']['save']>;
+  };
+};
+
+const transaction = (existingUser: User | null = null): MockedTransaction => ({
   users: {
     findByEmail: jest.fn().mockResolvedValue(existingUser),
     save: jest.fn(),
@@ -46,10 +56,8 @@ describe('CreateUserUseCase', () => {
 
     expect(result.user.email).toBe('ana@example.com');
     expect(result.accessToken).toBe('access-token');
-    const outboxSave = currentTransaction.outbox.save;
-    const userSave = currentTransaction.users.save;
-    expect(outboxSave).toHaveBeenCalled();
-    expect(userSave).toHaveBeenCalledTimes(2);
+    expect(currentTransaction.outbox.save.mock.calls.length).toBeGreaterThan(0);
+    expect(currentTransaction.users.save.mock.calls.length).toBe(2);
   });
 
   it('deve rejeitar criação com email existente', async () => {

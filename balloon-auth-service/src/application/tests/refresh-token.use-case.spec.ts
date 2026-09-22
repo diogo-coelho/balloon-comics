@@ -27,6 +27,7 @@ describe('RefreshTokenUseCase', () => {
           operation(currentTransaction),
       ),
     };
+    const saveUser = jest.spyOn(currentTransaction.users, 'save');
     const hasher = {
       compare: jest.fn().mockResolvedValue(true),
       hash: jest.fn().mockResolvedValue('new-hash'),
@@ -44,8 +45,7 @@ describe('RefreshTokenUseCase', () => {
         refreshToken: 'old',
       }),
     ).resolves.toEqual({ accessToken: 'access', refreshToken: 'refresh' });
-    const userSave = currentTransaction.users.save;
-    expect(userSave).toHaveBeenCalledWith(user);
+    expect(saveUser).toHaveBeenCalledWith(user);
   });
 
   it('deve rejeitar token inválido, tipo incorreto e hash divergente', async () => {
