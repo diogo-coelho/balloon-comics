@@ -46,6 +46,8 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
         email: email as string,
         password: password as string,
       });
+
+      await deactivateDialog(false);
       router.push('/reader');
     } catch (error: Error | unknown) {
       props.setAlertActive(true);
@@ -55,8 +57,17 @@ const BCLogin = (props: LoginFormProps): JSX.Element => {
     }
   };
 
+  const deactivateDialog = (value: boolean): Promise<void> => {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        setActive(value);
+        resolve();
+      }, 300);
+    });
+  };
+
   useLayoutEffect(() => {
-    setTimeout(() => setActive(true), 300);
+    deactivateDialog(true);
   }, []);
 
   return (
